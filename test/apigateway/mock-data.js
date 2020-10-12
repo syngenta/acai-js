@@ -1,0 +1,337 @@
+exports.getData = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        httpMethod: 'GET',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({body_key: 'body_value'})
+    };
+};
+
+exports.getDataNoHeaders = () => {
+    return {
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        httpMethod: 'GET',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({body_key: 'body_value'})
+    };
+};
+
+exports.getDataNoParams = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        httpMethod: 'GET',
+        queryStringParameters: null,
+        body: JSON.stringify({body_key: 'body_value'})
+    };
+};
+
+exports.getDataXml = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/xml'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        resource: '/{proxy+}',
+        pathParameters: {
+            proxy: 'hello'
+        },
+        httpMethod: 'POST',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: '<root><test>test2</test><someobject>1</someobject><someobject>2</someobject></root>'
+    };
+};
+
+exports.getDataRaw = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'multipart/form-data; boundary=430661979790652055785011'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        resource: '/{proxy+}',
+        pathParameters: {
+            proxy: 'hello'
+        },
+        httpMethod: 'POST',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
+    };
+};
+
+exports.getValidBodyData = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        httpMethod: 'GET',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({
+            test_id: 'test_id',
+            object_key: {
+                string_key: 'test'
+            },
+            array_number: [1],
+            array_objects: [
+                {
+                    array_string_key: 'string',
+                    array_number_key: 3
+                }
+            ]
+        })
+    };
+};
+
+exports.getInvalidBodyData = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        httpMethod: 'GET',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({
+            test_id: 'test_id',
+            object_key: {
+                string_key: 'test'
+            },
+            array_number: [1],
+            array_objects: [
+                {
+                    array_string_key: 'string',
+                    array_number_key: 3
+                }
+            ],
+            extra_key: true
+        })
+    };
+};
+
+exports.getApiGateWayRoute = (prefix = '', suffix = '', method = 'POST') => {
+    return {
+        path: `${prefix}unittest/v1/mock-handler${suffix}`,
+        httpMethod: method,
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({
+            test_id: 'test_id',
+            object_key: {
+                string_key: 'test'
+            },
+            array_number: [1],
+            array_objects: [
+                {
+                    array_string_key: 'string',
+                    array_number_key: 3
+                }
+            ]
+        })
+    };
+};
+
+exports.getApiGateWayRouteNoRequirements = () => {
+    return {
+        path: 'unittest/v1/mock-handler-no-requirements',
+        httpMethod: 'GET',
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({
+            test_id: 'test_id',
+            object_key: {
+                string_key: 'test'
+            },
+            array_number: [1],
+            array_objects: [
+                {
+                    array_string_key: 'string',
+                    array_number_key: 3
+                }
+            ]
+        })
+    };
+};
+
+exports.getIndexApiGateWayRoute = () => {
+    return {
+        path: 'unittest/v1',
+        httpMethod: 'POST',
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({
+            test_id: 'test_id',
+            object_key: {
+                string_key: 'test'
+            },
+            array_number: [1],
+            array_objects: [
+                {
+                    array_string_key: 'string',
+                    array_number_key: 3
+                }
+            ]
+        })
+    };
+};

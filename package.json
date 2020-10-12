@@ -1,0 +1,93 @@
+{
+    "name": "alc",
+    "author": "Paul Cruse, USCO Technical Lead Syngenta",
+    "main": "src/index.js",
+    "version": "1.0.0",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/syngenta-digital/alc-node.git"
+    },
+    "bugs": {
+        "url": "https://github.com/syngenta-digital/alc-node/issues"
+    },
+    "scripts": {
+        "test": "unittest=true nyc mocha --recursive ",
+        "report": "nyc report",
+        "lint": "eslint src/**",
+        "sct": "sct"
+    },
+    "dependencies": {
+        "ajv": "^6.12.4",
+        "js-yaml": "^3.14.0",
+        "json-schema-ref-parser": "^9.0.6",
+        "xml2js": "^0.4.23"
+    },
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "eslint": "^7.7.0",
+        "eslint-config-airbnb": "^18.1.0",
+        "eslint-config-prettier": "^6.11.0",
+        "eslint-plugin-jsx-a11y": "^6.3.1",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "eslint-plugin-react": "^7.20.6",
+        "mocha": "^8.1.1",
+        "mocha-junit-reporter": "^2.0.0",
+        "mocha-multi-reporters": "^1.1.7",
+        "mochawesome": "^6.1.1",
+        "nyc": "^15.1.0",
+        "prettier": "^2.0.5"
+    },
+    "engines": {
+        "node": ">=12.14.1"
+    },
+    "nyc": {
+        "temp-directory": "./node_modules/.test-metadata/.nyc_output"
+    },
+    "eslintConfig": {
+        "settings": {
+            "react": {
+                "version": "999.999.999"
+            }
+        },
+        "env": {
+            "es6": true
+        },
+        "parserOptions": {
+            "ecmaVersion": 9
+        },
+        "plugins": [
+            "prettier"
+        ],
+        "extends": [
+            "airbnb",
+            "plugin:prettier/recommended"
+        ],
+        "rules": {
+            "prettier/prettier": [
+                "warn",
+                {
+                    "trailingComma": "none",
+                    "printWidth": 120,
+                    "tabWidth": 4,
+                    "singleQuote": true,
+                    "bracketSpacing": false,
+                    "arrowParens": "always"
+                }
+            ],
+            "prefer-destucturing": "off",
+            "no-global-assign": "off",
+            "rest-spread-spacing": 1,
+            "no-restricted-syntax": "off",
+            "consistent-return": "off",
+            "import/no-dynamic-require": "import",
+            "no-param-reassign": "off",
+            "global-require": "off",
+            "eqeqeq": "error",
+            "class-methods-use-this": "off",
+            "no-underscore-dangle": "off",
+            "camelcase": "off"
+        }
+    }
+}
