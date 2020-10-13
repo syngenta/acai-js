@@ -20,5 +20,25 @@ functions:
             - http:
                 path: /v1/{proxy+}
                 method: ANY
+    v1-sqs-subscription:
+        name: v1-sqs-subscription
+        handler: application/v1/handler/sqs/listener.listen
+        events:
+            - sqs:
+                arn:
+                    Fn::GetAtt: [ ExampleQueue, 'Arn' ]
+    v1-dynamodb-stream:
+        name: v1-dynamodb-stream
+        handler: application/v1/handler/dynamodb/streamer.stream
+        events:
+            - stream:
+                type: dynamodb
+                arn:
+                    Fn::GetAtt: [ DynamoDbTableExample, 'Arn' ]
+    v1-s3-handler:
+        name: v1-s3-handler
+        handler: application/v1/handler/s3/handler.handle
+        events:
+            - s3: photos
 plugins:
     - serverless-offline
