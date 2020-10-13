@@ -6,6 +6,10 @@ class RecordClient {
         this._converter = AWS.DynamoDB.Converter.unmarshall;
     }
 
+    get awsRegion() {
+        return this._record.awsRegion;
+    }
+
     get eventID() {
         return this._record.eventID;
     }
@@ -28,10 +32,6 @@ class RecordClient {
 
     get newImage() {
         return this._converter(this._record.dynamodb.NewImage);
-    }
-
-    get rawBody() {
-        return this._record.body;
     }
 
     get eventSourceARN() {

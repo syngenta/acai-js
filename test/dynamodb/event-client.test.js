@@ -1,9 +1,9 @@
 const {assert} = require('chai');
-const EventClient = require('../../src').sqs.Event;
+const EventClient = require('../../src').dynamodb.Event;
 const mockData = require('./mockData');
 
-describe('Test SQS Event Client', async () => {
-    const eventClient = await new EventClient(mockData.getData());
+describe('Test DynamoDB Event Client', async () => {
+    const eventClient = await new EventClient(mockData.getData(), {globalLogger: true});
     describe('test constructor', () => {
         it('client took event', () => {
             assert.equal(true, '_event' in eventClient);
@@ -12,7 +12,7 @@ describe('Test SQS Event Client', async () => {
     describe('test records', () => {
         it('record object returned', () => {
             const {records} = eventClient;
-            assert.deepEqual(records[0].body, {status: 'ok'});
+            assert.equal(records[0].awsRegion, 'us-east-1');
         });
     });
     describe('test rawRecords', () => {
