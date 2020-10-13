@@ -12,15 +12,15 @@ describe('Test Validator Client', () => {
         it('client took other clients', () => {
             assert.equal(true, '_eventClient' in requestValidator);
             assert.equal(true, '_responseClient' in requestValidator);
-            assert.equal(true, '_requiredPairings' in requestValidator);
+            assert.equal(true, '_validationPairings' in requestValidator);
         });
     });
-    describe('test validateRequest', () => {
+    describe('test _validateRequest', () => {
         it('valid request', () => {
-            requestValidator.validateRequest(
+            requestValidator._validateRequest(
                 {
                     requiredHeaders: ['x-api-key'],
-                    requiredQueryStringParameters: ['name'],
+                    requiredParams: ['name'],
                     requiredBody: 'v1-test-request'
                 },
                 () => {}
@@ -28,7 +28,7 @@ describe('Test Validator Client', () => {
             assert.equal(responseClient.hasErrors, false);
         });
         it('invalid header request', () => {
-            requestValidator.validateRequest(
+            requestValidator._validateRequest(
                 {
                     requiredHeaders: ['x-api-key-fail']
                 },
@@ -39,16 +39,16 @@ describe('Test Validator Client', () => {
                 errors: [
                     {
                         key_path: 'headers',
-                        message: 'Please provide x-api-key-fail'
+                        message: 'Please provide x-api-key-fail for headers'
                     }
                 ]
             });
         });
         it('invalid query string params request', () => {
             responseClient._body = {};
-            requestValidator.validateRequest(
+            requestValidator._validateRequest(
                 {
-                    requiredQueryStringParameters: ['name', 'failing-param']
+                    requiredParams: ['name', 'failing-param']
                 },
                 () => {}
             );
@@ -56,15 +56,15 @@ describe('Test Validator Client', () => {
             assert.deepEqual(responseClient._body, {
                 errors: [
                     {
-                        key_path: 'queryStringParameters',
-                        message: 'Please provide failing-param'
+                        key_path: 'params',
+                        message: 'Please provide failing-param for params'
                     }
                 ]
             });
         });
         it('invalid json body request: full request empty', (callback) => {
             responseClient._body = {};
-            requestValidator.validateRequest(
+            requestValidator._validateRequest(
                 {
                     requiredBody: 'v1-test-fail-request'
                 },
@@ -92,7 +92,7 @@ describe('Test Validator Client', () => {
             const responseClient2 = new ResponseClient();
             const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
             responseClient2._body = {};
-            requestValidator2.validateRequest(
+            requestValidator2._validateRequest(
                 {
                     requiredBody: 'v1-test-fail-request'
                 },
