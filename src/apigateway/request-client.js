@@ -16,7 +16,7 @@ class RequestClient {
     }
 
     get authorizer() {
-        if (this._event.isOffline) {
+        if (this._event.isOffline || process.env.IS_OFFLINE) {
             return this._event.headers;
         }
         return this._event.requestContext.authorizer;
