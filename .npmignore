@@ -1,0 +1,12 @@
+.scannerwork
+.gitignore
+.npmrc
+.nvmrc
+.github
+.circleci
+buildspec.yml
+openapi.yml
+package-lock.json
+README.md
+test
+node_modules

@@ -1,0 +1,44 @@
+components:
+    schemas:
+        test_ref_model:
+            type: object
+            properties:
+                test_id:
+                    type: string
+                object_key:
+                    type: object
+                    properties:
+                        string_key:
+                            type: string
+                array_number:
+                    type: array
+                    items:
+                        type: number
+                array_objects:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            array_string_key:
+                                type: string
+                            array_number_key:
+                                type: number
+                fail_id:
+                    type: string
+        v1-test-request:
+            allOf:
+            - $ref: "#/components/schemas/test_ref_model"
+            - required:
+                - test_id
+                - object_key
+                - array_number
+                - array_objects
+        v1-test-fail-request:
+            allOf:
+            - $ref: "#/components/schemas/test_ref_model"
+            - required:
+                - test_id
+                - object_key
+                - array_number
+                - array_objects
+                - fail_id
