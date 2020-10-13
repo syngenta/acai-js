@@ -121,7 +121,7 @@ exports.delete = (request, response) => {
     return response;
 };
 ```
-*** Endpoint Requirement Options ***
+**Endpoint Requirement Options
 
 Option Name       | Type   | Description
 :-----------      | :----- | :----------
@@ -131,7 +131,7 @@ Option Name       | Type   | Description
 `availableHeaders`| array  | list of available headers for that method on that endpoint
 `requiredHeaders` | array  | list of required headers for that method on that endpoint
 
-*** Request Properties ***
+**Request Properties
 
 Property Name       | Description
 :-----------        | :-------   
@@ -146,7 +146,7 @@ Property Name       | Description
 `body`              | body of apigateway event will be parsed based on context headers
 `request`           | full request broken down as an object literal
 
-*** Request Properties ***
+**Request Properties 
 
 Property Name       | Description
 :-----------        | :-------   
@@ -161,7 +161,7 @@ Property Name       | Description
 `body`              | body of apigateway event will be parsed based on context headers
 `request`           | full request broken down as an object literal
 
-*** Response Properties ***
+**Response Properties
 
 Property Name       | Description
 :-----------        | :-------   
@@ -199,7 +199,7 @@ exports.listen = async (event) => {
     }
 };
 ```
-*** Event Client Properties ***
+**Event Client Properties
 
 Property Name   | Description
 :-----------    | :-------   
@@ -207,7 +207,7 @@ Property Name   | Description
 `rawRecords`    | jus the raw record from the original request
 
 
-*** Record Properties ***
+**Record Properties
 
 Property Name       | Description
 :-----------        | :-------   
@@ -250,7 +250,7 @@ exports.stream = async (event) => {
     }
 };
 ```
-*** Event Client Properties ***
+**Event Client Properties
 
 Property Name   | Description
 :-----------    | :-------   
@@ -258,7 +258,7 @@ Property Name   | Description
 `rawRecords`    | jus the raw record from the original request
 
 
-*** Record Properties ***
+**Record Properties
 
 Property Name                | Description
 :-----------                 | :-------   
@@ -301,7 +301,7 @@ exports.handle = async (event) => {
     }
 };
 ```
-*** Event Client Properties ***
+**Event Client Properties
 
 Property Name   | Description
 :-----------    | :-------   
