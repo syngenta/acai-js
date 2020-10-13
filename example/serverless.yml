@@ -1,0 +1,24 @@
+service: alc-example
+custom:
+    serverless-offline:
+        httpPort: 9000
+        stage: local
+        prefix: ${self:service}
+        region: us-east-2
+        noAuth: true
+        noPrependStageInUrl: true
+provider:
+    name: aws
+    runtime: nodejs12.x
+functions:
+    v1-apigateway-handler:
+        handler: application/v1/handler/apigateway/_router.route
+        events:
+            - http:
+                path: /v1/
+                method: ANY
+            - http:
+                path: /v1/{proxy+}
+                method: ANY
+plugins:
+    - serverless-offline
