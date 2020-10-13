@@ -36,11 +36,11 @@ $ npm install @syngenta-digital/alc
 
 ## Basic Usage
 
-Use alc to normalize your interactions with common events passed by AWS Lambdas and work with the events in a more OOP way.
+Use alc to normalize your interactions with common events passed to AWS Lambdas and work with the events in a more OO way.
 
 ### API Gateway Events
 
-`NOTE`: This packages assumes you are using a monolithic internally routed the lambda with [serverless framework](https://www.serverless.com/) and folder structure which put all your endpoint files in one directory.
+`NOTE`: This packages assumes you are using a monolithic, internally routed the lambda with [serverless framework](https://www.serverless.com/) and folder structure which put all your endpoint files in one sub directory and custom domain on apigateway.
 
 0. Setting Up the Monolithic Internally Routed Lambda
 
