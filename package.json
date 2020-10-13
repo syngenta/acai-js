@@ -31,7 +31,6 @@
         "eslint-plugin-jsx-a11y": "^6.3.1",
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-prettier": "^3.1.4",
-        "eslint-plugin-react": "^7.20.6",
         "mocha": "^8.1.1",
         "mocha-junit-reporter": "^2.0.0",
         "mocha-multi-reporters": "^1.1.7",
@@ -46,11 +45,6 @@
         "temp-directory": "./node_modules/.nyc_output"
     },
     "eslintConfig": {
-        "settings": {
-            "react": {
-                "version": "999.999.999"
-            }
-        },
         "env": {
             "es6": true
         },
