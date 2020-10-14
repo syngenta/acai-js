@@ -4,7 +4,7 @@ const fs = require('fs');
 const RequestClient = require('./request-client');
 const ResponseClient = require('./response-client');
 const RequestValidator = require('./request-validator');
-const Logger = require('../common/Logger');
+const Logger = require('../common/logger');
 
 class Router {
     constructor(params) {

@@ -1,5 +1,5 @@
 const xml2js = require('xml2js').Parser({explicitArray: false});
-const Logger = require('../common/Logger');
+const Logger = require('../common/logger');
 
 class RequestClient {
     constructor(event) {
