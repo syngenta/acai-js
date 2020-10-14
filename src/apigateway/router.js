@@ -33,7 +33,13 @@ class Router {
         }
         if (!process.env.unittest) {
             const request = new RequestClient(this._event);
-            this._logger.error({error, event: this._event, request: request.request, response: this._errors});
+            this._logger.error({
+                error_messsage: error.message,
+                error_stack: error.stack.split('\n'),
+                event: this._event,
+                request: request.request,
+                response: this._errors
+            });
         }
     }
 
