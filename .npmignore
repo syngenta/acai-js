@@ -4,6 +4,7 @@
 .nvmrc
 .github
 .circleci
+.tags
 buildspec.yml
 openapi.yml
 package-lock.json

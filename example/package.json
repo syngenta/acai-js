@@ -7,7 +7,7 @@
     },
     "license": "ISC",
     "dependencies": {
-        "@syngenta-digital/alc": "1.0.0"
+        "@syngenta-digital/alc": "1.0.2"
     },
     "devDependencies": {
         "eslint": "^7.11.0",
