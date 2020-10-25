@@ -3,9 +3,6 @@ require('../../src').logger.setup();
 
 describe('Test SetUp Logger', () => {
     describe('test constructor', () => {
-        it('Global Logger _logs property', () => {
-            assert.equal(true, '_logs' in global.logger);
-        });
         it('Global Logger _startTime property', () => {
             assert.equal(true, '_startTime' in global.logger);
         });

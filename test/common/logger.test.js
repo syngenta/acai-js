@@ -3,10 +3,6 @@ const Logger = require('../../src/common/logger');
 
 describe('Test Logger', () => {
     describe('test constructor', () => {
-        it('Console has Logger _logs property', () => {
-            const logger = new Logger();
-            assert.equal(true, '_logs' in logger);
-        });
         it('Console has Logger _startTime property', () => {
             const logger = new Logger();
             assert.equal(true, '_startTime' in logger);
@@ -27,18 +23,6 @@ describe('Test Logger', () => {
             assert.equal(true, !isNaN(results));
         });
     });
-    describe('test _appendToLogs', () => {
-        it('Pushes to logs array', () => {
-            const logger = new Logger();
-            logger._appendToLogs('INFO', 'N/A', [{test: true}]);
-            assert.equal(1, logger._logs.length);
-        });
-        it('Logs in array have corrrect format', () => {
-            const logger = new Logger();
-            logger.warn({test: true});
-            assert.deepEqual(true, true);
-        });
-    });
     describe('test _shouldLog', () => {
         it('WARN should log', () => {
             const logger = new Logger();
@@ -50,10 +34,10 @@ describe('Test Logger', () => {
             const result = logger._shouldLog('ERROR');
             assert.equal(true, result);
         });
-        it('INFO should not log', () => {
+        it('INFO should log', () => {
             const logger = new Logger();
             const result = logger._shouldLog('INFO');
-            assert.equal(false, result);
+            assert.equal(true, result);
         });
     });
     describe('test _getStackSafely', () => {
