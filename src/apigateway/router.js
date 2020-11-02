@@ -86,9 +86,7 @@ class Router {
     _getEndpointFile() {
         let basePath = this._basePath.startsWith('/') ? this._basePath.substr(1) : this._basePath;
         basePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-        const endpointFile = this._path.includes(basePath)
-            ? this._path.replace(basePath, '')
-            : this._path.replace(basePath, '');
+        const endpointFile = this._path.replace(basePath, '');
         return !endpointFile ? 'index' : endpointFile;
     }
 
