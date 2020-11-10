@@ -146,21 +146,6 @@ Property Name       | Description
 `body`              | body of apigateway event will be parsed based on context headers
 `request`           | full request broken down as an object literal
 
-**Request Properties**
-
-Property Name       | Description
-:-----------        | :-------   
-`method`            | method id of apigateway event
-`resource`          | resource handle of apigateway event
-`authorizer`        | authorizer of apigateway event (will default to use headers if using with [serverless offline](https://www.npmjs.com/package/serverless-offline))
-`headers`           | headers of apigateway event
-`params`            | query string params of apigateway event
-`path`              | path arguments of apigateway event
-`json`              | body of apigateway event parsed as JSON
-`xml`               | body of apigateway event parsed as XML
-`body`              | body of apigateway event will be parsed based on context headers
-`request`           | full request broken down as an object literal
-
 **Response Properties**
 
 Property Name       | Description
