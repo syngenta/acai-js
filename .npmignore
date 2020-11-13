@@ -5,6 +5,7 @@
 .github
 .circleci
 .tags
+*.tgz
 buildspec.yml
 openapi.yml
 package-lock.json
