@@ -19,7 +19,7 @@
     },
     "dependencies": {
         "ajv": "^6.12.6",
-        "aws-sdk": "^2.772.0",
+        "aws-sdk": "^2.826.0",
         "js-yaml": "^3.14.0",
         "json-schema-ref-parser": "^9.0.6",
         "xml2js": "^0.4.23"
