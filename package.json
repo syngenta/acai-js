@@ -18,7 +18,7 @@
         "sct": "sct"
     },
     "dependencies": {
-        "ajv": "^6.12.6",
+        "ajv": "^7.0.4",
         "aws-sdk": "^2.772.0",
         "js-yaml": "^3.14.0",
         "json-schema-ref-parser": "^9.0.6",
