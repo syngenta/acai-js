@@ -148,13 +148,12 @@ Property Name       | Description
 
 **Response Properties**
 
-Property Name       | Description
-:-----------        | :-------   
-`headers`           | headers you want to send in response
-`code`              | status code of response (will default to 204 if no content && will default 400 if errors found in response)
-`authorizer`        | authorizer of apigateway event (will default to use headers if using with [serverless offline](https://www.npmjs.com/package/serverless-offline))
-`hasErrors()`       | function will tell you if errors in the response
-`setError()`        | function will set error key and message
+Property Name               | Description
+:-----------                | :-------   
+`headers`                   | headers you want to send in response
+`code`                      | status code of response (will default to 204 if no content && will default 400 if errors found in response)
+`hasErrors`                 | function will tell you if errors in the response
+`setError(key, message)`    | function will set error key and message
 
 
 ### SQS Events
@@ -184,6 +183,7 @@ exports.listen = async (event) => {
     }
 };
 ```
+
 **Event Client Properties**
 
 Property Name   | Description
@@ -235,6 +235,7 @@ exports.stream = async (event) => {
     }
 };
 ```
+
 **Event Client Properties**
 
 Property Name   | Description
@@ -286,13 +287,13 @@ exports.handle = async (event) => {
     }
 };
 ```
+
 **Event Client Properties**
 
 Property Name   | Description
 :-----------    | :-------   
 `records`       | list of record objects
 `rawRecords`    | jus the raw record from the original request
-
 
 **Record Properties**
 
