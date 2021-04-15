@@ -28,10 +28,6 @@ commands:
             - run: npm run report -- --reporter=html
             - store_artifacts:
                 path: ./coverage
-    publish-results:
-        steps:
-            - run: aws s3 sync ./coverage s3://tools-test-reports.syndpe.com/$CIRCLE_PROJECT_REPONAME --delete
-            - run: aws cloudfront create-invalidation --distribution-id E38VEFEW0CRHJD --paths "/*"
     npm-deploy:
         steps:
             - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
@@ -57,7 +53,6 @@ jobs:
             - node-linter
             - node-test
             - node-report
-            - publish-results
             - slack-error
     install-build-deploy:
         docker:
