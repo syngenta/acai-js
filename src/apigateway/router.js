@@ -35,7 +35,7 @@ class Router {
             const request = new RequestClient(this._event);
             this._logger.error({
                 error_messsage: error.message,
-                error_stack: error.stack.split('\n'),
+                error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
                 event: this._event,
                 request: request.request,
                 response: this._errors
