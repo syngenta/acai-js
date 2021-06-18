@@ -30,6 +30,9 @@ class Logger {
     }
 
     _shouldLog(level) {
+        if (process.env.UNIT_TEST) {
+            return false;
+        }
         level = isNaN(level) ? this._logLevelMap[level] : level;
         this.minLevel = isNaN(this.minLevel) ? this._logLevelMap[this.minLevel] : this.minLevel;
         return level >= parseInt(this.minLevel, 10);
