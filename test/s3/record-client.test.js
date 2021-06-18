@@ -57,6 +57,11 @@ describe('Test S3 Record Client', async () => {
             });
         });
     });
+    describe('test key', () => {
+        it('object returned', () => {
+            assert.equal(record.key, '123456789/3c8e97105d5f462f8896a7189910ee16-original.jpg');
+        });
+    });
     describe('test bucket', () => {
         it('bucket returned', () => {
             assert.deepEqual(record.bucket, {

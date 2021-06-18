@@ -39,6 +39,10 @@ class RecordClient {
         return this._record.s3.bucket;
     }
 
+    get key() {
+        return this._record.s3.object.key;
+    }
+
     get s3SchemaVersion() {
         return this._record.s3.s3SchemaVersion;
     }
