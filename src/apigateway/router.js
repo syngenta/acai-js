@@ -29,7 +29,7 @@ class Router {
     _handleError(error) {
         if (!this._errors.hasErrors) {
             this._errors.code = 500;
-            this._errors.setError('server', 'interval server error');
+            this._errors.setError('server', 'internal server error');
         }
         if (!process.env.unittest) {
             const request = new RequestClient(this._event);
