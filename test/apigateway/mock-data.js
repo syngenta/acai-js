@@ -17,6 +17,7 @@ exports.getData = () => {
         pathParameters: {
             proxy: 'hello'
         },
+        path: `unittest/v1/mock-handler`,
         resource: '/{proxy+}',
         httpMethod: 'GET',
         queryStringParameters: {
@@ -138,6 +139,7 @@ exports.getDataXml = () => {
         queryStringParameters: {
             name: 'me'
         },
+        path: `unittest/v1/mock-handler`,
         body: '<root><test>test2</test><someobject>1</someobject><someobject>2</someobject></root>'
     };
 };
@@ -166,6 +168,7 @@ exports.getDataRaw = () => {
         queryStringParameters: {
             name: 'me'
         },
+        path: `unittest/v1/mock-handler`,
         body: '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
     };
 };

@@ -39,6 +39,10 @@ class RequestClient {
         return this._event.pathParameters;
     }
 
+    get route() {
+        return this._event.path;
+    }
+
     get json() {
         return JSON.parse(this._event.body);
     }
@@ -83,6 +87,7 @@ class RequestClient {
             headers: this.headers,
             params: this.params,
             path: this.path,
+            route: this.route,
             body: this.body
         };
     }

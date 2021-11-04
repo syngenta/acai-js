@@ -101,7 +101,8 @@ describe('Test Request Client', () => {
                 headers: {'x-api-key': 'SOME-KEY', 'content-type': 'application/json'},
                 params: {name: 'me'},
                 path: {proxy: 'hello'},
-                body: {body_key: 'body_value'}
+                body: {body_key: 'body_value'},
+                route: `unittest/v1/mock-handler`
             });
         });
         it('body is an object from XML', () => {
@@ -123,7 +124,8 @@ describe('Test Request Client', () => {
                         someobject: ['1', '2'],
                         test: 'test2'
                     }
-                }
+                },
+                route: `unittest/v1/mock-handler`
             });
         });
         it('body is raw from raw data', () => {
@@ -143,6 +145,7 @@ describe('Test Request Client', () => {
                 },
                 params: {name: 'me'},
                 path: {proxy: 'hello'},
+                route: `unittest/v1/mock-handler`,
                 body: '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
             });
         });

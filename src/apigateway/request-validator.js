@@ -14,7 +14,8 @@ class RequestValidator {
             availableHeaders: {list: 'headers', func: '_validateAvailableFields'},
             requiredParams: {list: 'params', func: '_validateRequiredFields'},
             availableParams: {list: 'params', func: '_validateAvailableFields'},
-            requiredBody: {list: 'body', func: '_validateRequiredBody'}
+            requiredBody: {list: 'body', func: '_validateRequiredBody'},
+            requiredRouteParams: {list: 'path', func: '_validateRequiredRouteParams'}
         };
     }
 
