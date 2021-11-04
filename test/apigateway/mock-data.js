@@ -335,7 +335,7 @@ exports.getApiGateWayRouteNoRequirements = () => {
 
 exports.getIndexApiGateWayRoute = () => {
     return {
-        path: 'unittest/v1',
+        path: 'unittest/apigateway',
         httpMethod: 'POST',
         headers: {
             'x-api-key': 'SOME-KEY',

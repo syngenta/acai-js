@@ -9,7 +9,7 @@ const Logger = require('../common/logger');
 class Router {
     constructor(params) {
         this._event = params.event;
-        this._path = params.event.path;
+        this._requestPath = params.event.path;
         this._beforeAll = params.beforeAll;
         this._afterAll = params.afterAll;
         this._basePath = params.basePath;
@@ -43,64 +43,107 @@ class Router {
         }
     }
 
-    async _runEndpoint(endpoint) {
-        const method = this._event.httpMethod.toLowerCase();
-        this._methodExists(endpoint, method);
+    async _runEndpoint(endpointFile) {
+        const endpoint = this._getExistingEndpoint(endpointFile);
+        const method = this._getExistingMethod(endpoint);
         const request = new RequestClient(this._event);
         const response = new ResponseClient();
         const validator = new RequestValidator(request, response, this._schemaPath);
-        if (endpoint.requirements && endpoint.requirements[method] && !response.hasErrors) {
+        if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method]) {
             await validator.requestIsValid(endpoint.requirements[method]);
         }
-        if (this._beforeAll && !response.hasErrors) {
+        if (!response.hasErrors && this._beforeAll && typeof this._beforeAll === 'function') {
             await this._beforeAll(request, response, endpoint.requirements);
         }
         if (!response.hasErrors) {
             await endpoint[method](request, response);
         }
-        if (!response.hasErrors && this._afterAll) {
+        if (!response.hasErrors && this._afterAll && typeof this._afterAll === 'function') {
             await this._afterAll(request, response, endpoint.requirements);
         }
         return response;
     }
 
-    _methodExists(endpoint, method) {
-        if (typeof endpoint[method] !== 'function') {
-            this._errors.code = 403;
-            this._errors.setError('method', 'method not allowed');
-            throw new Error('method not allowed');
-        }
-    }
-
-    async _endPointExists(requiredModule) {
-        const file = requiredModule.endsWith('/')
-            ? `${process.cwd()}/${requiredModule}index.js`.replace('//', '/')
-            : `${process.cwd()}/${requiredModule}.js`.replace('//', '/');
-        if (!(await fs.existsSync(file))) {
+    _getExistingEndpoint(endpointFile) {
+        try {
+            return require(path.join(process.cwd(), endpointFile));
+        } catch (error) {
             this._errors.code = 404;
             this._errors.setError('url', 'endpoint not found');
             throw new Error('endpoint not found');
         }
     }
 
-    _getEndpointFile() {
-        let basePath = this._basePath.startsWith('/') ? this._basePath.substr(1) : this._basePath;
-        basePath = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
-        const endpointFile = this._path.replace(basePath, '');
-        return !endpointFile ? 'index' : endpointFile;
+    _getExistingMethod(endpoint) {
+        const method = this._event.httpMethod.toLowerCase();
+        if (typeof endpoint[method] !== 'function') {
+            this._errors.code = 403;
+            this._errors.setError('method', 'method not allowed');
+            throw new Error('method not allowed');
+        }
+        return method;
     }
 
-    async _getRequiredModule() {
-        const endpointFile = await this._getEndpointFile();
-        const handlerPath = this._handlerPath.endsWith('/') ? this._handlerPath.slice(0, -1) : this._handlerPath;
-        const requiredModule = `${handlerPath}/${endpointFile}`;
-        return requiredModule.replace('//', '/');
+    _cleanUpPath(path) {
+        if (path.startsWith('/')) {
+            path = path.substr(1);
+        }
+        if (path.endsWith('/')) {
+            path = path.slice(0, -1);
+        }
+        return path;
+    }
+
+    _removeBasePathFromRequest(basePath, requestPath) {
+        const baseArray = basePath.split('/');
+        const requestArray = requestPath.split('/');
+        return requestArray.filter((item) => !baseArray.includes(item));
+    }
+
+    async _isDirectory(path) {
+        try {
+            return await fs.lstatSync(path).isDirectory();
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async _isFile(path) {
+        try {
+            return await fs.lstatSync(path).isFile();
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async _getEndpointPath(path, files, index) {
+        if (files[index] === undefined) {
+            return path;
+        }
+        let possiblePath = `${path}/${files[index]}`;
+        if (path === '') {
+            possiblePath = files[index];
+        }
+        if (await this._isDirectory(possiblePath)) {
+            path = await this._getControllerPath(possiblePath, files, index + 1);
+        } else if (await this._isFile(`${possiblePath}.js`)) {
+            path = `${possiblePath}.js`;
+        } else if (files[index + 1] !== undefined) {
+            path = await this._getControllerPath(path, files, index + 1);
+        }
+        if (await this._isDirectory(path)) {
+            path = `${path}/index.js`;
+        }
+        return path;
     }
 
     async _getEndpoint() {
-        const requiredModule = await this._getRequiredModule();
-        await this._endPointExists(requiredModule);
-        return require(path.join(process.cwd(), requiredModule));
+        const basePath = this._cleanUpPath(this._basePath);
+        const requestPath = this._cleanUpPath(this._requestPath);
+        const handlerPath = this._cleanUpPath(this._handlerPath);
+        const fileArray = this._removeBasePathFromRequest(basePath, requestPath);
+        const endpointPath = await this._getEndpointPath(handlerPath, fileArray, 0);
+        return endpointPath;
     }
 
     async route() {

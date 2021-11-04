@@ -12,7 +12,7 @@
         "url": "https://github.com/syngenta-digital/alc-node/issues"
     },
     "scripts": {
-        "test": "nyc mocha --recursive ",
+        "test": "unittest=true nyc mocha --recursive",
         "report": "nyc report",
         "lint": "eslint src/**",
         "sct": "sct"
