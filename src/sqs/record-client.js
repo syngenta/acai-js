@@ -28,7 +28,11 @@ class RecordClient {
     }
 
     get messageAttributes() {
-        return this._record.messageAttributes;
+        const attributes = {};
+        for (const attribute in this._record.messageAttributes) {
+            attributes[attribute] = this._record.messageAttributes[attribute]?.stringValue;
+        }
+        return attributes;
     }
 
     get md5OfBody() {
