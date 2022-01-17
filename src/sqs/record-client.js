@@ -30,7 +30,7 @@ class RecordClient {
     get messageAttributes() {
         const attributes = {};
         for (const attribute in this._record.messageAttributes) {
-            attributes[attribute] = this._record.messageAttributes[attribute]?.stringValue;
+            attributes[attribute] = this._record.messageAttributes[attribute].stringValue;
         }
         return attributes;
     }
