@@ -260,6 +260,8 @@ Property Name                | Description
 `streamViewType`             | stream view type version of dynamodb record
 `sizeBytes`                  | size bytes of dynamodb record
 `approximateCreationDateTime`| approximate creation date time of dynamodb record
+`userIdentity`               | the user who cause the action (not always available populated)
+`timeToLiveExpired`          | determines if the stream was invoked by a "time to live" expiring
 
 
 ### S3 Events

@@ -53,6 +53,17 @@ class RecordClient {
     get approximateCreationDateTime() {
         return this._record.dynamodb.ApproximateCreationDateTime;
     }
+
+    get userIdentity() {
+        return this._record.userIdentity;
+    }
+
+    get timeToLiveExpired() {
+        if (this._record.userIdentity && this._record.userIdentity.type && this._record.userIdentity.principalId) {
+            return true;
+        }
+        return false;
+    }
 }
 
 module.exports = RecordClient;
