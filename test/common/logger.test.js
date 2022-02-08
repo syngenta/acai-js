@@ -45,18 +45,7 @@ describe('Test Logger', () => {
             logger = new Logger();
             const {stack} = new Error();
             const result = logger._getStackSafely(stack.toString());
-            assert.deepEqual(result, [
-                'Context.<anonymous> (/Users/paul.cruse/Developer/syngenta/alc-node/test/common/logger.test.js:46:29)',
-                'callFn (/Users/paul.cruse/Developer/syngenta/alc-node/node_modules/mocha/lib/runnable.js:358:21)',
-                'Test.Runnable.run (/Users/paul.cruse/Developer/syngenta/alc-node/node_modules/mocha/lib/runnable.js:346:5)',
-                'Runner.runTest (/Users/paul.cruse/Developer/syngenta/alc-node/node_modules/mocha/lib/runner.js:621:10)',
-                '/Users/paul.cruse/Developer/syngenta/alc-node/node_modules/mocha/lib/runner.js:745:12',
-                'next (/Users/paul.cruse/Developer/syngenta/alc-node/node_modules/mocha/lib/runner.js:538:14)',
-                '/Users/paul.cruse/Developer/syngenta/alc-node/node_modules/mocha/lib/runner.js:548:7',
-                'next (/Users/paul.cruse/Developer/syngenta/alc-node/node_modules/mocha/lib/runner.js:430:14)',
-                'Immediate._onImmediate (/Users/paul.cruse/Developer/syngenta/alc-node/node_modules/mocha/lib/runner.js:516:5)',
-                'processImmediate (internal/timers.js:461:21)'
-            ]);
+            assert.equal(result.length, 10);
         });
         it('logger: Stack should take regular string', () => {
             logger = new Logger();
