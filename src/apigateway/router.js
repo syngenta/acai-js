@@ -84,14 +84,14 @@ class Router {
         return method;
     }
 
-    _cleanUpPath(path) {
-        if (path.startsWith('/')) {
-            path = path.substr(1);
+    _cleanUpPath(dirtyPath) {
+        if (dirtyPath.startsWith('/')) {
+            dirtyPath = dirtyPath.substr(1);
         }
-        if (path.endsWith('/')) {
-            path = path.slice(0, -1);
+        if (dirtyPath.endsWith('/')) {
+            dirtyPath = dirtyPath.slice(0, -1);
         }
-        return path;
+        return dirtyPath;
     }
 
     _removeBasePathFromRequest(basePath, requestPath) {
@@ -100,41 +100,41 @@ class Router {
         return requestArray.filter((item) => !baseArray.includes(item));
     }
 
-    async _isDirectory(path) {
+    async _isDirectory(dirPath) {
         try {
-            return await fs.lstatSync(path).isDirectory();
+            return await fs.lstatSync(dirPath).isDirectory();
         } catch (error) {
             return false;
         }
     }
 
-    async _isFile(path) {
+    async _isFile(filePath) {
         try {
-            return await fs.lstatSync(path).isFile();
+            return await fs.lstatSync(filePath).isFile();
         } catch (error) {
             return false;
         }
     }
 
-    async _getEndpointPath(path, files, index) {
+    async _getEndpointPath(endpointPath, files, index) {
         if (files[index] === undefined) {
-            return path;
+            return endpointPath;
         }
-        let possiblePath = `${path}/${files[index]}`;
-        if (path === '') {
+        let possiblePath = `${endpointPath}/${files[index]}`;
+        if (endpointPath === '') {
             possiblePath = files[index];
         }
         if (await this._isDirectory(possiblePath)) {
-            path = await this._getControllerPath(possiblePath, files, index + 1);
+            endpointPath = await this._getControllerPath(possiblePath, files, index + 1);
         } else if (await this._isFile(`${possiblePath}.js`)) {
-            path = `${possiblePath}.js`;
+            endpointPath = `${possiblePath}.js`;
         } else if (files[index + 1] !== undefined) {
-            path = await this._getControllerPath(path, files, index + 1);
+            endpointPath = await this._getControllerPath(endpointPath, files, index + 1);
         }
-        if (await this._isDirectory(path)) {
-            path = `${path}/index.js`;
+        if (await this._isDirectory(endpointPath)) {
+            endpointPath = `${endpointPath}/index.js`;
         }
-        return path;
+        return endpointPath;
     }
 
     async _getEndpoint() {
@@ -142,8 +142,7 @@ class Router {
         const requestPath = this._cleanUpPath(this._requestPath);
         const handlerPath = this._cleanUpPath(this._handlerPath);
         const fileArray = this._removeBasePathFromRequest(basePath, requestPath);
-        const endpointPath = await this._getEndpointPath(handlerPath, fileArray, 0);
-        return endpointPath;
+        return this._getEndpointPath(handlerPath, fileArray, 0);
     }
 
     async route() {

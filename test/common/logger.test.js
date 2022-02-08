@@ -73,6 +73,7 @@ describe('Test Logger', () => {
             logger.profileEnd();
             logger.timeStamp();
             logger.context();
+            assert.equal(true, true);
         });
     });
 });
