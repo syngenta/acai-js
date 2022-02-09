@@ -42,3 +42,14 @@ components:
                 - array_number
                 - array_objects
                 - fail_id
+        v1-test-nullable-field:
+            type: object
+            required:
+                - nullable_field
+                - non_nullable_field
+            properties:
+                nullable_field:
+                    type: string
+                    nullable: true
+                non_nullable_field:
+                    type: string

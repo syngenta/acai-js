@@ -213,6 +213,37 @@ exports.getValidBodyData = () => {
     };
 };
 
+exports.getBodyDataWithNullableField = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        httpMethod: 'GET',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({
+            nullable_field: null,
+            non_nullable_field: null
+        })
+    };
+};
+
 exports.getInvalidBodyData = () => {
     return {
         headers: {

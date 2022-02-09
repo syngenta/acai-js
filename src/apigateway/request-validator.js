@@ -58,7 +58,7 @@ class RequestValidator {
         this._ajv.validate(combinedSchema, requestBody);
         if (this._ajv.errors) {
             this._ajv.errors.forEach((error) => {
-                const dataPath = error.dataPath ? error.dataPath : 'root';
+                const dataPath = error.instancePath ? error.instancePath : 'root';
                 this._responseClient.setError(dataPath, error.message);
             });
         }
@@ -69,8 +69,7 @@ class RequestValidator {
     }
 
     async _dereferenceApiDoc(openapi) {
-        const parser = await RefParser.dereference(openapi);
-        return parser;
+        return await RefParser.dereference(openapi);
     }
 
     async _combineSchemas(requiredSchema, refSchema) {
