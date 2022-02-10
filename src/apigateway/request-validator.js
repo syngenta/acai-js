@@ -65,7 +65,7 @@ class RequestValidator {
     }
 
     async _getApiDoc() {
-        return yaml.safeLoad(fs.readFileSync(this._schemaPath, 'utf8'));
+        return yaml.load(fs.readFileSync(this._schemaPath, 'utf8'));
     }
 
     async _dereferenceApiDoc(openapi) {
