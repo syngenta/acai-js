@@ -77,7 +77,7 @@ describe('Test Validator Client', () => {
                         errors: [
                             {
                                 key_path: 'root',
-                                message: "should have required property 'fail_id'"
+                                message: "must have required property 'fail_id'"
                             }
                         ]
                     });
@@ -105,11 +105,11 @@ describe('Test Validator Client', () => {
                         errors: [
                             {
                                 key_path: 'root',
-                                message: 'should NOT have additional properties'
+                                message: "must have required property 'fail_id'"
                             },
                             {
                                 key_path: 'root',
-                                message: "should have required property 'fail_id'"
+                                message: 'must NOT have additional properties'
                             }
                         ]
                     });
@@ -119,5 +119,33 @@ describe('Test Validator Client', () => {
                 }
             }, 30);
         });
+    });
+    it('invalid json: nullable field', (callback) => {
+        const eventClient2 = new RequestClient(mockData.getBodyDataWithNullableField());
+        const responseClient2 = new ResponseClient();
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+        responseClient2._body = {};
+        requestValidator2._validateRequest(
+            {
+                requiredBody: 'v1-test-nullable-field'
+            },
+            () => {}
+        );
+        setTimeout(() => {
+            try {
+                assert.equal(responseClient2.hasErrors, true);
+                assert.deepEqual(responseClient2._body, {
+                    errors: [
+                        {
+                            key_path: '/non_nullable_field',
+                            message: 'must be string'
+                        }
+                    ]
+                });
+                callback();
+            } catch (error) {
+                callback(error);
+            }
+        }, 30);
     });
 });
