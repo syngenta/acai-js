@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=syngenta-digital_alc-node&metric=alert_status)](https://sonarcloud.io/dashboard?id=syngenta-digital_alc-node) [![CircleCI](https://circleci.com/gh/syngenta-digital/package-node-alc.svg?style=shield)](https://circleci.com/gh/syngenta-digital/package-node-alc)
+
 # AWS Lambda Client (alc)
 Auto-loading, self-validating, minimalist node framework for Amazon Web Service Lambdas
 
