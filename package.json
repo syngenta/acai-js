@@ -1,28 +1,27 @@
 {
     "name": "@syngenta-digital/alc",
-    "author": "Paul Cruse, Technical Lead USCO Syngenta",
+    "author": "Paul Cruse, Engineering Lead, Syngenta Digital, USCO",
     "main": "src/index.js",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/syngenta-digital/alc-node.git"
+        "url": "git+https://github.com/syngenta-digital/package-node-alc.git"
     },
     "bugs": {
-        "url": "https://github.com/syngenta-digital/alc-node/issues"
+        "url": "https://github.com/syngenta-digital/package-node-alc/issues"
     },
     "scripts": {
         "test": "unittest=true nyc mocha --recursive",
         "report": "UNIT_TEST=true nyc report --reporter=lcov",
-        "lint": "eslint src/**",
-        "sct": "sct"
+        "lint": "eslint src/**"
     },
     "dependencies": {
-        "ajv": "^6.12.6",
-        "aws-sdk": "^2.1067.0",
-        "js-yaml": "^3.14.0",
-        "json-schema-ref-parser": "^9.0.9",
-        "xml2js": "^0.4.23"
+        "ajv": "8.10.0",
+        "aws-sdk": "2.1073.0",
+        "js-yaml": "4.1.0",
+        "json-schema-ref-parser": "9.0.9",
+        "xml2js": "0.4.23"
     },
     "devDependencies": {
         "chai": "^4.2.0",
@@ -40,7 +39,7 @@
         "prettier": "^2.0.5"
     },
     "engines": {
-        "node": ">=12.14.1"
+        "node": ">=14.17.0"
     },
     "nyc": {
         "temp-directory": "./node_modules/.nyc_output"
