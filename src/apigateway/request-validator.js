@@ -1,5 +1,3 @@
-const Schema = require('./schema');
-
 class RequestValidator {
     constructor(EventClient, ResponseClient, schema) {
         this._eventClient = EventClient;
