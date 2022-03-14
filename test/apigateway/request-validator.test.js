@@ -91,7 +91,8 @@ describe('Test Validator Client', () => {
         it('invalid json body request: extra params', (callback) => {
             const eventClient2 = new RequestClient(mockData.getInvalidBodyData());
             const responseClient2 = new ResponseClient();
-            const requestValidator2 = new RequestValidator(eventClient2, responseClient2, Schema.fromFilePath('test/openapi.yml'));
+            const schema = Schema.fromFilePath('test/openapi.yml');
+            const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
             responseClient2._body = {};
             requestValidator2._validateRequest(
                 {
@@ -124,7 +125,8 @@ describe('Test Validator Client', () => {
     it('invalid json: nullable field', (callback) => {
         const eventClient2 = new RequestClient(mockData.getBodyDataWithNullableField());
         const responseClient2 = new ResponseClient();
-        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, Schema.fromFilePath('test/openapi.yml'));
+        const schema = Schema.fromFilePath('test/openapi.yml');
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
         requestValidator2._validateRequest(
             {
