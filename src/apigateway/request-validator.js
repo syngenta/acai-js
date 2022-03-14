@@ -1,14 +1,11 @@
-const fs = require('fs');
-const Ajv = require('ajv');
-const yaml = require('js-yaml');
-const RefParser = require('json-schema-ref-parser');
+const Schema = require('./schema');
 
 class RequestValidator {
-    constructor(EventClient, ResponseClient, schemaPath) {
-        this._ajv = new Ajv({allErrors: true});
+    constructor(EventClient, ResponseClient, schemaFilePath) {
         this._eventClient = EventClient;
         this._responseClient = ResponseClient;
-        this._schemaPath = schemaPath;
+        this._schema = Schema.fromFilePath(schemaFilePath);
+
         this._validationPairings = {
             requiredHeaders: {list: 'headers', func: '_validateRequiredFields'},
             availableHeaders: {list: 'headers', func: '_validateAvailableFields'},
@@ -52,35 +49,14 @@ class RequestValidator {
     }
 
     async _validateRequiredBody(requiredSchema, requestBody) {
-        const openapi = await this._getApiDoc();
-        const refSchema = await this._dereferenceApiDoc(openapi);
-        const combinedSchema = await this._combineSchemas(requiredSchema, refSchema);
-        this._ajv.validate(combinedSchema, requestBody);
-        if (this._ajv.errors) {
-            this._ajv.errors.forEach((error) => {
+        const result = await this._schema.validate(requiredSchema, requestBody);
+
+        if (result.errors) {
+            result.errors.forEach((error) => {
                 const dataPath = error.instancePath ? error.instancePath : 'root';
                 this._responseClient.setError(dataPath, error.message);
             });
         }
-    }
-
-    async _getApiDoc() {
-        return yaml.load(fs.readFileSync(this._schemaPath, 'utf8'));
-    }
-
-    async _dereferenceApiDoc(openapi) {
-        return RefParser.dereference(openapi);
-    }
-
-    async _combineSchemas(requiredSchema, refSchema) {
-        const combinedSchema = {};
-        const definition = refSchema.components.schemas[requiredSchema];
-        const jsonSchemas = definition.allOf ? definition.allOf : [definition];
-        jsonSchemas.forEach((jsonSchema) => {
-            Object.assign(combinedSchema, jsonSchema);
-        });
-        combinedSchema.additionalProperties = false;
-        return combinedSchema;
     }
 }
 
