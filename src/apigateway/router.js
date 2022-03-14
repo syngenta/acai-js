@@ -50,9 +50,9 @@ class Router {
         const request = new RequestClient(this._event);
         const response = new ResponseClient();
         const schema = new Schema(this._schemaPath);
-        const validator = new RequestValidator(request, response, schema);
+        const requestValidator = new RequestValidator(request, response, schema);
         if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method]) {
-            await validator.requestIsValid(endpoint.requirements[method]);
+            await requestValidator.isValid(endpoint.requirements[method]);
         }
         if (!response.hasErrors && this._beforeAll && typeof this._beforeAll === 'function') {
             await this._beforeAll(request, response, endpoint.requirements);

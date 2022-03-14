@@ -14,7 +14,7 @@ class RequestValidator {
         };
     }
 
-    async requestIsValid(params) {
+    async isValid(params) {
         await this._validateRequest(params);
         return this._responseClient;
     }
