@@ -1,10 +1,10 @@
 const Schema = require('./schema');
 
 class RequestValidator {
-    constructor(EventClient, ResponseClient, schemaFilePath) {
+    constructor(EventClient, ResponseClient, schema) {
         this._eventClient = EventClient;
         this._responseClient = ResponseClient;
-        this._schema = Schema.fromFilePath(schemaFilePath);
+        this._schema = schema;
 
         this._validationPairings = {
             requiredHeaders: {list: 'headers', func: '_validateRequiredFields'},

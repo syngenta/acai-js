@@ -4,6 +4,7 @@ const fs = require('fs');
 const RequestClient = require('./request-client');
 const ResponseClient = require('./response-client');
 const RequestValidator = require('./request-validator');
+const Schema = require('./schema');
 const Logger = require('../common/logger');
 
 class Router {
@@ -48,7 +49,8 @@ class Router {
         const method = this._getExistingMethod(endpoint);
         const request = new RequestClient(this._event);
         const response = new ResponseClient();
-        const validator = new RequestValidator(request, response, this._schemaPath);
+        const schema = new Schema(this._schemaPath);
+        const validator = new RequestValidator(request, response, schema);
         if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method]) {
             await validator.requestIsValid(endpoint.requirements[method]);
         }

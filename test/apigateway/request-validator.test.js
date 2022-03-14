@@ -2,12 +2,13 @@ const {assert} = require('chai');
 const RequestClient = require('../../src').apigateway.Request;
 const ResponseClient = require('../../src').apigateway.Response;
 const RequestValidator = require('../../src').apigateway.Validator;
+const Schema = require('../../src').apigateway.Schema;
 const mockData = require('./mock-data');
 
 describe('Test Validator Client', () => {
     const eventClient = new RequestClient(mockData.getValidBodyData());
     const responseClient = new ResponseClient();
-    const requestValidator = new RequestValidator(eventClient, responseClient, 'test/openapi.yml');
+    const requestValidator = new RequestValidator(eventClient, responseClient, Schema.fromFilePath('test/openapi.yml'));
     describe('test constructor', () => {
         it('client took other clients', () => {
             assert.equal(true, '_eventClient' in requestValidator);
@@ -90,7 +91,7 @@ describe('Test Validator Client', () => {
         it('invalid json body request: extra params', (callback) => {
             const eventClient2 = new RequestClient(mockData.getInvalidBodyData());
             const responseClient2 = new ResponseClient();
-            const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+            const requestValidator2 = new RequestValidator(eventClient2, responseClient2, Schema.fromFilePath('test/openapi.yml'));
             responseClient2._body = {};
             requestValidator2._validateRequest(
                 {
@@ -123,7 +124,7 @@ describe('Test Validator Client', () => {
     it('invalid json: nullable field', (callback) => {
         const eventClient2 = new RequestClient(mockData.getBodyDataWithNullableField());
         const responseClient2 = new ResponseClient();
-        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, Schema.fromFilePath('test/openapi.yml'));
         responseClient2._body = {};
         requestValidator2._validateRequest(
             {
