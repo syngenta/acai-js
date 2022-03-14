@@ -1,7 +1,7 @@
 const {assert} = require('chai');
 const RequestClient = require('../../src').apigateway.Request;
 const ResponseClient = require('../../src').apigateway.Response;
-const RequestValidator = require('../../src').apigateway.Validator;
+const RequestValidator = require('../../src').apigateway.RequestValidator;
 const Schema = require('../../src').apigateway.Schema;
 const mockData = require('./mock-data');
 
