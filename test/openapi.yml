@@ -1,3 +1,8 @@
+openapi: 3.1.0
+info:
+    title: test schema
+    version: test
+paths: {}
 components:
     schemas:
         test_ref_model:
@@ -52,4 +57,28 @@ components:
                     type: string
                     nullable: true
                 non_nullable_field:
+                    type: string
+        v1-response-test-all-of:
+            allOf:
+                -   $ref: '#/components/schemas/v-response-page'
+                -   type: object
+                    required:
+                        - data
+                    properties:
+                        data:
+                            $ref: '#/components/schemas/v1-response-result'
+
+        v-response-page:
+            type: object
+            properties:
+                pageNumber:
+                    type: number
+            required:
+                - pageNumber
+        v1-response-result:
+            type: object
+            required:
+                - id
+            properties:
+                id:
                     type: string

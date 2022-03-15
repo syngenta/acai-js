@@ -2,6 +2,7 @@ const fs = require('fs');
 const Ajv = require('ajv');
 const yaml = require('js-yaml');
 const RefParser = require('json-schema-ref-parser');
+const mergeAllOf = require('json-schema-merge-allof');
 
 class RequestValidator {
     constructor(EventClient, ResponseClient, schemaPath) {
@@ -69,16 +70,12 @@ class RequestValidator {
     }
 
     async _dereferenceApiDoc(openapi) {
-        return RefParser.dereference(openapi);
+        return RefParser.dereference(openapi, {additionalProperties: false});
     }
 
     async _combineSchemas(requiredSchema, refSchema) {
-        const combinedSchema = {};
         const definition = refSchema.components.schemas[requiredSchema];
-        const jsonSchemas = definition.allOf ? definition.allOf : [definition];
-        jsonSchemas.forEach((jsonSchema) => {
-            Object.assign(combinedSchema, jsonSchema);
-        });
+        const combinedSchema = mergeAllOf(definition, {additionalProperties: false});
         combinedSchema.additionalProperties = false;
         return combinedSchema;
     }

@@ -148,4 +148,40 @@ describe('Test Validator Client', () => {
             }
         }, 30);
     });
+
+    it('valid json: complex schema with allOfs', async () => {
+        const eventClient2 = new RequestClient(mockData.getBodyDataWithComplexObject());
+        const responseClient2 = new ResponseClient();
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+        responseClient2._body = {};
+        await requestValidator2._validateRequest(
+            {
+                requiredBody: 'v1-response-test-all-of'
+            },
+            () => {}
+        );
+        assert.isFalse(responseClient2.hasErrors);
+    });
+
+    it('invalid json: complex schema with allOfs', async () => {
+        const eventClient2 = new RequestClient(mockData.getBodyDataWithInvalidComplexObject());
+        const responseClient2 = new ResponseClient();
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+        responseClient2._body = {};
+        await requestValidator2._validateRequest(
+            {
+                requiredBody: 'v1-response-test-all-of'
+            },
+            () => {}
+        );
+        assert.isTrue(responseClient2.hasErrors);
+        assert.deepEqual(responseClient2._body, {
+            errors: [
+                {
+                    key_path: 'root',
+                    message: "must have required property 'data'"
+                }
+            ]
+        });
+    });
 });
