@@ -1,5 +1,17 @@
+openapi: 3.1.0
+info:
+    title: index
+    version: '1.0'
+servers:
+    - url: 'http://localhost:3000'
+paths: {}
 components:
     schemas:
+        test_ref_model_level_1:
+            type: object
+            properties:
+                complex:
+                    $ref: '#/components/schemas/test_ref_model'
         test_ref_model:
             type: object
             properties:
@@ -27,21 +39,21 @@ components:
                     type: string
         v1-test-request:
             allOf:
-            - $ref: "#/components/schemas/test_ref_model"
-            - required:
-                - test_id
-                - object_key
-                - array_number
-                - array_objects
+                -   $ref: '#/components/schemas/test_ref_model'
+                -   required:
+                        - test_id
+                        - object_key
+                        - array_number
+                        - array_objects
         v1-test-fail-request:
             allOf:
-            - $ref: "#/components/schemas/test_ref_model"
-            - required:
-                - test_id
-                - object_key
-                - array_number
-                - array_objects
-                - fail_id
+                -   $ref: '#/components/schemas/test_ref_model'
+                -   required:
+                        - test_id
+                        - object_key
+                        - array_number
+                        - array_objects
+                        - fail_id
         v1-test-nullable-field:
             type: object
             required:
@@ -52,4 +64,47 @@ components:
                     type: string
                     nullable: true
                 non_nullable_field:
+                    type: string
+        v1-required-response:
+            type: object
+            required:
+                - foo
+                - bar
+            properties:
+                foo:
+                    type: string
+                bar:
+                    type: number
+        v1-response-test-all-of:
+            allOf:
+                -   $ref: '#/components/schemas/v-response-page'
+                -   type: object
+                    required:
+                        - data
+                    properties:
+                        data:
+                            $ref: '#/components/schemas/v1-response-result'
+
+        v1-response-test-one-of:
+            oneOf:
+                -   $ref: '#/components/schemas/v-response-page'
+                -   type: object
+                    required:
+                        - data
+                    properties:
+                        data:
+                            $ref: '#/components/schemas/v1-response-result'
+        v-response-page:
+            type: object
+            properties:
+                pageNumber:
+                    type: number
+            required:
+                - pageNumber
+        v1-response-result:
+            type: object
+            required:
+                - id
+            properties:
+                id:
                     type: string
