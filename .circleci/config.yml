@@ -66,13 +66,8 @@ workflows:
         jobs:
             - install-build-test:
                 context:
-                    - npm-org-token
-                    - sonarcloud-token
-                    - pypi-token
-                    - github-tokens
-                    - qualys-token
-                    - gemfury-tokens
-                    - postman-token
+                    - shared-npm-org-token
+                    - sahred-sonarcloud-token
                 filters:
                     tags:
                         ignore: /.*/
