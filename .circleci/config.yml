@@ -67,7 +67,7 @@ workflows:
             - install-build-test:
                 context:
                     - shared-npm-org-token
-                    - sahred-sonarcloud-token
+                    - shared-sonarcloud-token
                 filters:
                     tags:
                         ignore: /.*/
