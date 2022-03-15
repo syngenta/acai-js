@@ -30,6 +30,10 @@ class ResponseClient {
         this._code = code;
     }
 
+    get rawBody() {
+        return this._body;
+    }
+
     get body() {
         try {
             return JSON.stringify(this._body);
