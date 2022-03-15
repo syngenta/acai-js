@@ -5,10 +5,11 @@ const RequestValidator = require('../../src').apigateway.RequestValidator;
 const Schema = require('../../src').apigateway.Schema;
 const mockData = require('./mock-data');
 
-describe('Test Validator Client', () => {
+describe('Test RequestValidator', () => {
     const eventClient = new RequestClient(mockData.getValidBodyData());
     const responseClient = new ResponseClient();
-    const requestValidator = new RequestValidator(eventClient, responseClient, Schema.fromFilePath('test/openapi.yml'));
+    const schema = Schema.fromFilePath('test/openapi.yml');
+    const requestValidator = new RequestValidator(eventClient, responseClient, schema);
     describe('test constructor', () => {
         it('client took other clients', () => {
             assert.equal(true, '_eventClient' in requestValidator);
