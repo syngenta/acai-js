@@ -18,7 +18,7 @@
     },
     "dependencies": {
         "ajv": "8.10.0",
-        "aws-sdk": "2.1073.0",
+        "aws-sdk": "2.1083.0",
         "js-yaml": "4.1.0",
         "json-schema-ref-parser": "9.0.9",
         "xml2js": "0.4.23"
