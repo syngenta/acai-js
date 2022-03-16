@@ -14,18 +14,14 @@ class ResponseValidator {
 
     async _checkIfRequestValid(params) {
         const rule = params[responseBodyValidationRuleKey];
-
         if (!rule) {
             return;
         }
         const {errors} = await this._schema.validate(rule, this._responseClient.rawBody);
-
         if (errors === null) {
             return;
         }
-
         this._responseClient.code = 500;
-
         errors.forEach((error) => {
             const dataPath = error.instancePath ? error.instancePath : 'root';
             this._responseClient.setError(dataPath, error.message);
