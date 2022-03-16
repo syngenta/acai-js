@@ -22,9 +22,7 @@ class Schema {
     async validate(entityName, data) {
         const refSchema = await RefParser.dereference(this._openAPISchema);
         const combinedSchema = await this._combineSchemas(entityName, refSchema);
-
         const validate = this._ajv.compile(combinedSchema);
-
         const result = validate(data);
 
         return {
