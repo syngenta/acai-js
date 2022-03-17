@@ -6,8 +6,7 @@ const mergeAll = require('json-schema-merge-allof');
 
 class Schema {
     static fromFilePath(schemaPath) {
-        const defaultEncoding = 'utf8';
-        const openAPISchema = yaml.load(fs.readFileSync(schemaPath, defaultEncoding));
+        const openAPISchema = yaml.load(fs.readFileSync(schemaPath, 'utf8'));
         return new Schema(openAPISchema);
     }
 
