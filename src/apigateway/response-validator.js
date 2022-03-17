@@ -1,5 +1,3 @@
-const responseBodyValidationRuleKey = 'requiredResponse';
-
 class ResponseValidator {
     constructor(eventClient, responseClient, schema) {
         this._schema = schema;
@@ -7,25 +5,20 @@ class ResponseValidator {
         this._eventClient = eventClient;
     }
 
-    async isValid(params) {
-        await this._checkIfRequestValid(params);
+    async isValid(validationRule) {
+        await this._checkIfRequestValid(validationRule);
         return this._responseClient;
     }
 
-    async _checkIfRequestValid(params) {
-        const rule = params[responseBodyValidationRuleKey];
-        if (!rule) {
-            return;
+    async _checkIfRequestValid(validationRule) {
+        const errors = await this._schema.validate(validationRule, this._responseClient.rawBody);
+        if (errors) {
+            this._responseClient.code = 500;
+            errors.forEach((error) => {
+                const dataPath = error.instancePath ? error.instancePath : 'root';
+                this._responseClient.setError(dataPath, error.message);
+            });
         }
-        const {errors} = await this._schema.validate(rule, this._responseClient.rawBody);
-        if (errors === null) {
-            return;
-        }
-        this._responseClient.code = 500;
-        errors.forEach((error) => {
-            const dataPath = error.instancePath ? error.instancePath : 'root';
-            this._responseClient.setError(dataPath, error.message);
-        });
     }
 }
 

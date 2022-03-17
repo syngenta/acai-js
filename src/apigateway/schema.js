@@ -4,11 +4,10 @@ const yaml = require('js-yaml');
 const RefParser = require('json-schema-ref-parser');
 const mergeAll = require('json-schema-merge-allof');
 
-const defaultEnconding = 'utf8';
-
 class Schema {
     static fromFilePath(schemaPath) {
-        const openAPISchema = yaml.load(fs.readFileSync(schemaPath, defaultEnconding));
+        const defaultEncoding = 'utf8';
+        const openAPISchema = yaml.load(fs.readFileSync(schemaPath, defaultEncoding));
         return new Schema(openAPISchema);
     }
 
@@ -24,12 +23,8 @@ class Schema {
         const refSchema = await this._refParser.dereference(this._openAPISchema);
         const combinedSchema = await this._combineSchemas(entityName, refSchema);
         const validate = this._ajv.compile(combinedSchema);
-        const result = validate(data);
-
-        return {
-            result,
-            errors: validate.errors
-        };
+        await validate(data);
+        return validate.errors;
     }
 
     _getEntityRulesFromSchema(schemaComponentName, refSchema) {

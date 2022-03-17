@@ -47,10 +47,10 @@ class RequestValidator {
     }
 
     async _validateRequiredBody(requiredSchema, requestBody) {
-        const result = await this._schema.validate(requiredSchema, requestBody);
+        const errors = await this._schema.validate(requiredSchema, requestBody);
 
-        if (result.errors) {
-            result.errors.forEach((error) => {
+        if (errors) {
+            errors.forEach((error) => {
                 const dataPath = error.instancePath ? error.instancePath : 'root';
                 this._responseClient.setError(dataPath, error.message);
             });
