@@ -4,6 +4,8 @@ const fs = require('fs');
 const RequestClient = require('./request-client');
 const ResponseClient = require('./response-client');
 const RequestValidator = require('./request-validator');
+const ResponseValidator = require('./response-validator');
+const Schema = require('./schema');
 const Logger = require('../common/logger');
 
 class Router {
@@ -48,9 +50,12 @@ class Router {
         const method = this._getExistingMethod(endpoint);
         const request = new RequestClient(this._event);
         const response = new ResponseClient();
-        const validator = new RequestValidator(request, response, this._schemaPath);
+        const schema = new Schema(this._schemaPath);
+        const requestValidator = new RequestValidator(request, response, schema);
+        const responseValidator = new ResponseValidator(request, response, schema);
+
         if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method]) {
-            await validator.requestIsValid(endpoint.requirements[method]);
+            await requestValidator.isValid(endpoint.requirements[method]);
         }
         if (!response.hasErrors && this._beforeAll && typeof this._beforeAll === 'function') {
             await this._beforeAll(request, response, endpoint.requirements);
@@ -58,6 +63,17 @@ class Router {
         if (!response.hasErrors) {
             await endpoint[method](request, response);
         }
+
+        if (
+            !response.hasErrors &&
+            endpoint.requirements &&
+            endpoint.requirements[method] &&
+            endpoint.requirements[method]['responseBody']
+        ) {
+            const rule = endpoint.requirements[method]['responseBody'];
+            await responseValidator.isValid(rule);
+        }
+
         if (!response.hasErrors && this._afterAll && typeof this._afterAll === 'function') {
             await this._afterAll(request, response, endpoint.requirements);
         }

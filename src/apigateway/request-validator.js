@@ -1,15 +1,9 @@
-const fs = require('fs');
-const Ajv = require('ajv');
-const yaml = require('js-yaml');
-const RefParser = require('json-schema-ref-parser');
-const mergeAllOf = require('json-schema-merge-allof');
-
 class RequestValidator {
-    constructor(EventClient, ResponseClient, schemaPath) {
-        this._ajv = new Ajv({allErrors: true});
+    constructor(EventClient, ResponseClient, schema) {
         this._eventClient = EventClient;
         this._responseClient = ResponseClient;
-        this._schemaPath = schemaPath;
+        this._schema = schema;
+
         this._validationPairings = {
             requiredHeaders: {list: 'headers', func: '_validateRequiredFields'},
             availableHeaders: {list: 'headers', func: '_validateAvailableFields'},
@@ -20,7 +14,7 @@ class RequestValidator {
         };
     }
 
-    async requestIsValid(params) {
+    async isValid(params) {
         await this._validateRequest(params);
         return this._responseClient;
     }
@@ -53,31 +47,14 @@ class RequestValidator {
     }
 
     async _validateRequiredBody(requiredSchema, requestBody) {
-        const openapi = await this._getApiDoc();
-        const refSchema = await this._dereferenceApiDoc(openapi);
-        const combinedSchema = await this._combineSchemas(requiredSchema, refSchema);
-        this._ajv.validate(combinedSchema, requestBody);
-        if (this._ajv.errors) {
-            this._ajv.errors.forEach((error) => {
+        const errors = await this._schema.validate(requiredSchema, requestBody);
+
+        if (errors) {
+            errors.forEach((error) => {
                 const dataPath = error.instancePath ? error.instancePath : 'root';
                 this._responseClient.setError(dataPath, error.message);
             });
         }
-    }
-
-    async _getApiDoc() {
-        return yaml.load(fs.readFileSync(this._schemaPath, 'utf8'));
-    }
-
-    async _dereferenceApiDoc(openapi) {
-        return RefParser.dereference(openapi, {additionalProperties: false});
-    }
-
-    async _combineSchemas(requiredSchema, refSchema) {
-        const definition = refSchema.components.schemas[requiredSchema];
-        const combinedSchema = mergeAllOf(definition, {additionalProperties: false});
-        combinedSchema.additionalProperties = false;
-        return combinedSchema;
     }
 }
 
