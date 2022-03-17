@@ -64,14 +64,8 @@ class Router {
             await endpoint[method](request, response);
         }
 
-        const responseBodyValidationRuleKey = 'responseBody';
-        const hasResponseValidationRule =
-            endpoint.requirements &&
-            endpoint.requirements[method] &&
-            endpoint.requirements[method][responseBodyValidationRuleKey];
-
-        if (!response.hasErrors && hasResponseValidationRule) {
-            const rule = endpoint.requirements[method][responseBodyValidationRuleKey];
+        if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method] && endpoint.requirements[method]['responseBody']) {
+            const rule = endpoint.requirements[method]['responseBody'];
             await responseValidator.isValid(rule);
         }
 
