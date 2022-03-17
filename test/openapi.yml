@@ -65,16 +65,6 @@ components:
                     nullable: true
                 non_nullable_field:
                     type: string
-        v1-required-response:
-            type: object
-            required:
-                - foo
-                - bar
-            properties:
-                foo:
-                    type: string
-                bar:
-                    type: number
         v1-response-test-all-of:
             allOf:
                 -   $ref: '#/components/schemas/v-response-page'
@@ -85,15 +75,6 @@ components:
                         data:
                             $ref: '#/components/schemas/v1-response-result'
 
-        v1-response-test-one-of:
-            oneOf:
-                -   $ref: '#/components/schemas/v-response-page'
-                -   type: object
-                    required:
-                        - data
-                    properties:
-                        data:
-                            $ref: '#/components/schemas/v1-response-result'
         v-response-page:
             type: object
             properties:
