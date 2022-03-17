@@ -62,90 +62,105 @@ describe('Test Validator Client', () => {
                 ]
             });
         });
-        it('invalid json body request: full request empty', (callback) => {
+        it('invalid json body request: full request empty', async () => {
             responseClient._body = {};
-            requestValidator._validateRequest(
+            await requestValidator._validateRequest(
                 {
                     requiredBody: 'v1-test-fail-request'
                 },
                 () => {}
             );
-            setTimeout(() => {
-                try {
-                    assert.equal(responseClient.hasErrors, true);
-                    assert.deepEqual(responseClient._body, {
-                        errors: [
-                            {
-                                key_path: 'root',
-                                message: "must have required property 'fail_id'"
-                            }
-                        ]
-                    });
-                    callback();
-                } catch (error) {
-                    callback(error);
-                }
-            }, 30);
+            assert.equal(responseClient.hasErrors, true);
+            assert.deepEqual(responseClient._body, {
+                errors: [
+                    {
+                        key_path: 'root',
+                        message: "must have required property 'fail_id'"
+                    }
+                ]
+            });
         });
-        it('invalid json body request: extra params', (callback) => {
+        it('invalid json body request: extra params', async () => {
             const eventClient2 = new RequestClient(mockData.getInvalidBodyData());
             const responseClient2 = new ResponseClient();
             const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
             responseClient2._body = {};
-            requestValidator2._validateRequest(
+            await requestValidator2._validateRequest(
                 {
                     requiredBody: 'v1-test-fail-request'
                 },
                 () => {}
             );
-            setTimeout(() => {
-                try {
-                    assert.equal(responseClient2.hasErrors, true);
-                    assert.deepEqual(responseClient2._body, {
-                        errors: [
-                            {
-                                key_path: 'root',
-                                message: "must have required property 'fail_id'"
-                            },
-                            {
-                                key_path: 'root',
-                                message: 'must NOT have additional properties'
-                            }
-                        ]
-                    });
-                    callback();
-                } catch (error) {
-                    callback(error);
-                }
-            }, 30);
+            assert.equal(responseClient2.hasErrors, true);
+            assert.deepEqual(responseClient2._body, {
+                errors: [
+                    {
+                        key_path: 'root',
+                        message: "must have required property 'fail_id'"
+                    },
+                    {
+                        key_path: 'root',
+                        message: 'must NOT have additional properties'
+                    }
+                ]
+            });
         });
     });
-    it('invalid json: nullable field', (callback) => {
+    it('invalid json: nullable field', async () => {
         const eventClient2 = new RequestClient(mockData.getBodyDataWithNullableField());
         const responseClient2 = new ResponseClient();
         const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
         responseClient2._body = {};
-        requestValidator2._validateRequest(
+        await requestValidator2._validateRequest(
             {
                 requiredBody: 'v1-test-nullable-field'
             },
             () => {}
         );
-        setTimeout(() => {
-            try {
-                assert.equal(responseClient2.hasErrors, true);
-                assert.deepEqual(responseClient2._body, {
-                    errors: [
-                        {
-                            key_path: '/non_nullable_field',
-                            message: 'must be string'
-                        }
-                    ]
-                });
-                callback();
-            } catch (error) {
-                callback(error);
-            }
-        }, 30);
+        assert.equal(responseClient2.hasErrors, true);
+        assert.deepEqual(responseClient2._body, {
+            errors: [
+                {
+                    key_path: '/non_nullable_field',
+                    message: 'must be string'
+                }
+            ]
+        });
+    });
+
+    it('valid json: complex schema with allOfs', async () => {
+        const eventClient2 = new RequestClient(mockData.getBodyDataWithComplexObject());
+        const responseClient2 = new ResponseClient();
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+        responseClient2._body = {};
+        await requestValidator2._validateRequest(
+            {
+                requiredBody: 'v1-response-test-all-of'
+            },
+            () => {}
+        );
+        assert.isFalse(responseClient2.hasErrors);
+    });
+
+    it('invalid json: complex schema with allOfs', async () => {
+        const eventClient2 = new RequestClient(mockData.getBodyDataWithInvalidComplexObject());
+        const responseClient2 = new ResponseClient();
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+        responseClient2._body = {};
+        await requestValidator2._validateRequest(
+            {
+                requiredBody: 'v1-response-test-all-of'
+            },
+            () => {}
+        );
+        assert.isTrue(responseClient2.hasErrors);
+        assert.deepEqual(responseClient2._body, {
+            errors: [
+                {
+                    key_path: 'root',
+                    message: "must have required property 'data'"
+                }
+            ]
+        });
     });
 });
