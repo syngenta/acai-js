@@ -89,7 +89,8 @@ Option Name   | Required | Type   | Default | Description
 ```javascript
 exports.requirements = {
     post: {
-        requiredBody: 'v1-test-request'
+        requiredBody: 'v1-test-request',
+        responseBody: 'v1-test-response'
     },
     get: {
         availableParams: ['test_id', 'fail_id']
@@ -128,6 +129,7 @@ exports.delete = (request, response) => {
 Option Name       | Type   | Description
 :-----------      | :----- | :----------
 `requiredBody`    | string | the components schema key name
+`responseBody`    | string | the components schema key name
 `availableParams` | array  | list of available query string params for that method on that endpoint
 `requiredParams`  | array  | list of required query string params for that method on that endpoint
 `availableHeaders`| array  | list of available headers for that method on that endpoint
