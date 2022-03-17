@@ -11,11 +11,13 @@ describe('Test ResponseValidator', () => {
     const schema = Schema.fromFilePath('test/openapi.yml');
     const requestValidator = new ResponseValidator(eventClient, responseClient, schema);
 
-    describe('test isValid', () => {
+    describe('test with complex objects', () => {
         it('when response is valid then test should pass', async () => {
             responseClient.body = {
-                foo: 'hello',
-                bar: 1
+                pageNumber: 0,
+                data: {
+                    id: 'string'
+                }
             };
             await requestValidator.isValid({requiredResponse: 'v1-required-response'});
             assert.equal(responseClient.hasErrors, false);
@@ -42,17 +44,6 @@ describe('Test ResponseValidator', () => {
                     {key_path: 'root', message: "must have required property 'pageNumber'"}
                 ]
             });
-        });
-
-        it('when response is valid then validation should pass', async () => {
-            responseClient.body = {
-                data: {
-                    id: 'test'
-                },
-                pageNumber: 20
-            };
-            await requestValidator.isValid({requiredResponse: 'v1-response-test-all-of'});
-            assert.equal(responseClient.hasErrors, false);
         });
     });
 });

@@ -135,7 +135,8 @@ describe('Test RequestValidator', () => {
     it('valid json: complex schema with allOfs', async () => {
         const eventClient2 = new RequestClient(mockData.getBodyDataWithComplexObject());
         const responseClient2 = new ResponseClient();
-        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+        const schema = Schema.fromFilePath('test/openapi.yml')
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
         await requestValidator2._validateRequest(
             {
@@ -149,7 +150,8 @@ describe('Test RequestValidator', () => {
     it('invalid json: complex schema with allOfs', async () => {
         const eventClient2 = new RequestClient(mockData.getBodyDataWithInvalidComplexObject());
         const responseClient2 = new ResponseClient();
-        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, 'test/openapi.yml');
+        const schema = Schema.fromFilePath('test/openapi.yml')
+        const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
         await requestValidator2._validateRequest(
             {

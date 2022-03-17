@@ -13,6 +13,7 @@ class Schema {
     }
 
     constructor(openAPISchema) {
+        this._refParser = RefParser;
         this._openAPISchema = openAPISchema;
         this._ajv = new Ajv({
             allErrors: true
@@ -20,7 +21,7 @@ class Schema {
     }
 
     async validate(entityName, data) {
-        const refSchema = await RefParser.dereference(this._openAPISchema);
+        const refSchema = await this._refParser.dereference(this._openAPISchema);
         const combinedSchema = await this._combineSchemas(entityName, refSchema);
         const validate = this._ajv.compile(combinedSchema);
         const result = validate(data);
@@ -31,8 +32,16 @@ class Schema {
         };
     }
 
-    async _combineSchemas(schemaComponentName, refSchema) {
+    _getEntityRulesFromSchema(schemaComponentName, refSchema) {
         const schemaWithInlinedRefs = refSchema.components.schemas[schemaComponentName];
+        if (!schemaWithInlinedRefs) {
+            throw new Error(`Schema with name ${schemaComponentName} is not found`);
+        }
+        return schemaWithInlinedRefs;
+    }
+
+    async _combineSchemas(schemaComponentName, refSchema) {
+        const schemaWithInlinedRefs = this._getEntityRulesFromSchema(schemaComponentName, refSchema);
         const schemaWithMergedAllOf = mergeAll(schemaWithInlinedRefs, {ignoreAdditionalProperties: true});
         schemaWithMergedAllOf.additionalProperties = false;
         return schemaWithMergedAllOf;

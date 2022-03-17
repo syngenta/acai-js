@@ -65,6 +65,8 @@ components:
                     nullable: true
                 non_nullable_field:
                     type: string
+        v1-required-response:
+                $ref: '#/components/schemas/v1-response-test-all-of'
         v1-response-test-all-of:
             allOf:
                 -   $ref: '#/components/schemas/v-response-page'
