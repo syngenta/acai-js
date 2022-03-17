@@ -64,7 +64,12 @@ class Router {
             await endpoint[method](request, response);
         }
 
-        if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method] && endpoint.requirements[method]['responseBody']) {
+        if (
+            !response.hasErrors &&
+            endpoint.requirements &&
+            endpoint.requirements[method] &&
+            endpoint.requirements[method]['responseBody']
+        ) {
             const rule = endpoint.requirements[method]['responseBody'];
             await responseValidator.isValid(rule);
         }
