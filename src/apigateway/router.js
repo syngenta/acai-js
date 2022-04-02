@@ -16,6 +16,7 @@ class Router {
         this._afterAll = params.afterAll;
         this._basePath = params.basePath;
         this._handlerPath = params.handlerPath;
+        this._onError = params.onError;
         this._errors = new ResponseClient();
         this._logger = new Logger();
         this._schemaPath = params.schemaPath;
@@ -43,6 +44,7 @@ class Router {
                 response: this._errors
             });
         }
+        this._onError(e);
     }
 
     async _runEndpoint(endpointFile) {
@@ -167,7 +169,7 @@ class Router {
             const response = await this._runEndpoint(endpoint);
             return response.response;
         } catch (error) {
-            this._handleError(error);
+            await this._handleError(error);
             return this._errors.response;
         }
     }
