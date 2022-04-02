@@ -44,7 +44,7 @@ class Router {
                 response: this._errors
             });
         }
-        this._onError(e);
+        this._onError?.(error);
     }
 
     async _runEndpoint(endpointFile) {

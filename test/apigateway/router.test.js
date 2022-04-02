@@ -1,7 +1,11 @@
-const {assert} = require('chai');
+const chai = require('chai');
+const spies = require('chai-spies');
 const {Router} = require('../../src').apigateway;
 const mockData = require('./mock-data');
 const mockPermissions = require('./mock-permissions-middleware');
+
+const {assert, use, expect} = chai;
+use(spies);
 
 describe('Test Router', () => {
     describe('test route', () => {
@@ -153,6 +157,25 @@ describe('Test Router', () => {
                 statusCode: 200,
                 body: '{"test":true}'
             });
+        });
+        it('should call onError callback if exist and error occurs', async () => {
+            const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
+            const spyFn = chai.spy();
+            const error = new Error();
+
+            this.router = new Router({
+                event,
+                basePath: 'unittest/v1',
+                handlerPath: 'test/apigateway/',
+                schemaPath: 'test/openapi.yml',
+                beforeAll: () => {
+                    throw error;
+                },
+                onError: spyFn
+            });
+            await this.router.route();
+            expect(spyFn).to.have.been.called(1);
+            expect(spyFn).to.have.been.called.with(error);
         });
     });
 });
