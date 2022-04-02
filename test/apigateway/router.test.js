@@ -1,11 +1,8 @@
-const chai = require('chai');
-const spies = require('chai-spies');
+const {assert, expect} = require('chai');
+const sinon = require('sinon');
 const {Router} = require('../../src').apigateway;
 const mockData = require('./mock-data');
 const mockPermissions = require('./mock-permissions-middleware');
-
-const {assert, use, expect} = chai;
-use(spies);
 
 describe('Test Router', () => {
     describe('test route', () => {
@@ -158,9 +155,9 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
-        it('should call onError callback if exist and error occurs', async () => {
+        it('should call onError callback if onError exist and error occurs', async () => {
             const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
-            const spyFn = chai.spy();
+            const spyFn = sinon.fake();
             const error = new Error();
 
             this.router = new Router({
@@ -173,9 +170,31 @@ describe('Test Router', () => {
                 },
                 onError: spyFn
             });
-            await this.router.route();
-            expect(spyFn).to.have.been.called(1);
-            expect(spyFn).to.have.been.called.with(error);
+            const response = await this.router.route();
+            assert.deepEqual(spyFn.callCount, 1);
+            assert.deepEqual(spyFn.getCall(0).args[0], error);
+            assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
+        });
+
+        it('should call onError callback if onError exist and request is not valid', async () => {
+            const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
+            const spyFn = sinon.fake();
+            const error = new Error();
+
+            this.router = new Router({
+                event,
+                basePath: 'unittest/v1',
+                handlerPath: 'test/apigateway/',
+                schemaPath: 'test/openapi.yml',
+                beforeAll: () => {
+                    throw error;
+                },
+                onError: spyFn
+            });
+            const response = await this.router.route();
+            assert.deepEqual(spyFn.callCount, 1);
+            assert.deepEqual(spyFn.getCall(0).args[0], error);
+            assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
     });
 });
