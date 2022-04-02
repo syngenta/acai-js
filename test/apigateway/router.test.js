@@ -175,26 +175,5 @@ describe('Test Router', () => {
             assert.deepEqual(spyFn.getCall(0).args[0], error);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
-
-        it('should call onError callback if onError exist and request is not valid', async () => {
-            const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
-            const spyFn = sinon.fake();
-            const error = new Error();
-
-            this.router = new Router({
-                event,
-                basePath: 'unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml',
-                beforeAll: () => {
-                    throw error;
-                },
-                onError: spyFn
-            });
-            const response = await this.router.route();
-            assert.deepEqual(spyFn.callCount, 1);
-            assert.deepEqual(spyFn.getCall(0).args[0], error);
-            assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
-        });
     });
 });
