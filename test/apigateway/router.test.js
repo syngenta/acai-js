@@ -172,7 +172,7 @@ describe('Test Router', () => {
             });
             const response = await this.router.route();
             assert.deepEqual(spyFn.callCount, 1);
-            assert.deepEqual(spyFn.getCall(0).args[0], error);
+            assert.deepEqual(spyFn.getCall(0).args[2], error);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
     });
