@@ -37,7 +37,6 @@ class Router {
             this._errors.setError('server', 'internal server error');
         }
         if (!process.env.unittest) {
-            const request = new RequestClient(this._event);
             this._logger.error({
                 error_messsage: error.message,
                 error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
