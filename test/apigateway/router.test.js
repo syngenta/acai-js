@@ -1,4 +1,5 @@
-const {assert} = require('chai');
+const {assert, expect} = require('chai');
+const sinon = require('sinon');
 const {Router} = require('../../src').apigateway;
 const mockData = require('./mock-data');
 const mockPermissions = require('./mock-permissions-middleware');
@@ -153,6 +154,26 @@ describe('Test Router', () => {
                 statusCode: 200,
                 body: '{"test":true}'
             });
+        });
+        it('should call onError callback if onError exist and error occurs', async () => {
+            const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
+            const spyFn = sinon.fake();
+            const error = new Error();
+
+            this.router = new Router({
+                event,
+                basePath: 'unittest/v1',
+                handlerPath: 'test/apigateway/',
+                schemaPath: 'test/openapi.yml',
+                beforeAll: () => {
+                    throw error;
+                },
+                onError: spyFn
+            });
+            const response = await this.router.route();
+            assert.deepEqual(spyFn.callCount, 1);
+            assert.deepEqual(spyFn.getCall(0).args[2], error);
+            assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
     });
 });

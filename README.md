@@ -80,8 +80,9 @@ Option Name   | Required | Type   | Default | Description
 `basePath`    | true     | string | n/a     | apigateway base path for the custom domain
 `handlerPath` | true     | string | n/a     | project path of where the endpoint files
 `schemaPath`  | false    | string | null    | path where your schema file can found (accepts JSON as well)
-`beforeAll`   | false    | string | null    | before all middleware function to run before all routes (after validation occurs)
-`afterAll`    | false    | string | null    | after all middleware function to run after all routes
+`beforeAll`   | false    | Function | undefined    | before all middleware function to run before all routes (after validation occurs)
+`afterAll`    | false    | Function | undefined    | after all middleware function to run after all routes
+`onError`     | false    | Function | undefined    | onError callback, called in case of errors while handle endpoint
 `globalLogger`| false    | boolean| false   | will apply the logger function to the global scope (`global.logger`)
 
 2. Create endpoint file with matching methods and requirements
