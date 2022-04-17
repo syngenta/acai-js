@@ -2,6 +2,7 @@
     "name": "@syngenta-digital/alc",
     "author": "Paul Cruse, Engineering Lead, Syngenta Digital, USCO",
     "main": "src/index.js",
+    "types": "./typings/index.d.ts",
     "version": "1.0.9",
     "license": "Apache-2.0",
     "repository": {
