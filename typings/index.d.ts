@@ -5,7 +5,9 @@ import {
     APIGatewayProxyResult as ProxyResult,
 } from 'aws-lambda'
 
-import {GetRecordsOutput, Record as AWSRecord} from 'aws-sdk/clients/dynamodbstreams';
+import {S3Event, S3EventRecord, S3Handler as AWSS3Handler} from 'aws-lambda/trigger/s3';
+import {SQSEvent, SQSRecord } from 'aws-lambda/trigger/sqs';
+import {DynamoDBStreamEvent, DynamoDBRecord, DynamoDBStreamHandler } from 'aws-lambda/trigger/dynamodb-stream';
 
 declare enum HTTPMethods {
     get,
@@ -246,29 +248,163 @@ declare type AlcDynamoDBParams  ={
     globalLogger: boolean
 }
 
-export type DynamoDBHandler = (event: GetRecordsOutput) => void;
+export type DynamoDBHandler = DynamoDBStreamHandler;
 
 export namespace dynamodb {
     export class Record {
-        constructor(record: AWSRecord);
-        readonly awsRegion: AWSRecord['awsRegion']
-        readonly eventID: AWSRecord['eventID']
-        readonly eventName: AWSRecord['eventName']
-        readonly eventSource: AWSRecord['eventSource']
-        readonly keys: AWSRecord['dynamodb']['Keys']
-        readonly oldImage: AWSRecord['dynamodb']['OldImage']
-        readonly newImage: AWSRecord['dynamodb']['NewImage']
-        readonly eventSourceARN: AWSRecord['eventSource']
-        readonly eventVersion: AWSRecord['eventVersion']
-        readonly streamViewType: AWSRecord['dynamodb']['StreamViewType']
-        readonly sizeBytes: AWSRecord['dynamodb']['SizeBytes']
-        readonly approximateCreationDateTime: AWSRecord['dynamodb']['ApproximateCreationDateTime']
-        readonly userIdentity: AWSRecord['userIdentity']
+        constructor(record: DynamoDBRecord);
+        /**
+         * aws region of record
+         */
+        readonly awsRegion: DynamoDBRecord['awsRegion']
+        /**
+         * event id of dynamodb record
+         */
+        readonly eventID: DynamoDBRecord['eventID']
+        /**
+         * event name of dynamodb record
+         */
+        readonly eventName: DynamoDBRecord['eventName']
+        /**
+         * event source of dynamodb record
+         */
+        readonly eventSource: DynamoDBRecord['eventSource']
+        /**
+         * keys of dynamodb record (will convert ddb json)
+         */
+        readonly keys: DynamoDBRecord['dynamodb']['Keys']
+        /**
+         * old image of dynamodb record
+         */
+        readonly oldImage: DynamoDBRecord['dynamodb']['OldImage']
+        /**
+         * new image of dynamodb record
+         */
+        readonly newImage: DynamoDBRecord['dynamodb']['NewImage']
+        /**
+         * event source ARN of dynamodb record
+         */
+        readonly eventSourceARN: DynamoDBRecord['eventSource']
+        /**
+         * event version of dynamodb record
+         */
+        readonly eventVersion: DynamoDBRecord['eventVersion']
+        /**
+         * stream view type version of dynamodb record
+         */
+        readonly streamViewType: DynamoDBRecord['dynamodb']['StreamViewType']
+        /**
+         * size bytes of dynamodb record
+         */
+        readonly sizeBytes: DynamoDBRecord['dynamodb']['SizeBytes']
+        /**
+         * approximate creation date time of dynamodb record
+         */
+        readonly approximateCreationDateTime: DynamoDBRecord['dynamodb']['ApproximateCreationDateTime']
+        /**
+         * the user who cause the action (not always available populated)
+         */
+        readonly userIdentity: DynamoDBRecord['userIdentity']
+        /**
+         * determines if the stream was invoked by a "time to live" expiring
+         */
         readonly timeToLiveExpired: boolean
     }
     export class Event {
-        constructor(event: GetRecordsOutput, params?: AlcDynamoDBParams)
-        rawRecords: GetRecordsOutput['Records']
+        constructor(event: DynamoDBStreamEvent, params?: AlcDynamoDBParams)
+        rawRecords: DynamoDBRecord
+        records: Record[]
+    }
+}
+
+
+export type S3Handler = AWSS3Handler
+
+export namespace s3 {
+    export class Record {
+        constructor(record: S3EventRecord);
+
+        /**
+         *
+         */
+        readonly eventName: S3EventRecord['eventName']
+        readonly eventSource: S3EventRecord['eventSource'] 
+        readonly eventTime: S3EventRecord['eventTime']
+        readonly awsRegion: S3EventRecord['awsRegion']
+        readonly requestParameters: S3EventRecord['requestParameters']
+        readonly responseElements: S3EventRecord['responseElements']
+        readonly configurationId: S3EventRecord['s3']['configurationId']
+        readonly object: S3EventRecord['s3']['object']
+        readonly bucket: S3EventRecord['s3']['bucket']
+        readonly key: S3EventRecord['s3']['object']['key']
+        readonly s3SchemaVersion: S3EventRecord['s3']['s3SchemaVersion']
+    }
+    export class Event {
+        constructor(event: S3Event, params?: AlcDynamoDBParams)
+        /**
+         * just the raw record from the original request
+         */
+        rawRecords: S3Event['Records']
+        /**
+         * list of record objects
+         */
+        records: Record[]
+    }
+}
+
+export namespace sqs {
+    export class Record {
+        constructor(record: SQSRecord);
+        /**
+         * message id of sqs record
+         */
+        readonly messageId: SQSRecord['messageId']
+        /**
+         * receipt handle of sqs record
+         */
+        readonly receiptHandle: SQSRecord['receiptHandle']
+        /**
+         * body of sqs record (will automatically decode JSON)
+         */
+        readonly body: unknown
+        /**
+         * body of sqs record
+         */
+        readonly rawBody: SQSRecord['body']
+        /**
+         * attributes of sqs record
+         */
+        readonly attributes: SQSRecord['attributes']
+        /**
+         * message attributes of sqs record
+         */
+        readonly messageAttributes: SQSRecord['messageAttributes']
+        /**
+         * md5 of body of sqs record
+         */
+        readonly md5OfBody: SQSRecord['md5OfBody']
+        /**
+         * source of sqs record
+         */
+        readonly source: SQSRecord['eventSource']
+        /**
+         * source ARN of sqs record
+         */
+        readonly sourceARN: SQSRecord['eventSourceARN']
+        /**
+         * region of sqs record
+         */
+        readonly region: SQSRecord['awsRegion']
+    }
+    export class Event {
+        constructor(event: SQSEvent, params?: AlcDynamoDBParams)
+        /**
+         * just the raw record from the original request
+         */
+        rawRecords: SQSEvent['Records']
+        /**
+         * list of record objects
+         */
         records: Record[]
     }
 }
