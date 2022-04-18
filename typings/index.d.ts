@@ -2,8 +2,10 @@ import {RequireAtLeastOne} from './type-utils'
 import {
     APIGatewayProxyHandler as ProxyHandler,
     APIGatewayProxyEvent as ProxyEvent,
-    APIGatewayProxyResult as ProxyResult
+    APIGatewayProxyResult as ProxyResult,
 } from 'aws-lambda'
+
+import {GetRecordsOutput, Record as AWSRecord} from 'aws-sdk/clients/dynamodbstreams';
 
 declare enum HTTPMethods {
     get,
@@ -173,14 +175,6 @@ declare type AlcHttpResponseClient<T> = {
 }
 
 
-export namespace apigateway {
-    export class Router {
-        constructor(params: AlcRouterParams);
-
-        route(): ProxyResult;
-    }
-}
-
 export type AlcHttpPathMethodHandlers = {
     [key in keyof typeof HTTPMethods]: HttpPathMethodHandler
 }
@@ -191,3 +185,90 @@ export type AlcPathConfig = {
     }>
 } & RequireAtLeastOne<AlcHttpPathMethodHandlers>
 
+export namespace apigateway {
+    export class Router {
+        constructor(params: AlcRouterParams);
+        route(): ProxyResult;
+    }
+}
+
+export namespace logger {
+    export class Logger {
+        info(...args: unknown[]): void
+
+        log(...args: unknown[]): void
+
+        warn(...args: unknown[]): void
+
+        error(...args: unknown[]): void
+
+        dir(...args: unknown[]): void
+
+        time(...args: unknown[]): void
+
+        timeEnd(...args: unknown[]): void
+
+        timeLog(...args: unknown[]): void
+
+        trace(...args: unknown[]): void
+
+        clear(...args: unknown[]): void
+
+        count(...args: unknown[]): void
+
+        countReset(...args: unknown[]): void
+
+        group(...args: unknown[]): void
+
+        groupEnd(...args: unknown[]): void
+
+        table(...args: unknown[]): void
+
+        debug(...args: unknown[]): void
+
+        dirxml(...args: unknown[]): void
+
+        groupCollapsed(...args: unknown[]): void
+
+        Console(...args: unknown[]): void
+
+        profile(...args: unknown[]): void
+
+        profileEnd(...args: unknown[]): void
+
+        timeStamp(...args: unknown[]): void
+
+        context(...args: unknown[]): void
+    }
+}
+
+declare type AlcDynamoDBParams  ={
+    globalLogger: boolean
+}
+
+export type DynamoDBHandler = (event: GetRecordsOutput) => void;
+
+export namespace dynamodb {
+    export class Record {
+        constructor(record: AWSRecord);
+        readonly awsRegion: AWSRecord['awsRegion']
+        readonly eventID: AWSRecord['eventID']
+        readonly eventName: AWSRecord['eventName']
+        readonly eventSource: AWSRecord['eventSource']
+        readonly keys: AWSRecord['dynamodb']['Keys']
+        readonly oldImage: AWSRecord['dynamodb']['OldImage']
+        readonly newImage: AWSRecord['dynamodb']['NewImage']
+        readonly eventSourceARN: AWSRecord['eventSource']
+        readonly eventVersion: AWSRecord['eventVersion']
+        readonly streamViewType: AWSRecord['dynamodb']['StreamViewType']
+        readonly sizeBytes: AWSRecord['dynamodb']['SizeBytes']
+        readonly approximateCreationDateTime: AWSRecord['dynamodb']['ApproximateCreationDateTime']
+        readonly userIdentity: AWSRecord['userIdentity']
+        readonly timeToLiveExpired: boolean
+    }
+    export class Event {
+        constructor(event: GetRecordsOutput, params?: AlcDynamoDBParams)
+        rawRecords: GetRecordsOutput['Records']
+        records: Record[]
+    }
+}
