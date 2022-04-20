@@ -17,6 +17,7 @@ class Router {
         this._basePath = params.basePath;
         this._handlerPath = params.handlerPath;
         this._onError = params.onError;
+        this._canActivate = params.canActivate;
         this._errors = new ResponseClient();
         this._logger = new Logger();
         this._schemaPath = params.schemaPath;
@@ -54,6 +55,9 @@ class Router {
         const requestValidator = new RequestValidator(request, response, schema);
         const responseValidator = new ResponseValidator(request, response, schema);
 
+        if (!response.hasErrors && this._canActivate && typeof this._canActivate === 'function') {
+            await this._canActivate(request, response);
+        }
         if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method]) {
             await requestValidator.isValid(endpoint.requirements[method]);
         }

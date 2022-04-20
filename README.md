@@ -83,6 +83,7 @@ Option Name   | Required | Type   | Default | Description
 `beforeAll`   | false    | Function | undefined    | before all middleware function to run before all routes (after validation occurs)
 `afterAll`    | false    | Function | undefined    | after all middleware function to run after all routes
 `onError`     | false    | Function | undefined    | onError callback, called in case of errors while handle endpoint
+`canActivate` | false    | Function | undefined    | middleware function to run before all routes (and before validation occurs) in case if there are conditions to determine whether a given request will be handled by the route handler or not 
 `globalLogger`| false    | boolean| false   | will apply the logger function to the global scope (`global.logger`)
 
 2. Create endpoint file with matching methods and requirements

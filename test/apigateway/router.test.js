@@ -175,5 +175,36 @@ describe('Test Router', () => {
             assert.deepEqual(spyFn.getCall(0).args[2], error);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
+        it('should call canActivate callback if canActivate exist', async () => {
+            const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
+            const spyFn = sinon.fake();
+
+            this.router = new Router({
+                event,
+                basePath: 'unittest/v1',
+                handlerPath: 'test/apigateway/',
+                schemaPath: 'test/openapi.yml',
+                canActivate: spyFn
+            });
+            const response = await this.router.route();
+            assert.deepEqual(spyFn.callCount, 1);
+        });
+        it('should stop route handling if canActivate throws an error', async () => {
+            const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
+            const spyFn = sinon.fake();
+
+            this.router = new Router({
+                event,
+                basePath: 'unittest/v1',
+                handlerPath: 'test/apigateway/',
+                schemaPath: 'test/openapi.yml',
+                canActivate: () => {
+                    throw new Error();
+                },
+                beforeAll: spyFn
+            });
+            const response = await this.router.route();
+            assert.deepEqual(spyFn.callCount, 0);
+        });
     });
 });
