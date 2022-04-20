@@ -55,7 +55,10 @@ export declare type AlcRouterParams = {
     globalLogger?: boolean
 }
 
-declare type HttpOnErrorCallback = (request: AlcHttpRequestClient<unknown>, response: AlcHttpResponseClient<unknown>) => Promise<unknown>
+declare type HttpOnErrorCallback = (
+    request: AlcHttpRequestClient<unknown>, 
+    response: AlcHttpResponseClient<unknown>, 
+    error: unknown) => Promise<unknown>
 
 declare type HttpPathMethodRequirements = {
     /**
