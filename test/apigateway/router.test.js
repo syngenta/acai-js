@@ -178,7 +178,7 @@ describe('Test Router', () => {
         it('should return status code that was set in onError callback', async () => {
             const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
             const error = new Error();
-
+            const returnedCode = 400;
             this.router = new Router({
                 event,
                 basePath: 'unittest/v1',
@@ -188,11 +188,11 @@ describe('Test Router', () => {
                     throw error;
                 },
                 onError: (req, res) => {
-                    res.code = 400;
+                    res.code = returnedCode;
                 }
             });
             const response = await this.router.route();
-            assert.equal(400, response.statusCode);
+            assert.equal(returnedCode, response.statusCode);
 
         });
     });
