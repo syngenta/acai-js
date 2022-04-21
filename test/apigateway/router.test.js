@@ -175,5 +175,25 @@ describe('Test Router', () => {
             assert.deepEqual(spyFn.getCall(0).args[2], error);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
+        it('should return status code that was set in onError callback', async () => {
+            const event = await mockData.getApiGateWayRoute('', '', 'PATCH');
+            const error = new Error();
+
+            this.router = new Router({
+                event,
+                basePath: 'unittest/v1',
+                handlerPath: 'test/apigateway/',
+                schemaPath: 'test/openapi.yml',
+                beforeAll: () => {
+                    throw error;
+                },
+                onError: (req, res) => {
+                    res.code = 400;
+                }
+            });
+            const response = await this.router.route();
+            assert.equal(400, response.statusCode);
+
+        });
     });
 });
