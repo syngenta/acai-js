@@ -168,7 +168,7 @@ class Router {
             const endpointFile = await this._getEndpoint();
             return (await this._runEndpoint({endpointFile, request, response})).response;
         } catch (error) {
-            await this._handleError(request, response, error);
+            await this._handleError(request, this._errors, error);
             return this._errors.response;
         }
     }
