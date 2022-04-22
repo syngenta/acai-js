@@ -1,4 +1,4 @@
-class NotFoundModuleError extends Error {
+class NotMatchedUrlError extends Error {
     constructor(message) {
         super(message);
         // Ensure the name of this error is the same as the class name
@@ -10,4 +10,4 @@ class NotFoundModuleError extends Error {
     }
 }
 
-module.exports = NotFoundModuleError;
+module.exports = NotMatchedUrlError;

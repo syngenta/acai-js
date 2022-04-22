@@ -4,12 +4,12 @@ class NotFoundError {
     constructor() {
         const responseClient = new ResponseClient();
         responseClient.code = 404;
-        responseClient.setError('url', 'url is not found');
+        responseClient.setError('url', 'endpoint not found');
         this._responseClient = responseClient;
     }
 
-    toJSON() {
-        return JSON.stringify(this._responseClient.response);
+    get response() {
+        return this._responseClient.response;
     }
 }
 

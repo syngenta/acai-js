@@ -75,6 +75,7 @@ describe('Test Router', () => {
             });
         });
         it('router: method not allowed', async () => {
+            const event = await mockData.getApiGateWayRoute('', '', 'GET');
             this.router = new Router({
                 event: await mockData.getApiGateWayRoute('', '', 'GET'),
                 basePath: 'unittest/v1',
@@ -95,10 +96,10 @@ describe('Test Router', () => {
             this.router = new Router({
                 event: await mockData.getIndexApiGateWayRoute(),
                 basePath: 'unittest/v1',
-                handlerPath: '/test/apigateway'
+                handlerPath: '/test/apigateway/mocks'
             });
-            const results = await this.router._getEndpoint();
-            assert.equal(results, 'test/apigateway/index.js');
+            const result = await this.router.route();
+            assert.equal(result.statusCode, 404);
         });
         it('router: ran route without the need of requirements export', async () => {
             this.router = new Router({
@@ -189,6 +190,7 @@ describe('Test Router', () => {
                 },
                 onError: (req, res) => {
                     res.code = returnedCode;
+                    return res;
                 }
             });
             const response = await this.router.route();

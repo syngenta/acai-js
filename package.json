@@ -14,8 +14,9 @@
     },
     "scripts": {
         "test": "unittest=true nyc mocha --recursive",
-        "report": "UNIT_TEST=true nyc report --reporter=lcov",
-        "lint": "eslint src/**"
+        "report": "UNIT_TEST=true NODE_PATH=pwd nyc report --reporter=lcov",
+        "lint": "eslint src/**",
+        "check-env": "node -e 'console.log(process.env)' | grep npm"
     },
     "dependencies": {
         "ajv": "8.10.0",

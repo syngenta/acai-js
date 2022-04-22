@@ -2,15 +2,11 @@ const path = require('path');
 const FileConfigReader = require('../../../src').apigateway.FileConfigReader;
 const { assert } = require('chai');
 
-const requirer = (modulePath) => require(path.join(path.dirname(__filename), 'mocks',  modulePath));
-requirer.resolve = (modulePath) => require.resolve(path.join(path.dirname(__filename), 'mocks', modulePath))
-
-
 describe('FileConfigReader', () => {
     it('should read config file from folder without index.js', () => {
-        const modulePath = 'random-dir-name';
+        const modulePath = 'test/apigateway/mocks/enpoint-config/random-dir-name';
         const module = require('./mocks/random-dir-name');
-        const fileConfigReader = new FileConfigReader({modulePath, requirer});
+        const fileConfigReader = new FileConfigReader({modulePath});
         assert.deepEqual(fileConfigReader.read(), module);
     });
 

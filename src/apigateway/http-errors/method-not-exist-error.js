@@ -2,14 +2,18 @@ const ResponseClient = require('../response-client');
 
 class MethodNotExistError {
     constructor() {
+        this._setResponseClient();
+    }
+
+    _setResponseClient() {
         const responseClient = new ResponseClient();
         responseClient.code = 403;
         responseClient.setError('method', 'method not allowed');
         this._responseClient = responseClient;
     }
 
-    toJSON() {
-        return JSON.stringify(this._responseClient.response);
+    get response(){
+        return this._responseClient.response;
     }
 }
 

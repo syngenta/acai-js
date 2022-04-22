@@ -18,7 +18,7 @@ class EndpointConfig {
     }
 
     getRequirementsByMethodName(methodName) {
-        return this._requirements[methodName];
+        return this._requirements ? this._requirements[methodName]: undefined;
     }
 
     getHandlerByMethodName(methodName) {
@@ -26,7 +26,7 @@ class EndpointConfig {
     }
 
     ifMethodExist(methodName) {
-        const method = this.getMethodHandler(methodName);
+        const method = this.getHandlerByMethodName(methodName);
         return method && typeof method === 'function';
     }
 

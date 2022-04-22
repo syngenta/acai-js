@@ -1,19 +1,24 @@
+const path = require('path');
+const NotFoundModuleError = require('./not-found-module-error');
+
 class FileConfigReader {
     constructor({modulePath, requirer = require}) {
         this._requirer = requirer;
         this._modulePath = modulePath;
-        this._checkIfModuleExist(this._modulePath);
+        const finalPath = path.join(process.env.NODE_PATH, modulePath);
+        this._finalPath = finalPath;
+        this._checkIfModuleExist();
     }
 
     read() {
-        return this._requirer(this._modulePath);
+        return this._requirer(this._finalPath);
     }
 
-    _checkIfModuleExist(modulePath) {
+    _checkIfModuleExist() {
         try {
-            this._requirer.resolve(modulePath);
+            this._requirer.resolve(this._finalPath);
         } catch (e) {
-            throw new Error(`can't resolve module ${modulePath}`);
+            throw new NotFoundModuleError(`can't resolve module ${this._modulePath}`);
         }
     }
 }

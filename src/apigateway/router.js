@@ -12,6 +12,8 @@ const UnknownError = require('./http-errors/unknown-error');
 const NotFoundError = require('./http-errors/not-found-error');
 const MethodNotExistError = require('./http-errors/method-not-exist-error');
 const PathResolver = require('./endpoint-config/path-resolver');
+const NotMatchedUrlError = require('./endpoint-config/not-matched-url-error');
+const NotFoundModuleError = require('./endpoint-config/not-found-module-error');
 
 class Router {
     constructor(params) {
@@ -26,26 +28,23 @@ class Router {
         this._request = new RequestClient(params.event);
         this._response = new ResponseClient();
 
-        this._config = this._getEndpointConfig({
+        this._paths = {
             requestPath: params.event.path,
-            ...params
-        });
+            basePath: params.basePath,
+            handlerPath: params.handlerPath
+        }
 
         this._setUpValidators(params.schemaPath);
     }
 
-    _setUpLogger(params) {
-        this._logger = new Logger();
-        this._setUpLogger(params.globalLogger);
-    }
-
     _setUpValidators(schemaPath) {
-        const schema = new Schema(this._schemaPath);
+        const schema = new Schema(schemaPath);
         this._requestValidator = new RequestValidator(this._request, this._response, schema);
         this._responseValidator = new ResponseValidator(this._request, this._response, schema);
     }
 
-    _setUpLogger(globalLogger = false) {
+    _setUpLogger({globalLogger = false}) {
+        this._logger = new Logger();
         if (globalLogger) {
             require('../common/setup-logger.js').setUpLogger();
         }
@@ -53,8 +52,14 @@ class Router {
 
     async _handleError(request, response, error) {
         if (this._onError && typeof this._onError === 'function') {
-            return this._onError(this._request, this._response, error);
+            const onErrorResult = await this._onError(this._request, this._response, error);
+            return onErrorResult ? onErrorResult.response : response.response;
         }
+
+        if(error instanceof NotMatchedUrlError || error instanceof NotFoundModuleError) {
+            return new NotFoundError().response;
+        }
+
         if (!process.env.unittest) {
             this._logger.error({
                 error_messsage: error.message,
@@ -64,43 +69,44 @@ class Router {
                 response: this._errors
             });
         }
-        return new UnknownError();
+        return new UnknownError().response;
     }
 
     async _runEndpoint(methodName) {
-        const {_request: request, _response: response, _config: config} = this;
+        this._config = this._getEndpointConfig(this._paths);
 
-        if (!config.ifExist()) {
+        if (!this._config.ifExist()) {
             return new NotFoundError();
         }
 
-        if (config.ifMethodExist(methodName)) {
+        if (!this._config.ifMethodExist(methodName)) {
             return new MethodNotExistError();
         }
 
-        const beforeAllResult =
-            typeof this._beforeAll === 'function' ? await this._beforeAll(request, response) : response;
+        const requirements = this._config.getRequirementsByMethodName(methodName);
 
-        const validationResult = await this._requestValidator.isValid(config.getRequirementsByMethodName(methodName));
-
-        if (validationResult.hasErrors()) {
-            return validationResult.response();
+        if (typeof this._beforeAll === 'function') {
+            await this._beforeAll(this._request, this._response, requirements);
         }
 
-        const endpointResult = await this._config.getHandlerByMethodName(methodName)(request, beforeAllResult);
+        const validationConfig = this._config.getRequirementsByMethodName(methodName);
 
-        const rule = config.getRequirementsByMethodName(methodName)['responseBody'];
-        const bodyValidationResult = await this._responseValidator.isValid(rule);
-
-        if (bodyValidationResult.hasErrors()) {
-            return bodyValidationResult.response();
+        if (!this._response.hasErrors && validationConfig) {
+            await this._requestValidator.isValid(validationConfig);
         }
 
-        if (!response.hasErrors && this._afterAll && typeof this._afterAll === 'function') {
-            await this._afterAll(request, response, endpoint.requirements);
+        if (!this._response.hasErrors) {
+            await this._config.getHandlerByMethodName(methodName)(this._request, this._response);
         }
 
-        return typeof this._afterAll === 'function' ? await this._afterAll(request, endpointResult) : endpointResult;
+        if(!this._response.hasErrors && requirements && requirements['responseBody']){
+            await this._responseValidator.isValid(rule);
+        }
+
+        if(!this._response.hasErrors && typeof this._afterAll === 'function'){
+            await this._afterAll(this._request, this._response, this._config.getRequirementsByMethodName(methodName));
+        }
+        return this._response;
     }
 
     _getEndpointConfig({basePath, requestPath, handlerPath}) {
@@ -113,9 +119,9 @@ class Router {
     async route() {
         try {
             const method = this._event.httpMethod.toLowerCase();
-            return await this._runEndpoint(method);
+            return (await this._runEndpoint(method)).response;
         } catch (error) {
-            return this._handleError();
+            return this._handleError(this._request, this._response, error);
         }
     }
 }

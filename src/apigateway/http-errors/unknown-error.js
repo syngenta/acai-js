@@ -8,8 +8,8 @@ class UnknownError {
         this._responseClient = responseClient;
     }
 
-    toJSON() {
-        return JSON.stringify(this._responseClient.response);
+    get response () {
+        return this._responseClient.response;
     }
 }
 
