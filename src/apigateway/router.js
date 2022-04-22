@@ -17,7 +17,6 @@ class Router {
         this._basePath = params.basePath;
         this._handlerPath = params.handlerPath;
         this._onError = params.onError;
-        this._errors = new ResponseClient();
         this._logger = new Logger();
         this._schemaPath = params.schemaPath;
         this._setUpLogger(params.globalLogger);
@@ -32,9 +31,9 @@ class Router {
     async _handleError(request, response, error) {
         if (typeof this._onError === 'function') {
             this._onError(request, response, error);
-        } else if (!this._errors.hasErrors) {
-            this._errors.code = 500;
-            this._errors.setError('server', 'internal server error');
+        } else if (!response.hasErrors) {
+            response.code = 500;
+            response.setError('server', 'internal server error');
         }
         if (!process.env.unittest) {
             this._logger.error({
@@ -42,14 +41,16 @@ class Router {
                 error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
                 event: this._event,
                 request: request.request,
-                response: this._errors
+                response: response
             });
         }
+        return response;
     }
 
-    async _runEndpoint({endpointFile, request, response}) {
-        const endpoint = this._getExistingEndpoint(endpointFile);
-        const method = this._getExistingMethod(endpoint);
+    async _runEndpoint(request, response) {
+        const endpointFile = await this._getEndpoint();
+        const endpoint = this._getExistingEndpoint(endpointFile, response);
+        const method = this._getExistingMethod(endpoint, response);
         const schema = new Schema(this._schemaPath);
         const requestValidator = new RequestValidator(request, response, schema);
         const responseValidator = new ResponseValidator(request, response, schema);
@@ -63,7 +64,6 @@ class Router {
         if (!response.hasErrors) {
             await endpoint[method](request, response);
         }
-
         if (
             !response.hasErrors &&
             endpoint.requirements &&
@@ -73,29 +73,27 @@ class Router {
             const rule = endpoint.requirements[method]['responseBody'];
             await responseValidator.isValid(rule);
         }
-
         if (!response.hasErrors && this._afterAll && typeof this._afterAll === 'function') {
             await this._afterAll(request, response, endpoint.requirements);
         }
         return response;
     }
 
-    _getExistingEndpoint(endpointFile) {
+    _getExistingEndpoint(endpointFile, response) {
         try {
             return require(path.join(process.cwd(), endpointFile));
         } catch (error) {
-            this._errors.code = 404;
-            this._errors.setError('url', 'endpoint not found');
-            throw new Error('endpoint not found');
+            response.code = 404;
+            response.setError('url', 'endpoint not found');
+            return;
         }
     }
 
-    _getExistingMethod(endpoint) {
+    _getExistingMethod(endpoint, response) {
         const method = this._event.httpMethod.toLowerCase();
         if (typeof endpoint[method] !== 'function') {
-            this._errors.code = 403;
-            this._errors.setError('method', 'method not allowed');
-            throw new Error('method not allowed');
+            response.code = 403;
+            response.setError('method', 'method not allowed');
         }
         return method;
     }
@@ -165,11 +163,9 @@ class Router {
         const request = new RequestClient(this._event);
         const response = new ResponseClient();
         try {
-            const endpointFile = await this._getEndpoint();
-            return (await this._runEndpoint({endpointFile, request, response})).response;
+            return (await this._runEndpoint(request, response)).response;
         } catch (error) {
-            await this._handleError(request, response, error);
-            return this._errors.response;
+            return (await this._handleError(request, response, error)).response;
         }
     }
 }
