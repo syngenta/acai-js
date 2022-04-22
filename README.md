@@ -149,6 +149,7 @@ Property Name       | Description
 `json`              | body of apigateway event parsed as JSON
 `xml`               | body of apigateway event parsed as XML
 `body`              | body of apigateway event will be parsed based on context headers
+`context`           | a mutatable context field you can use to pass additional context down to your endpoints, best used with `beforeAll` functions
 `request`           | full request broken down as an object literal
 
 **Response Properties**
