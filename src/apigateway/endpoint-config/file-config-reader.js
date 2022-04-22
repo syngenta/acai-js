@@ -1,11 +1,12 @@
 const path = require('path');
 const NotFoundModuleError = require('./not-found-module-error');
+const appRoot = require('app-root-path');
 
 class FileConfigReader {
     constructor({modulePath, requirer = require}) {
         this._requirer = requirer;
         this._modulePath = modulePath;
-        const finalPath = path.join(process.env.NODE_PATH, modulePath);
+        const finalPath = path.join(appRoot.path, modulePath);
         this._finalPath = finalPath;
         this._checkIfModuleExist();
     }

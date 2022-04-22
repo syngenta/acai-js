@@ -13,12 +13,13 @@
         "url": "https://github.com/syngenta-digital/package-node-alc/issues"
     },
     "scripts": {
-        "test": "export NODE_PATH=$(pwd) && unittest=true NODE_PATH=pwd nyc mocha --recursive",
-        "report": "export NODE_PATH=$(pwd) && UNIT_TEST=true nyc report --reporter=lcov",
+        "test": "unittest=true nyc mocha --recursive",
+        "report": "UNIT_TEST=true nyc report --reporter=lcov",
         "lint": "eslint src/**"
     },
     "dependencies": {
         "ajv": "8.10.0",
+        "app-root-path": "^3.0.0",
         "aws-lambda": "^1.0.7",
         "aws-sdk": "2.1105.0",
         "js-yaml": "4.1.0",
