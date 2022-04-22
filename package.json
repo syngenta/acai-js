@@ -13,10 +13,9 @@
         "url": "https://github.com/syngenta-digital/package-node-alc/issues"
     },
     "scripts": {
-        "test": "unittest=true nyc mocha --recursive",
-        "report": "UNIT_TEST=true NODE_PATH=pwd nyc report --reporter=lcov",
-        "lint": "eslint src/**",
-        "check-env": "node -e 'console.log(process.env)' | grep npm"
+        "test": "export NODE_PATH=$(pwd) && unittest=true NODE_PATH=pwd nyc mocha --recursive",
+        "report": "export NODE_PATH=$(pwd) && UNIT_TEST=true nyc report --reporter=lcov",
+        "lint": "eslint src/**"
     },
     "dependencies": {
         "ajv": "8.10.0",
@@ -31,6 +30,7 @@
         "@types/aws-lambda": "^8.10.93",
         "chai": "^4.2.0",
         "chai-as-promised": "^7.1.1",
+        "cross-env": "^7.0.3",
         "eslint": "^7.7.0",
         "eslint-config-prettier": "^6.11.0",
         "eslint-plugin-import": "^2.22.1",
