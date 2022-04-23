@@ -1,6 +1,5 @@
 const path = require('path');
 const NotFoundModuleError = require('./not-found-module-error');
-const appRoot = require('app-root-path');
 
 class FileConfigReader {
     constructor({modulePath, requirer = require}) {
