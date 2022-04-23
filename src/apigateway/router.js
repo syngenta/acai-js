@@ -128,8 +128,6 @@ class Router {
             const method = this._event.httpMethod.toLowerCase();
             return (await this._runEndpoint(method)).response;
         } catch (error) {
-            console.log(error);
-            console.log(error.stack);
             return this._handleError(this._request, this._response, error);
         }
     }
