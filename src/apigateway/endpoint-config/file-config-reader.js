@@ -6,7 +6,7 @@ class FileConfigReader {
     constructor({modulePath, requirer = require}) {
         this._requirer = requirer;
         this._modulePath = modulePath;
-        const finalPath = path.join(appRoot.path, modulePath);
+        const finalPath = path.join(process.cwd(), modulePath);
         this._finalPath = finalPath;
         this._checkIfModuleExist();
     }
