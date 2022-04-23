@@ -2,7 +2,7 @@ const path = require('path');
 const NotMatchedUrlError = require('./not-matched-url-error');
 
 class PathResolver {
-    constructor({basePath, requestPath, handlerPath}) {
+    constructor({basePath = '', requestPath = '', handlerPath = ''} = {}) {
         this._setPath(basePath, requestPath, handlerPath);
     }
 
@@ -11,10 +11,10 @@ class PathResolver {
         const cleanRequestPath = this._cleanUpPath(requestPath);
 
         if (!cleanRequestPath.startsWith(cleanBasePath)) {
-            throw new NotMatchedUrlError();
+            throw new NotMatchedUrlError('base path is not match request path');
         }
         const urlPath = path.relative(cleanBasePath, cleanRequestPath);
-        this._path = path.join(handlerPath, urlPath);
+        this._path = path.join(this._cleanUpPath(handlerPath), urlPath);
     }
 
     get path() {
