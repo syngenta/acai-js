@@ -38,7 +38,7 @@ class Router {
         this._response = new ResponseClient();
 
         this._paths = {
-            requestPath: event?.path,
+            requestPath: event? event.path: undefined,
             basePath: basePath,
             handlerPath: handlerPath
         };
