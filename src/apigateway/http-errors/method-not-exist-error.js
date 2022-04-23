@@ -12,7 +12,7 @@ class MethodNotExistError {
         this._responseClient = responseClient;
     }
 
-    get response(){
+    get response() {
         return this._responseClient.response;
     }
 }

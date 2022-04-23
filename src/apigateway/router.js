@@ -13,22 +13,15 @@ const NotMatchedUrlError = require('./endpoint-config/not-matched-url-error');
 const NotFoundModuleError = require('./endpoint-config/not-found-module-error');
 
 class Router {
-    constructor({
-                    handlerPath,
-                    schemaPath,
-                    event,
-                    basePath,
-                    onError,
-                    afterAll,
-                    beforeAll,
-                    globalLogger
-                } = {}, {
-                    Config = EndpointConfig,
-                    PathResolver = PathResolverClass,
-                    RequestValidator = RequestValidatorClass,
-                    ResponseValidator = ResponseValidatorClass
-
-                } = {}) {
+    constructor(
+        {handlerPath, schemaPath, event, basePath, onError, afterAll, beforeAll, globalLogger} = {},
+        {
+            Config = EndpointConfig,
+            PathResolver = PathResolverClass,
+            RequestValidator = RequestValidatorClass,
+            ResponseValidator = ResponseValidatorClass
+        } = {}
+    ) {
         this._event = event;
         this._Config = Config;
         this._PathResolver = PathResolver;
