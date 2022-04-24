@@ -30,6 +30,7 @@
         "@types/aws-lambda": "^8.10.93",
         "chai": "^4.2.0",
         "chai-as-promised": "^7.1.1",
+        "cross-env": "^7.0.3",
         "eslint": "^7.7.0",
         "eslint-config-prettier": "^6.11.0",
         "eslint-plugin-import": "^2.22.1",

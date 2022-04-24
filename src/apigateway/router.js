@@ -1,171 +1,127 @@
-const path = require('path');
-const fs = require('fs');
-
 const RequestClient = require('./request-client');
 const ResponseClient = require('./response-client');
-const RequestValidator = require('./request-validator');
-const ResponseValidator = require('./response-validator');
+const RequestValidatorClass = require('./request-validator');
+const ResponseValidatorClass = require('./response-validator');
 const Schema = require('./schema');
 const Logger = require('../common/logger');
+const EndpointConfig = require('./endpoint-config');
+const UnknownError = require('./http-errors/unknown-error');
+const NotFoundError = require('./http-errors/not-found-error');
+const MethodNotExistError = require('./http-errors/method-not-exist-error');
+const PathResolverClass = require('./endpoint-config/path-resolver');
+const NotMatchedUrlError = require('./endpoint-config/not-matched-url-error');
+const NotFoundModuleError = require('./endpoint-config/not-found-module-error');
 
 class Router {
-    constructor(params) {
-        this._event = params.event;
-        this._requestPath = params.event.path;
-        this._beforeAll = params.beforeAll;
-        this._afterAll = params.afterAll;
-        this._basePath = params.basePath;
-        this._handlerPath = params.handlerPath;
-        this._onError = params.onError;
-        this._logger = new Logger();
-        this._schemaPath = params.schemaPath;
-        this._setUpLogger(params.globalLogger);
+    constructor(
+        {handlerPath, schemaPath, event, basePath, onError, afterAll, beforeAll, globalLogger} = {},
+        {
+            Config = EndpointConfig,
+            PathResolver = PathResolverClass,
+            RequestValidator = RequestValidatorClass,
+            ResponseValidator = ResponseValidatorClass
+        } = {}
+    ) {
+        this._event = event;
+        this._Config = Config;
+        this._PathResolver = PathResolver;
+        this._RequestValidator = RequestValidator;
+        this._ResponseValidator = ResponseValidator;
+
+        this._beforeAll = beforeAll;
+        this._afterAll = afterAll;
+        this._onError = onError;
+
+        this._setUpLogger({globalLogger});
+
+        this._request = new RequestClient(event);
+        this._response = new ResponseClient();
+
+        this._paths = {
+            requestPath: event? event.path: undefined,
+            basePath: basePath,
+            handlerPath: handlerPath
+        };
+
+        this._setUpValidators(schemaPath);
     }
 
-    _setUpLogger(globalLogger = false) {
+    _setUpValidators(schemaPath) {
+        const schema = new Schema(schemaPath);
+        this._requestValidator = new this._RequestValidator(this._request, this._response, schema);
+        this._responseValidator = new this._ResponseValidator(this._request, this._response, schema);
+    }
+
+    _setUpLogger({globalLogger = false}) {
+        this._logger = new Logger();
         if (globalLogger) {
             require('../common/setup-logger.js').setUpLogger();
         }
     }
 
-    async _handleError(request, response, error) {
-        if (typeof this._onError === 'function') {
-            this._onError(request, response, error);
-        } else if (!response.hasErrors) {
-            response.code = 500;
-            response.setError('server', 'internal server error');
+    async _handleError(_request, response, error) {
+        if (this._onError && typeof this._onError === 'function') {
+            const onErrorResult = await this._onError(this._request, this._response, error);
+            return onErrorResult ? onErrorResult.response : response.response;
         }
-        if (!process.env.unittest) {
-            this._logger.error({
-                error_messsage: error.message,
-                error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
-                event: this._event,
-                request: request.request,
-                response: response
-            });
+
+        if (error instanceof NotMatchedUrlError || error instanceof NotFoundModuleError) {
+            return new NotFoundError().response;
         }
-        return response;
+
+        return new UnknownError().response;
     }
 
-    async _runEndpoint(request, response) {
-        const endpointFile = await this._getEndpoint();
-        const endpoint = this._getExistingEndpoint(endpointFile, response);
-        const method = this._getExistingMethod(endpoint, response);
-        const schema = new Schema(this._schemaPath);
-        const requestValidator = new RequestValidator(request, response, schema);
-        const responseValidator = new ResponseValidator(request, response, schema);
+    async _runEndpoint(methodName) {
+        this._config = this._getEndpointConfig(this._paths);
 
-        if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method]) {
-            await requestValidator.isValid(endpoint.requirements[method]);
+        if (!this._config.ifExist()) {
+            return new NotFoundError();
         }
-        if (!response.hasErrors && this._beforeAll && typeof this._beforeAll === 'function') {
-            await this._beforeAll(request, response, endpoint.requirements);
+
+        if (!this._config.ifMethodExist(methodName)) {
+            return new MethodNotExistError();
         }
-        if (!response.hasErrors) {
-            await endpoint[method](request, response);
+
+        const requirements = this._config.getRequirementsByMethodName(methodName);
+
+        if (typeof this._beforeAll === 'function') {
+            await this._beforeAll(this._request, this._response, requirements);
         }
-        if (
-            !response.hasErrors &&
-            endpoint.requirements &&
-            endpoint.requirements[method] &&
-            endpoint.requirements[method]['responseBody']
-        ) {
-            const rule = endpoint.requirements[method]['responseBody'];
-            await responseValidator.isValid(rule);
+
+        const validationConfig = this._config.getRequirementsByMethodName(methodName);
+
+        if (!this._response.hasErrors && validationConfig) {
+            await this._requestValidator.isValid(validationConfig);
         }
-        if (!response.hasErrors && this._afterAll && typeof this._afterAll === 'function') {
-            await this._afterAll(request, response, endpoint.requirements);
+
+        if (!this._response.hasErrors) {
+            await this._config.getHandlerByMethodName(methodName)(this._request, this._response);
         }
-        return response;
+
+        if (!this._response.hasErrors && requirements && requirements['responseBody']) {
+            await this._responseValidator.isValid(requirements['responseBody']);
+        }
+
+        if (!this._response.hasErrors && typeof this._afterAll === 'function') {
+            await this._afterAll(this._request, this._response, this._config.getRequirementsByMethodName(methodName));
+        }
+        return this._response;
     }
 
-    _getExistingEndpoint(endpointFile, response) {
-        try {
-            return require(path.join(process.cwd(), endpointFile));
-        } catch (error) {
-            response.code = 404;
-            response.setError('url', 'endpoint not found');
-            return;
-        }
-    }
+    _getEndpointConfig({basePath, requestPath, handlerPath}) {
+        const pathResolver = new this._PathResolver({basePath, requestPath, handlerPath});
+        const modulePath = pathResolver.path;
 
-    _getExistingMethod(endpoint, response) {
-        const method = this._event.httpMethod.toLowerCase();
-        if (typeof endpoint[method] !== 'function') {
-            response.code = 403;
-            response.setError('method', 'method not allowed');
-        }
-        return method;
-    }
-
-    _cleanUpPath(dirtyPath) {
-        if (dirtyPath.startsWith('/')) {
-            dirtyPath = dirtyPath.substr(1);
-        }
-        if (dirtyPath.endsWith('/')) {
-            dirtyPath = dirtyPath.slice(0, -1);
-        }
-        return dirtyPath;
-    }
-
-    _removeBasePathFromRequest(basePath, requestPath) {
-        const baseArray = basePath.split('/');
-        const requestArray = requestPath.split('/');
-        return requestArray.filter((item) => !baseArray.includes(item));
-    }
-
-    async _isDirectory(dirPath) {
-        try {
-            return await fs.lstatSync(dirPath).isDirectory();
-        } catch (error) {
-            return false;
-        }
-    }
-
-    async _isFile(filePath) {
-        try {
-            return await fs.lstatSync(filePath).isFile();
-        } catch (error) {
-            return false;
-        }
-    }
-
-    async _getEndpointPath(endpointPath, files, index) {
-        if (files[index] === undefined) {
-            return endpointPath;
-        }
-        let possiblePath = `${endpointPath}/${files[index]}`;
-        if (endpointPath === '') {
-            possiblePath = files[index];
-        }
-        if (await this._isDirectory(possiblePath)) {
-            endpointPath = await this._getControllerPath(possiblePath, files, index + 1);
-        } else if (await this._isFile(`${possiblePath}.js`)) {
-            endpointPath = `${possiblePath}.js`;
-        } else if (files[index + 1] !== undefined) {
-            endpointPath = await this._getControllerPath(endpointPath, files, index + 1);
-        }
-        if (await this._isDirectory(endpointPath)) {
-            endpointPath = `${endpointPath}/index.js`;
-        }
-        return endpointPath;
-    }
-
-    async _getEndpoint() {
-        const basePath = this._cleanUpPath(this._basePath);
-        const requestPath = this._cleanUpPath(this._requestPath);
-        const handlerPath = this._cleanUpPath(this._handlerPath);
-        const fileArray = this._removeBasePathFromRequest(basePath, requestPath);
-        return this._getEndpointPath(handlerPath, fileArray, 0);
+        return this._Config.fromFilePath({modulePath});
     }
 
     async route() {
-        const request = new RequestClient(this._event);
-        const response = new ResponseClient();
         try {
-            return (await this._runEndpoint(request, response)).response;
+            const method = this._event.httpMethod.toLowerCase();
+            return (await this._runEndpoint(method)).response;
         } catch (error) {
-            return (await this._handleError(request, response, error)).response;
+            return this._handleError(this._request, this._response, error);
         }
     }
 }
