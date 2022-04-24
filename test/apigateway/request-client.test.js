@@ -81,6 +81,30 @@ describe('Test Request Client', () => {
             assert.deepEqual(requestClient.body, {body_key: 'body_value'});
         });
     });
+    describe('test context', () => {
+        it('context default is null', () => {
+            assert.equal(requestClient.context, null);
+        });
+        it('context is assignable', () => {
+            const assignableContextClient = new RequestClient(mockData.getData());
+            assignableContextClient.context = {context: true};
+            assert.deepEqual(assignableContextClient.context, {context: true});
+        });
+        it('context is nullable', () => {
+            const nullableContextClient = new RequestClient(mockData.getData());
+            nullableContextClient.context = {nullable: true};
+            assert.deepEqual(nullableContextClient.context, {nullable: true});
+            nullableContextClient.context = null;
+            assert.equal(nullableContextClient.context, null);
+        });
+        it('context is mutatable', () => {
+            const mutatableContextClient = new RequestClient(mockData.getData());
+            mutatableContextClient.context = {key1: 'value1'};
+            assert.deepEqual(mutatableContextClient.context, {key1: 'value1'});
+            mutatableContextClient.context.key2 = 'value2';
+            assert.deepEqual(mutatableContextClient.context, {key1: 'value1', key2: 'value2'});
+        });
+    });
     describe('test bad body', () => {
         it('body is an object', () => {
             assert.equal(requestClientBad.body, '{body_key: "body_value"},#');
@@ -102,6 +126,7 @@ describe('Test Request Client', () => {
                 params: {name: 'me'},
                 path: {proxy: 'hello'},
                 body: {body_key: 'body_value'},
+                context: null,
                 route: `unittest/v1/mock-handler`
             });
         });
@@ -125,6 +150,7 @@ describe('Test Request Client', () => {
                         test: 'test2'
                     }
                 },
+                context: null,
                 route: `unittest/v1/mock-handler`
             });
         });
@@ -146,7 +172,9 @@ describe('Test Request Client', () => {
                 params: {name: 'me'},
                 path: {proxy: 'hello'},
                 route: `unittest/v1/mock-handler`,
-                body: '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
+                body:
+                    '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"',
+                context: null
             });
         });
     });

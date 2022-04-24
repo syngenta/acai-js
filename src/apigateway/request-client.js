@@ -5,6 +5,7 @@ class RequestClient {
     constructor(event) {
         this._event = event;
         this._logger = new Logger();
+        this._context = null;
     }
 
     get method() {
@@ -79,6 +80,14 @@ class RequestClient {
         }
     }
 
+    get context() {
+        return this._context;
+    }
+
+    set context(context) {
+        this._context = context;
+    }
+
     get request() {
         return {
             method: this.method,
@@ -88,6 +97,7 @@ class RequestClient {
             params: this.params,
             path: this.path,
             route: this.route,
+            context: this.context,
             body: this.body
         };
     }
