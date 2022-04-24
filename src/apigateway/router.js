@@ -59,7 +59,7 @@ class Router {
         }
     }
 
-    async _handleError(request, response, error) {
+    async _handleError(_request, response, error) {
         if (this._onError && typeof this._onError === 'function') {
             const onErrorResult = await this._onError(this._request, this._response, error);
             return onErrorResult ? onErrorResult.response : response.response;
