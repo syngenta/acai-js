@@ -94,7 +94,7 @@ declare type HttpPathMethodHandler<TRequest = any, TResponse = any> = (
 type HTTPAuthorizer = ProxyEvent['requestContext']['authorizer'] | ProxyEvent['headers'];
 type HttpParams = NonNullable<ProxyEvent['queryStringParameters']>;
 
-declare type AlcHttpRequestClient<T = unknown> = {
+declare type AlcHttpRequestClient<T = unknown, TContext = unknown | null> = {
     /**
      * method id of apigateway event
      */
@@ -149,6 +149,10 @@ declare type AlcHttpRequestClient<T = unknown> = {
         body: T
 
     }
+    /*
+    * a mutatable context field you can use to pass additional context down to your endpoints, best used with beforeAll functions  
+    */
+    context: TContext
 }
 
 type ResponseHeaders = Record<string, string>;
