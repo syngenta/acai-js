@@ -5,11 +5,6 @@ const RefParser = require('json-schema-ref-parser');
 const mergeAll = require('json-schema-merge-allof');
 
 class Schema {
-    static fromFilePath(schemaPath) {
-        const openAPISchema = yaml.load(fs.readFileSync(schemaPath, 'utf8'));
-        return new Schema(openAPISchema);
-    }
-
     constructor(openAPISchema) {
         this._refParser = RefParser;
         this._openAPISchema = openAPISchema;
@@ -39,6 +34,11 @@ class Schema {
         const schemaWithMergedAllOf = mergeAll(schemaWithInlinedRefs, {ignoreAdditionalProperties: true});
         schemaWithMergedAllOf.additionalProperties = false;
         return schemaWithMergedAllOf;
+    }
+
+    static fromFilePath(schemaPath) {
+        const openAPISchema = yaml.load(fs.readFileSync(schemaPath, 'utf8'));
+        return new Schema(openAPISchema);
     }
 }
 
