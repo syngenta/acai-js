@@ -1,7 +1,7 @@
 const {assert, expect} = require('chai');
 const sinon = require('sinon');
 const NotFoundModuleError = require('../../../src/apigateway/endpoint-config/not-found-module-error');
-const EndpointConfig = require('../../../src').apigateway.EndpointConfig;
+const EndpointConfig = require('../../../src/apigateway/endpoint-config');
 
 describe('Test EndpointConfig', () => {
     it('should create with empty constructor', () => {

@@ -1,12 +1,9 @@
 module.exports = {
     apigateway: {
-        FileConfigReader: require('./apigateway/endpoint-config/file-config-reader'),
-        EndpointConfig: require('./apigateway/endpoint-config'),
         Request: require('./apigateway/request-client'),
         Response: require('./apigateway/response-client'),
         RequestValidator: require('./apigateway/request-validator'),
         ResponseValidator: require('./apigateway/response-validator'),
-        Schema: require('./apigateway/schema'),
         Router: require('./apigateway/router')
     },
     dynamodb: {

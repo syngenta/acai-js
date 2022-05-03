@@ -1,7 +1,8 @@
 const path = require('path');
-const FileConfigReader = require('../../../src').apigateway.FileConfigReader;
-const { assert } = require('chai');
+const {assert} = require('chai');
+
 const randomModule = require('./mocks/random-dir-name');
+const FileConfigReader = require('../../../src/apigateway/endpoint-config/file-config-reader');
 
 describe('FileConfigReader', () => {
     it('should read config file from folder without index.js', () => {
@@ -17,7 +18,7 @@ describe('FileConfigReader', () => {
     });
 
     it('should fail if path not found', () => {
-        const modulePath = path.join('random', 'module', 'name')
-        assert.throws(() => new FileConfigReader({modulePath}), 'can\'t resolve module random/module/name');
+        const modulePath = path.join('random', 'module', 'name');
+        assert.throws(() => new FileConfigReader({modulePath}), "can't resolve module random/module/name");
     });
 });

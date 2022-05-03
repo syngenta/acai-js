@@ -4,7 +4,7 @@ const chaiAsPromised = require('chai-as-promised');
 const RequestClient = require('../../src').apigateway.Request;
 const ResponseClient = require('../../src').apigateway.Response;
 const ResponseValidator = require('../../src').apigateway.ResponseValidator;
-const Schema = require('../../src').apigateway.Schema;
+const Schema = require('../../src/apigateway/schema');
 const mockData = require('./mock-data');
 
 use(chaiAsPromised);
