@@ -7,8 +7,8 @@ const mockPermissions = require('./mock-permissions-middleware');
 describe('Test Router', () => {
     let event;
     beforeEach(() => {
-        event = { httpMethod: 'get', requestContext: {}};
-    })
+        event = {httpMethod: 'get', requestContext: {}};
+    });
     describe('test route', () => {
         it('router: found app route', async () => {
             this.router = new Router({
@@ -198,175 +198,188 @@ describe('Test Router', () => {
             });
             const response = await this.router.route();
             assert.equal(returnedCode, response.statusCode);
-
         });
         it('should return 404 error if config is not exist', async () => {
             class Config {
-                ifExist(){
+                ifExist() {
                     return false;
                 }
-                static fromFilePath = () => {
+                static fromFilePath() {
                     return new Config();
                 }
             }
-            const router = new Router({
-                event,
-            }, {Config});
-            const result = await router.route()
+            const router = new Router(
+                {
+                    event
+                },
+                {Config}
+            );
+            const result = await router.route();
             expect(result.statusCode).to.be.eq(404);
-        })
-
+        });
 
         it('should return 403 error if config is exist and method is not exist', async () => {
             class Config {
-                ifExist(){
+                ifExist() {
                     return true;
                 }
 
-                ifMethodExist(){
+                ifMethodExist() {
                     return false;
                 }
 
-                static fromFilePath = () => {
+                static fromFilePath() {
                     return new Config();
                 }
             }
-            const router = new Router({
-                event,
-            }, {Config});
-            const result = await router.route()
+            const router = new Router(
+                {
+                    event
+                },
+                {Config}
+            );
+            const result = await router.route();
             expect(result.statusCode).to.be.eq(403);
-        })
+        });
 
         it('should return 500 error if handler throws something', async () => {
             class Config {
-                ifExist(){
+                ifExist() {
                     return true;
                 }
 
-                ifMethodExist(){
+                ifMethodExist() {
                     return true;
                 }
 
-                getRequirementsByMethodName(){
+                getRequirementsByMethodName() {
                     return {};
                 }
 
-                getHandlerByMethodName(){
+                getHandlerByMethodName() {
                     return () => {
-                        throw new Error()
-                    }
+                        throw new Error();
+                    };
                 }
 
-                static fromFilePath = () => {
+                static fromFilePath() {
                     return new Config();
                 }
-
             }
 
             class PathResolverMock {
-                path = '$$$randomString'
+                constructor() {
+                    this.path = '$$$randomString';
+                }
             }
 
-
-            const router = new Router({
-                event,
-            }, {Config, PathResolverMock});
-            const result = await router.route()
+            const router = new Router(
+                {
+                    event
+                },
+                {Config, PathResolverMock}
+            );
+            const result = await router.route();
             expect(result.statusCode).to.be.eq(500);
-        })
+        });
 
         it('should call afterAll callback', async () => {
             class Config {
-                ifExist(){
+                ifExist() {
                     return true;
                 }
 
-                ifMethodExist(){
+                ifMethodExist() {
                     return true;
                 }
 
-                getRequirementsByMethodName(){
+                getRequirementsByMethodName() {
                     return {};
                 }
 
-                getHandlerByMethodName(){
+                getHandlerByMethodName() {
                     return () => () => ({
                         response: {}
-                    })
+                    });
                 }
 
-                static fromFilePath = () => {
+                static fromFilePath() {
                     return new Config();
                 }
-
             }
 
             class PathResolverMock {
-                path = '$$$randomString'
+                constructor() {
+                    this.path = '$$$randomString';
+                }
             }
 
             const afterAll = sinon.fake();
 
-            const router = new Router({
-                event,
-                afterAll,
-            }, {Config, PathResolverMock});
+            const router = new Router(
+                {
+                    event,
+                    afterAll
+                },
+                {Config, PathResolverMock}
+            );
 
-
-            await router.route()
+            await router.route();
             expect(afterAll.getCalls().length).to.be.eq(1);
-        })
+        });
         it('should validate response', async () => {
             class Config {
-                ifExist(){
+                ifExist() {
                     return true;
                 }
 
-                ifMethodExist(){
+                ifMethodExist() {
                     return true;
                 }
 
-                getRequirementsByMethodName(){
+                getRequirementsByMethodName() {
                     return {
                         responseBody: '$$fakeName'
                     };
                 }
 
-                getHandlerByMethodName(){
+                getHandlerByMethodName() {
                     return () => () => ({
                         response: {}
-                    })
+                    });
                 }
 
-                static fromFilePath = () => {
+                static fromFilePath() {
                     return new Config();
                 }
-
             }
 
             class PathResolverMock {
-                path = '$$$randomString'
+                constructor() {
+                    this.path = '$$$randomString';
+                }
             }
 
-            const isValid = sinon.fake(() => Promise.resolve())
-
+            const isValid = sinon.fake(() => Promise.resolve());
 
             class ResponseValidatorMock {
-                isValid = isValid
+                constructor() {
+                    this.isValid = isValid;
+                }
             }
 
+            const router = new Router(
+                {
+                    event
+                },
+                {
+                    Config,
+                    PathResolver: PathResolverMock,
+                    ResponseValidator: ResponseValidatorMock
+                }
+            );
 
-            const router = new Router({
-                event,
-            }, {
-                Config,
-                PathResolver: PathResolverMock,
-                ResponseValidator: ResponseValidatorMock
-            });
-
-
-            await router.route()
+            await router.route();
             expect(isValid.getCalls().length).to.be.eq(1);
         });
     });
