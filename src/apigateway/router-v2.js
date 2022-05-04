@@ -1,7 +1,9 @@
-const EndpointConfig = require('./endpoint-config');
+const EndpointConfig = require('./endpoint/config');
 const Logger = require('../common/logger');
 const LoggerSetup = require('../common/setup-logger.js');
+const RequestClient = require('./request-client');
 const RequestValidator = require('./request-validator');
+const ResponseClient = require('./response-client');
 const ResponseValidator = require('./response-validator');
 
 class Router {
@@ -24,50 +26,52 @@ class Router {
         try {
             const request = new RequestClient(this.__event);
             const response = new ResponseClient();
-            return await this.__runRoute(request, response);
+            const routeResult = await this.__runRoute(request, response);
+            return routeResult.response;
         } catch (error) {
-            return await this.__handleError(request, response, error);
+            const errorResult = await this.__handleError(request, response, error);
+            return errorResult.response;
         }
     }
 
-    async __runRoute(request, reponse) {
-        const endpoint = EndpointConfig.getEndpoint(request, reponse);
+    async __runRoute(request, response) {
+        const endpoint = await EndpointConfig.getEndpoint(request, response, this.__basePath, this.__controllerPath);
         if (!response.hasErrors && typeof this.__beforeAll === 'function') {
-            await this.__beforeAll(request, reponse, endpoint.requirements);
+            await this.__beforeAll(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasBefore) {
-            await endpoint.before(request, reponse, endpoint.requirements);
+            await endpoint.before(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasAuth) {
-            await this.__withAuth(request, reponse, endpoint.requirements);
+            await this.__withAuth(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasRequirements) {
-            await this.__requestValidator(request, reponse, endpoint.requirements);
+            await this.__requestValidator(request, response, endpoint.requirements);
         }
         if (!response.hasErrors) {
-            await endpoint.run(endpoint.dataClass(request) ? endpoint.hasDataClass : request, reponse);
+            await endpoint.run(endpoint.dataClass(request) ? endpoint.hasDataClass : request, response);
         }
         if (!response.hasErrors && endpoint.hasResponseBody) {
-            await this.__responseValidator(request, reponse, endpoint.requirements);
+            await this.__responseValidator(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasAfter) {
-            await endpoint.after(request, reponse, endpoint.requirements);
+            await endpoint.after(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && typeof this.__afterAll === 'function') {
-            await this.__afterAll(request, reponse, endpoint.requirements);
+            await this.__afterAll(request, response, endpoint.requirements);
         }
-        return response.awsResponse;
+        return response;
     }
 
     async __handleError(request, response, error) {
-        this.__logError(request, response, error);
         if (typeof this.__onError === 'function') {
             this.__onError(request, response, error);
             return response;
         }
+        this.__logError(request, response, error);
         response.code = 500;
         response.setError('server', 'internal server error');
-        return response.awsResponse;
+        return response;
     }
 
     __logError(request, response, error) {
@@ -75,10 +79,12 @@ class Router {
             this.__logger.error({
                 error_messsage: error.message,
                 error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
-                event: this._event,
+                event: this.__event,
                 request: request.request,
-                response: response
+                response: response.response
             });
         }
     }
 }
+
+module.exports = EndpointConfig;

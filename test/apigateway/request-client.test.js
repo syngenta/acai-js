@@ -12,7 +12,7 @@ describe('Test Request Client', () => {
     const requestClientOffline = new RequestClient(mockData.getDataOffline());
     describe('test constructor', () => {
         it('client took event', () => {
-            assert.equal(true, '_event' in requestClient);
+            assert.equal(true, '__event' in requestClient);
         });
     });
     describe('test method', () => {
