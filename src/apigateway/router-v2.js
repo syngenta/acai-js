@@ -38,14 +38,11 @@ class Router {
         if (!response.hasErrors && endpoint.hasBefore) {
             await endpoint.before(request, reponse, endpoint.requirements);
         }
-        if (!response.hasErrors && endpoint.hasRequirements) {
-            await this.__requestValidator(request, reponse, endpoint.requirements);
-        }
         if (!response.hasErrors && endpoint.hasAuth) {
             await this.__withAuth(request, reponse, endpoint.requirements);
         }
-        if (!response.hasErrors && endpoint.hasValidate) {
-            await endpoint.validate(request, reponse, endpoint.requirements);
+        if (!response.hasErrors && endpoint.hasRequirements) {
+            await this.__requestValidator(request, reponse, endpoint.requirements);
         }
         if (!response.hasErrors) {
             await endpoint.run(endpoint.dataClass(request) ? endpoint.hasDataClass : request, reponse);
