@@ -59,10 +59,9 @@ class RecordClient {
     }
 
     get timeToLiveExpired() {
-        if (this._record.userIdentity && this._record.userIdentity.type && this._record.userIdentity.principalId) {
-            return true;
-        }
-        return false;
+        return Boolean(
+            this._record.userIdentity && this._record.userIdentity.type && this._record.userIdentity.principalId
+        );
     }
 }
 
