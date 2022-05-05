@@ -27,6 +27,10 @@ class Endpoint {
         return this.__endpoint[this.__method];
     }
 
+    get httpMethod() {
+        return this.__method;
+    }
+
     async after(request, response) {
         return this.requirements.after(request, response, this.requirements);
     }

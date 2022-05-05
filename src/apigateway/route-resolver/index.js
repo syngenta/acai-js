@@ -8,7 +8,7 @@ class RouteResolver {
         } catch (error) {
             response.code = 500;
             response.setError('router-config', error.message);
-            return false;
+            return {};
         }
     }
 

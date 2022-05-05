@@ -1,4 +1,5 @@
 const fs = require('fs');
+const RouteError = require('./route-error');
 
 class DirectoryResolver {
     resolve(request, response, base, controller) {
@@ -6,9 +7,9 @@ class DirectoryResolver {
             const cleanedPaths = this.cleanUpPaths(request, base, controller);
             return this.getEndpointPath(cleanedPaths);
         } catch (error) {
-            response.code = 500;
-            response.setError('router-config', error.message);
-            return false;
+            response.code = error.code;
+            response.setError(error.key, error.message);
+            return '';
         }
     }
 
@@ -33,12 +34,15 @@ class DirectoryResolver {
     getEndpointPath({controllerFilePrefix, requestedFilePath}) {
         const endpointPath = `${controllerFilePrefix}/${requestedFilePath}`;
         const isDirectory = this.isDirectory(endpointPath);
-        const isFile = this.isDirectory(`${endpointPath}.js`);
+        const isFile = this.isFile(`${endpointPath}.js`);
         if (isDirectory && isFile) {
-            throw new Error('can not have file and directory with the same name in the same directory');
+            throw new RouteError(500, 'router-config', 'file & directory share name in the same directory');
         }
         if (isDirectory) {
             return `${endpointPath}/index.js`;
+        }
+        if (!isFile) {
+            throw new RouteError(404, 'url', 'endpoint not found');
         }
         return `${endpointPath}.js`;
     }

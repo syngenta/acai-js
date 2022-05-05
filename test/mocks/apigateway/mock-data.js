@@ -1,4 +1,4 @@
-exports.getData = () => {
+exports.getData = (suffix = '') => {
     return {
         headers: {
             'x-api-key': 'SOME-KEY',
@@ -17,7 +17,7 @@ exports.getData = () => {
         pathParameters: {
             proxy: 'hello'
         },
-        path: `unittest/v1/mock-handler`,
+        path: `unittest/v1/mock-handler${suffix}`,
         resource: '/{proxy+}',
         httpMethod: 'GET',
         queryStringParameters: {

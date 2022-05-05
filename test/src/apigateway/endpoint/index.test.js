@@ -3,8 +3,14 @@ const mockData = require('../../../mocks/apigateway/mock-data');
 const Endpoint = require('../../../../src/apigateway/endpoint');
 const {Request, Response} = require('../../../../src').apigateway;
 
-describe('Test Endpiont', () => {
+describe('Test Endpoint', () => {
     const module = require('../../../mocks/apigateway/mock-handler');
+    describe('test basic endpoint settings', () => {
+        const endpoint = new Endpoint(module, 'GET');
+        it('endpoint: no http method', async () => {
+            assert.equal(endpoint.httpMethod, 'get');
+        });
+    });
     describe('test basic endpoint properties', () => {
         const endpoint = new Endpoint(module, 'GET');
         it('endpoint: no before', async () => {

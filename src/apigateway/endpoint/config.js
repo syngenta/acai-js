@@ -6,20 +6,19 @@ class EndpointConfig {
     static getEndpoint(request, response, base, controller) {
         const resolver = new RouteResolver();
         const endpoint = resolver.resolve(request, response, base, controller);
-        if (endpoint) {
+        if (!response.hasErrors) {
             const endpointModule = EndpointConfig.getModule(endpoint, response);
             return new Endpoint(endpointModule, request.method);
         }
-        return false;
+        return new Endpoint({}, 'error');
     }
 
     static getModule(endpoint, response) {
         try {
             return require(path.join(process.cwd(), endpoint));
         } catch (error) {
-            response.code = 404;
-            response.setError('url', 'endpoint not found');
-            return false;
+            response.code = 500;
+            response.setError('router', error.message);
         }
     }
 }
