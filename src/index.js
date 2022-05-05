@@ -2,8 +2,8 @@ module.exports = {
     apigateway: {
         Request: require('./apigateway/request-client'),
         Response: require('./apigateway/response-client'),
-        RequestValidator: require('./apigateway/request-validator'),
-        ResponseValidator: require('./apigateway/response-validator'),
+        RequestValidator: require('./apigateway/validator/request-validator'),
+        ResponseValidator: require('./apigateway/validator/response-validator'),
         Schema: require('./apigateway/schema'),
         Router: require('./apigateway/router')
     },

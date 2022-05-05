@@ -1,7 +1,7 @@
 class Endpoint {
     constructor(endpoint, method) {
         this.__endpoint = endpoint;
-        this.__method = method;
+        this.__method = method.toLowerCase();
     }
 
     get requirements() {
@@ -12,7 +12,7 @@ class Endpoint {
     }
 
     get hasBefore() {
-        if (typeof this.requirements.before === 'function') {
+        if (this.requirements && typeof this.requirements.before === 'function') {
             return true;
         }
         return false;
@@ -23,8 +23,15 @@ class Endpoint {
     }
 
     get hasAfter() {
-        if (typeof this.requirements.after === 'function') {
+        if (this.requirements && typeof this.requirements.after === 'function') {
             return true;
+        }
+        return false;
+    }
+
+    get method() {
+        if (this.__endpoint) {
+            return this.__endpoint[this.__method];
         }
         return false;
     }
@@ -34,18 +41,21 @@ class Endpoint {
     }
 
     get hasDataClass() {
-        if (this.requirements.dataClass) {
+        if (this.requirements && this.requirements.dataClass) {
             return true;
         }
         return false;
     }
 
     dataClass(request) {
-        return new this.requirements.dataClass(request);
+        if (this.hasDataClass) {
+            return new this.requirements.dataClass(request);
+        }
     }
 
-    async run(request, response, requirements) {
-        return this.__endpoint[this.__method](request, response);
+    async run(request, response) {
+        const input = this.dataClass(request) ? this.hasDataClass : request;
+        return this.__endpoint[this.__method](input, response);
     }
 }
 

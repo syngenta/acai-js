@@ -1,171 +1,92 @@
-const path = require('path');
-const fs = require('fs');
-
-const RequestClient = require('./request-client');
-const ResponseClient = require('./response-client');
-const RequestValidator = require('./request-validator');
-const ResponseValidator = require('./response-validator');
-const Schema = require('./schema');
+const EndpointConfig = require('./endpoint/config');
 const Logger = require('../common/logger');
+const LoggerSetup = require('../common/setup-logger.js');
+const RequestClient = require('./request-client');
+const RequestValidator = require('./validator/request-validator');
+const ResponseClient = require('./response-client');
+const ResponseValidator = require('./validator/response-validator');
 
 class Router {
     constructor(params) {
-        this._event = params.event;
-        this._requestPath = params.event.path;
-        this._beforeAll = params.beforeAll;
-        this._afterAll = params.afterAll;
-        this._basePath = params.basePath;
-        this._handlerPath = params.handlerPath;
-        this._onError = params.onError;
-        this._logger = new Logger();
-        this._schemaPath = params.schemaPath;
-        this._setUpLogger(params.globalLogger);
-    }
-
-    _setUpLogger(globalLogger = false) {
-        if (globalLogger) {
-            require('../common/setup-logger.js').setUpLogger();
-        }
-    }
-
-    async _handleError(request, response, error) {
-        if (typeof this._onError === 'function') {
-            this._onError(request, response, error);
-        } else if (!response.hasErrors) {
-            response.code = 500;
-            response.setError('server', 'internal server error');
-        }
-        if (!process.env.unittest) {
-            this._logger.error({
-                error_messsage: error.message,
-                error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
-                event: this._event,
-                request: request.request,
-                response: response
-            });
-        }
-        return response;
-    }
-
-    async _runEndpoint(request, response) {
-        const endpointFile = await this._getEndpoint();
-        const endpoint = this._getExistingEndpoint(endpointFile, response);
-        const method = this._getExistingMethod(endpoint, response);
-        const schema = new Schema(this._schemaPath);
-        const requestValidator = new RequestValidator(request, response, schema);
-        const responseValidator = new ResponseValidator(request, response, schema);
-
-        if (!response.hasErrors && endpoint.requirements && endpoint.requirements[method]) {
-            await requestValidator.isValid(endpoint.requirements[method]);
-        }
-        if (!response.hasErrors && this._beforeAll && typeof this._beforeAll === 'function') {
-            await this._beforeAll(request, response, endpoint.requirements);
-        }
-        if (!response.hasErrors) {
-            await endpoint[method](request, response);
-        }
-        if (
-            !response.hasErrors &&
-            endpoint.requirements &&
-            endpoint.requirements[method] &&
-            endpoint.requirements[method]['responseBody']
-        ) {
-            const rule = endpoint.requirements[method]['responseBody'];
-            await responseValidator.isValid(rule);
-        }
-        if (!response.hasErrors && this._afterAll && typeof this._afterAll === 'function') {
-            await this._afterAll(request, response, endpoint.requirements);
-        }
-        return response;
-    }
-
-    _getExistingEndpoint(endpointFile, response) {
-        try {
-            return require(path.join(process.cwd(), endpointFile));
-        } catch (error) {
-            response.code = 404;
-            response.setError('url', 'endpoint not found');
-            return;
-        }
-    }
-
-    _getExistingMethod(endpoint, response) {
-        const method = this._event.httpMethod.toLowerCase();
-        if (typeof endpoint[method] !== 'function') {
-            response.code = 403;
-            response.setError('method', 'method not allowed');
-        }
-        return method;
-    }
-
-    _cleanUpPath(dirtyPath) {
-        if (dirtyPath.startsWith('/')) {
-            dirtyPath = dirtyPath.substr(1);
-        }
-        if (dirtyPath.endsWith('/')) {
-            dirtyPath = dirtyPath.slice(0, -1);
-        }
-        return dirtyPath;
-    }
-
-    _removeBasePathFromRequest(basePath, requestPath) {
-        const baseArray = basePath.split('/');
-        const requestArray = requestPath.split('/');
-        return requestArray.filter((item) => !baseArray.includes(item));
-    }
-
-    async _isDirectory(dirPath) {
-        try {
-            return await fs.lstatSync(dirPath).isDirectory();
-        } catch (error) {
-            return false;
-        }
-    }
-
-    async _isFile(filePath) {
-        try {
-            return await fs.lstatSync(filePath).isFile();
-        } catch (error) {
-            return false;
-        }
-    }
-
-    async _getEndpointPath(endpointPath, files, index) {
-        if (files[index] === undefined) {
-            return endpointPath;
-        }
-        let possiblePath = `${endpointPath}/${files[index]}`;
-        if (endpointPath === '') {
-            possiblePath = files[index];
-        }
-        if (await this._isDirectory(possiblePath)) {
-            endpointPath = await this._getControllerPath(possiblePath, files, index + 1);
-        } else if (await this._isFile(`${possiblePath}.js`)) {
-            endpointPath = `${possiblePath}.js`;
-        } else if (files[index + 1] !== undefined) {
-            endpointPath = await this._getControllerPath(endpointPath, files, index + 1);
-        }
-        if (await this._isDirectory(endpointPath)) {
-            endpointPath = `${endpointPath}/index.js`;
-        }
-        return endpointPath;
-    }
-
-    async _getEndpoint() {
-        const basePath = this._cleanUpPath(this._basePath);
-        const requestPath = this._cleanUpPath(this._requestPath);
-        const handlerPath = this._cleanUpPath(this._handlerPath);
-        const fileArray = this._removeBasePathFromRequest(basePath, requestPath);
-        return this._getEndpointPath(handlerPath, fileArray, 0);
+        this.__event = params.event;
+        this.__basePath = params.basePath;
+        this.__controllerPath = params.controllerPath || params.handlerPath;
+        this.__beforeAll = params.beforeAll;
+        this.__afterAll = params.afterAll;
+        this.__withAuth = params.withAuth;
+        this.__onError = params.onError;
+        this.__schema = params.schema || params.schemaPath;
+        this.__logger = new Logger();
+        this.__requestValidator = new RequestValidator();
+        this.__responseValidator = new ResponseValidator();
+        LoggerSetup.setUpLogger(params.globalLogger);
     }
 
     async route() {
-        const request = new RequestClient(this._event);
+        const request = new RequestClient(this.__event);
         const response = new ResponseClient();
         try {
-            return (await this._runEndpoint(request, response)).response;
+            const routeResult = await this.__runRoute(request, response);
+            return routeResult.response;
         } catch (error) {
-            return (await this._handleError(request, response, error)).response;
+            const errorResult = await this.__handleError(request, response, error);
+            return errorResult.response;
+        }
+    }
+
+    async __runRoute(request, response) {
+        const endpoint = EndpointConfig.getEndpoint(request, response, this.__basePath, this.__controllerPath);
+        if (!response.hasErrors && typeof this.__beforeAll === 'function') {
+            await this.__beforeAll(request, response, endpoint.requirements);
+        }
+        if (!response.hasErrors && endpoint.hasAuth) {
+            await this.__withAuth(request, response, endpoint.requirements);
+        }
+        if (!response.hasErrors && endpoint.hasRequirements) {
+            await this.__requestValidator(request, response, endpoint.requirements);
+        }
+        if (!response.hasErrors && endpoint.hasBefore) {
+            await endpoint.before(request, response, endpoint.requirements);
+        }
+        if (!response.hasErrors && typeof endpoint.method !== 'function') {
+            response.code = 403;
+            response.setError('method', 'method not allowed');
+        }
+        if (!response.hasErrors) {
+            await endpoint.run(request, response);
+        }
+        if (!response.hasErrors && endpoint.hasResponseBody) {
+            await this.__responseValidator(request, response, endpoint.requirements);
+        }
+        if (!response.hasErrors && endpoint.hasAfter) {
+            await endpoint.after(request, response, endpoint.requirements);
+        }
+        if (!response.hasErrors && typeof this.__afterAll === 'function') {
+            await this.__afterAll(request, response, endpoint.requirements);
+        }
+        return response;
+    }
+
+    async __handleError(request, response, error) {
+        if (typeof this.__onError === 'function') {
+            this.__onError(request, response, error);
+            return response;
+        }
+        this.__logError(request, response, error);
+        response.code = 500;
+        response.setError('server', 'internal server error');
+        return response;
+    }
+
+    __logError(request, response, error) {
+        if (!process.env.unittest) {
+            this.__logger.error({
+                error_messsage: error.message,
+                error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
+                event: this.__event,
+                request: request.request,
+                response: response.response
+            });
         }
     }
 }
