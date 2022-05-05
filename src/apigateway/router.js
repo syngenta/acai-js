@@ -46,7 +46,7 @@ class Router {
             await this.__requestValidator(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasBefore) {
-            await endpoint.before(request, response, endpoint.requirements);
+            await endpoint.before(request, response);
         }
         if (!response.hasErrors && typeof endpoint.method !== 'function') {
             response.code = 403;
@@ -59,7 +59,7 @@ class Router {
             await this.__responseValidator(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasAfter) {
-            await endpoint.after(request, response, endpoint.requirements);
+            await endpoint.after(request, response);
         }
         if (!response.hasErrors && typeof this.__afterAll === 'function') {
             await this.__afterAll(request, response, endpoint.requirements);
