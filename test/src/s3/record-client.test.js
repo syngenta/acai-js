@@ -1,5 +1,5 @@
 const {assert} = require('chai');
-const RecordClient = require('../../src').s3.Record;
+const RecordClient = require('../../../src').s3.Record;
 const mockData = require('./mockData');
 
 describe('Test S3 Record Client', async () => {

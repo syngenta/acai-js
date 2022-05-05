@@ -1,5 +1,5 @@
 const {assert} = require('chai');
-const RecordClient = require('../../src').dynamodb.Record;
+const RecordClient = require('../../../src').dynamodb.Record;
 const mockData = require('./mockData');
 
 describe('Test DynamoDB Record Client', async () => {

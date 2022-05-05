@@ -1,5 +1,5 @@
 const {assert} = require('chai');
-const RecordClient = require('../../src').sqs.Record;
+const RecordClient = require('../../../src').sqs.Record;
 const mockData = require('./mockData');
 
 describe('Test SQS Record Client', async () => {

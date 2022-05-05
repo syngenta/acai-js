@@ -1,5 +1,5 @@
 const {assert} = require('chai');
-require('../../src').logger.setup();
+require('../../../src').logger.setup();
 
 describe('Test SetUp Logger', () => {
     describe('test constructor', () => {
@@ -16,7 +16,7 @@ describe('Test SetUp Logger', () => {
             assert.equal(true, '_logLevelMap' in global.logger);
         });
         it('logger: doesnt run twice', () => {
-            require('../../src').logger.setup();
+            require('../../../src').logger.setup();
             assert.equal(true, '_logLevelMap' in global.logger);
         });
     });

@@ -1,6 +1,6 @@
 const {assert, expect} = require('chai');
 const sinon = require('sinon');
-const {Router} = require('../../src').apigateway;
+const {Router} = require('../../../src').apigateway;
 const mockData = require('./mock-data');
 const mockPermissions = require('./mock-permissions-middleware');
 
@@ -10,8 +10,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event: await mockData.getApiGateWayRoute(),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml'
+                handlerPath: 'test/src/apigateway/',
+                schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
             assert.deepEqual(results, {
@@ -27,8 +27,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event: await mockData.getApiGateWayRoute(),
                 basePath: 'unittest/v1',
-                handlerPath: '/test/apigateway',
-                schemaPath: 'test/openapi.yml'
+                handlerPath: '/test/src/apigateway',
+                schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
             assert.deepEqual(results, {
@@ -44,8 +44,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event: await mockData.getApiGateWayRoute('client-'),
                 basePath: 'client-unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml'
+                handlerPath: 'test/src/apigateway/',
+                schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
             assert.deepEqual(results, {
@@ -61,8 +61,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event: await mockData.getApiGateWayRoute('', '-fail'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml'
+                handlerPath: 'test/src/apigateway/',
+                schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
             assert.deepEqual(results, {
@@ -78,8 +78,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event: await mockData.getApiGateWayRoute('', '', 'GET'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml'
+                handlerPath: 'test/src/apigateway/',
+                schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
             assert.deepEqual(results, {
@@ -95,8 +95,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event: await mockData.getApiGateWayRouteNoRequirements(),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml'
+                handlerPath: 'test/src/apigateway/',
+                schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
             assert.deepEqual(results, {
@@ -112,8 +112,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event: await mockData.getApiGateWayRoute('', '', 'PATCH'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml',
+                handlerPath: 'test/src/apigateway/',
+                schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: mockPermissions.checkPermissions
             });
             const results = await router.route();
@@ -132,8 +132,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml',
+                handlerPath: 'test/src/apigateway/',
+                schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: mockPermissions.checkPermissions
             });
             const results = await router.route();
@@ -153,8 +153,8 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/apigateway/',
-                schemaPath: 'test/openapi.yml',
+                handlerPath: 'test/src/apigateway/',
+                schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: () => {
                     throw error;
                 },

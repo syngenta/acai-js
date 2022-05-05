@@ -1,10 +1,10 @@
 const {assert, expect, use} = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 
-const RequestClient = require('../../src').apigateway.Request;
-const ResponseClient = require('../../src').apigateway.Response;
-const ResponseValidator = require('../../src').apigateway.ResponseValidator;
-const Schema = require('../../src').apigateway.Schema;
+const RequestClient = require('../../../src').apigateway.Request;
+const ResponseClient = require('../../../src').apigateway.Response;
+const ResponseValidator = require('../../../src').apigateway.ResponseValidator;
+const Schema = require('../../../src').apigateway.Schema;
 const mockData = require('./mock-data');
 
 use(chaiAsPromised);
@@ -12,7 +12,7 @@ use(chaiAsPromised);
 describe('Test ResponseValidator', () => {
     const eventClient = new RequestClient(mockData.getValidBodyData());
     const responseClient = new ResponseClient();
-    const schema = Schema.fromFilePath('test/openapi.yml');
+    const schema = Schema.fromFilePath('test/mocks/openapi.yml');
     const requestValidator = new ResponseValidator(eventClient, responseClient, schema);
 
     describe('corner cases', () => {

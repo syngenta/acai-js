@@ -1,5 +1,5 @@
 const {assert} = require('chai');
-const RequestClient = require('../../src').apigateway.Request;
+const RequestClient = require('../../../src').apigateway.Request;
 const mockData = require('./mock-data');
 
 describe('Test Request Client', () => {

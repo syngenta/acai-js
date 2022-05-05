@@ -1,5 +1,5 @@
 const {assert} = require('chai');
-const EventClient = require('../../src').dynamodb.Event;
+const EventClient = require('../../../src').dynamodb.Event;
 const mockData = require('./mockData');
 
 describe('Test DynamoDB Event Client', async () => {

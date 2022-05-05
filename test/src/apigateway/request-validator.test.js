@@ -1,14 +1,14 @@
 const {assert} = require('chai');
-const RequestClient = require('../../src').apigateway.Request;
-const ResponseClient = require('../../src').apigateway.Response;
-const RequestValidator = require('../../src').apigateway.RequestValidator;
-const Schema = require('../../src').apigateway.Schema;
+const RequestClient = require('../../../src').apigateway.Request;
+const ResponseClient = require('../../../src').apigateway.Response;
+const RequestValidator = require('../../../src').apigateway.RequestValidator;
+const Schema = require('../../../src').apigateway.Schema;
 const mockData = require('./mock-data');
 
 describe('Test RequestValidator', () => {
     const eventClient = new RequestClient(mockData.getValidBodyData());
     const responseClient = new ResponseClient();
-    const schema = Schema.fromFilePath('test/openapi.yml');
+    const schema = Schema.fromFilePath('test/mocks/openapi.yml');
     const requestValidator = new RequestValidator(eventClient, responseClient, schema);
     describe('test constructor', () => {
         it('client took other clients', () => {
@@ -85,7 +85,7 @@ describe('Test RequestValidator', () => {
         it('invalid json body request: extra params', async () => {
             const eventClient2 = new RequestClient(mockData.getInvalidBodyData());
             const responseClient2 = new ResponseClient();
-            const schema = Schema.fromFilePath('test/openapi.yml');
+            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
             responseClient2._body = {};
             await requestValidator2._validateRequest(
@@ -112,7 +112,7 @@ describe('Test RequestValidator', () => {
     it('invalid json: nullable field', async () => {
         const eventClient2 = new RequestClient(mockData.getBodyDataWithNullableField());
         const responseClient2 = new ResponseClient();
-        const schema = Schema.fromFilePath('test/openapi.yml');
+        const schema = Schema.fromFilePath('test/mocks/openapi.yml');
         const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
         await requestValidator2._validateRequest(
@@ -135,7 +135,7 @@ describe('Test RequestValidator', () => {
     it('valid json: complex schema with allOfs', async () => {
         const eventClient2 = new RequestClient(mockData.getBodyDataWithComplexObject());
         const responseClient2 = new ResponseClient();
-        const schema = Schema.fromFilePath('test/openapi.yml')
+        const schema = Schema.fromFilePath('test/mocks/openapi.yml');
         const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
         await requestValidator2._validateRequest(
@@ -150,7 +150,7 @@ describe('Test RequestValidator', () => {
     it('invalid json: complex schema with allOfs', async () => {
         const eventClient2 = new RequestClient(mockData.getBodyDataWithInvalidComplexObject());
         const responseClient2 = new ResponseClient();
-        const schema = Schema.fromFilePath('test/openapi.yml')
+        const schema = Schema.fromFilePath('test/mocks/openapi.yml');
         const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
         await requestValidator2._validateRequest(

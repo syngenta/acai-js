@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 require('chai').should();
-const ResponseClient = require('../../src').apigateway.Response;
+const ResponseClient = require('../../../src').apigateway.Response;
 
 describe('Test Response Client', () => {
     const responseClient = new ResponseClient();
