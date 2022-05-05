@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const RecordClient = require('../../../src').sqs.Record;
-const mockData = require('./mockData');
+const mockData = require('../../mocks/sqs/mock-data');
 
 describe('Test SQS Record Client', async () => {
     const record = new RecordClient(mockData.getData().Records[0]);

@@ -1,17 +1,13 @@
 const {assert, expect, use} = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-
-const RequestClient = require('../../../src').apigateway.Request;
-const ResponseClient = require('../../../src').apigateway.Response;
-const ResponseValidator = require('../../../src').apigateway.ResponseValidator;
-const Schema = require('../../../src').apigateway.Schema;
-const mockData = require('./mock-data');
+const {Request, Response, ResponseValidator, Schema} = require('../../../src').apigateway;
+const mockData = require('../../mocks/apigateway/mock-data');
 
 use(chaiAsPromised);
 
 describe('Test ResponseValidator', () => {
-    const eventClient = new RequestClient(mockData.getValidBodyData());
-    const responseClient = new ResponseClient();
+    const eventClient = new Request(mockData.getValidBodyData());
+    const responseClient = new Response();
     const schema = Schema.fromFilePath('test/mocks/openapi.yml');
     const requestValidator = new ResponseValidator(eventClient, responseClient, schema);
 

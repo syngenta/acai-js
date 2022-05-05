@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const EventClient = require('../../../src').s3.Event;
-const mockData = require('./mockData');
+const mockData = require('../../mocks/s3/mock-data');
 
 describe('Test S3 Event Client', async () => {
     const eventClient = await new EventClient(mockData.getData(), {globalLogger: true});

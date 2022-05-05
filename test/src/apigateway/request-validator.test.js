@@ -3,7 +3,7 @@ const RequestClient = require('../../../src').apigateway.Request;
 const ResponseClient = require('../../../src').apigateway.Response;
 const RequestValidator = require('../../../src').apigateway.RequestValidator;
 const Schema = require('../../../src').apigateway.Schema;
-const mockData = require('./mock-data');
+const mockData = require('../../mocks/apigateway/mock-data');
 
 describe('Test RequestValidator', () => {
     const eventClient = new RequestClient(mockData.getValidBodyData());

@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const EventClient = require('../../../src').sqs.Event;
-const mockData = require('./mockData');
+const mockData = require('../../mocks/sqs/mock-data');
 
 describe('Test SQS Event Client', async () => {
     const eventClient = await new EventClient(mockData.getData());

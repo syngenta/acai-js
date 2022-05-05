@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const RecordClient = require('../../../src').dynamodb.Record;
-const mockData = require('./mockData');
+const mockData = require('../../mocks/dynamodb/mock-data');
 
 describe('Test DynamoDB Record Client', async () => {
     describe('test dynamoDB non-ttl stream', async () => {
