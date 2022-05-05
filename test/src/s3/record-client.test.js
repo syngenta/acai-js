@@ -4,11 +4,6 @@ const mockData = require('../../mocks/s3/mock-data');
 
 describe('Test S3 Record Client', async () => {
     const record = new RecordClient(mockData.getData().Records[0]);
-    describe('test constructor', () => {
-        it('s3: client took event', () => {
-            assert.equal(true, '_record' in record);
-        });
-    });
     describe('test eventName', () => {
         it('s3: eventName returned', () => {
             assert.equal(record.eventName, 'ObjectCreated:Put');
