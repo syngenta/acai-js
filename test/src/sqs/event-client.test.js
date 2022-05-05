@@ -4,11 +4,6 @@ const mockData = require('../../mocks/sqs/mock-data');
 
 describe('Test SQS Event Client', async () => {
     const eventClient = await new EventClient(mockData.getData());
-    describe('test constructor', () => {
-        it('sqs: client took event', () => {
-            assert.equal(true, '_event' in eventClient);
-        });
-    });
     describe('test records', () => {
         it('sqs: record object returned', () => {
             const {records} = eventClient;

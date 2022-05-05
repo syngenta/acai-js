@@ -4,9 +4,6 @@ const mockData = require('../../mocks/sqs/mock-data');
 
 describe('Test SQS Record Client', async () => {
     const record = new RecordClient(mockData.getData().Records[0]);
-    it('sqs: client took event', () => {
-        assert.equal(true, '_record' in record);
-    });
     it('sqs: messageId returned', () => {
         assert.equal(record.messageId, '19dd0b57-b21e-4ac1-bd88-01bbb068cb78');
     });
