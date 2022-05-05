@@ -4,20 +4,20 @@ require('../../../src').logger.setup();
 describe('Test SetUp Logger', () => {
     describe('test constructor', () => {
         it('logger: _startTime property', () => {
-            assert.equal(true, '_startTime' in global.logger);
+            assert.equal('_startTime' in global.logger, true);
         });
         it('logger: _methodMap property', () => {
-            assert.equal(true, '_methodMap' in global.logger);
+            assert.equal('_methodMap' in global.logger, true);
         });
         it('logger: _logLevelMap property', () => {
-            assert.equal(true, '_logLevelMap' in global.logger);
+            assert.equal('_logLevelMap' in global.logger, true);
         });
         it('logger: _logLevelMap property', () => {
-            assert.equal(true, '_logLevelMap' in global.logger);
+            assert.equal('_logLevelMap' in global.logger, true);
         });
         it('logger: doesnt run twice', () => {
             require('../../../src').logger.setup();
-            assert.equal(true, '_logLevelMap' in global.logger);
+            assert.equal('_logLevelMap' in global.logger, true);
         });
     });
 });

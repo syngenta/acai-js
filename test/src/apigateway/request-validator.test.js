@@ -10,13 +10,6 @@ describe('Test RequestValidator', () => {
     const responseClient = new ResponseClient();
     const schema = Schema.fromFilePath('test/mocks/openapi.yml');
     const requestValidator = new RequestValidator(eventClient, responseClient, schema);
-    describe('test constructor', () => {
-        it('client took other clients', () => {
-            assert.equal(true, '_eventClient' in requestValidator);
-            assert.equal(true, '_responseClient' in requestValidator);
-            assert.equal(true, '_validationPairings' in requestValidator);
-        });
-    });
     describe('test _validateRequest', () => {
         it('valid request', () => {
             requestValidator._validateRequest(

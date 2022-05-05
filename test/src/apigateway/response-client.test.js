@@ -4,13 +4,6 @@ const ResponseClient = require('../../../src').apigateway.Response;
 
 describe('Test Response Client', () => {
     const responseClient = new ResponseClient();
-    describe('test constructor', () => {
-        it('client built', () => {
-            assert.equal(true, '_body' in responseClient);
-            assert.equal(true, '_code' in responseClient);
-            assert.equal(true, '_headers' in responseClient);
-        });
-    });
     describe('test headers', () => {
         it('default headers', () => {
             assert.deepEqual(responseClient.headers, {

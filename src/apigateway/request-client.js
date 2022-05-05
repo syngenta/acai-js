@@ -49,7 +49,7 @@ class RequestClient {
     get xml() {
         try {
             let result;
-            xml2js.parseString(this.__event.body, (error, parsed) => {
+            xml2js.parseString(this.__event.body, (_error, parsed) => {
                 result = parsed;
             });
             return result;

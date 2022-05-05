@@ -2,42 +2,28 @@ const {assert} = require('chai');
 const Logger = require('../../../src/common/logger');
 
 describe('Test Logger', () => {
-    describe('test constructor', () => {
-        it('logger: Console has Logger _startTime property', () => {
-            const logger = new Logger();
-            assert.equal(true, '_startTime' in logger);
-        });
-        it('logger: Console has Logger _methodMap property', () => {
-            const logger = new Logger();
-            assert.equal(true, '_methodMap' in logger);
-        });
-        it('logger: Console has Logger _logLevelMap property', () => {
-            const logger = new Logger();
-            assert.equal(true, '_logLevelMap' in logger);
-        });
-    });
     describe('test _calcTime', () => {
         it('logger: Console has number for calcTime', () => {
             const logger = new Logger();
             const results = logger._calcTime();
-            assert.equal(true, !isNaN(results));
+            assert.equal(!isNaN(results), true);
         });
     });
     describe('test _shouldLog', () => {
         it('logger: WARN should log', () => {
             const logger = new Logger();
             const result = logger._shouldLog('WARN');
-            assert.equal(true, result);
+            assert.equal(result, true);
         });
         it('logger: ERROR should log', () => {
             const logger = new Logger();
             const result = logger._shouldLog('ERROR');
-            assert.equal(true, result);
+            assert.equal(result, true);
         });
         it('logger: INFO should log', () => {
             const logger = new Logger();
             const result = logger._shouldLog('INFO');
-            assert.equal(true, result);
+            assert.equal(result, true);
         });
     });
     describe('test _getStackSafely', () => {

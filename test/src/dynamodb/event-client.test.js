@@ -4,11 +4,6 @@ const mockData = require('../../mocks/dynamodb/mock-data');
 
 describe('Test DynamoDB Event Client', async () => {
     const eventClient = await new EventClient(mockData.getData(), {globalLogger: true});
-    describe('test constructor', () => {
-        it('ddb: client took event', () => {
-            assert.equal(true, '_event' in eventClient);
-        });
-    });
     describe('test records', () => {
         it('ddb: record object returned', () => {
             const {records} = eventClient;

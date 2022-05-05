@@ -12,10 +12,7 @@ class Endpoint {
     }
 
     get hasBefore() {
-        if (this.requirements && typeof this.requirements.before === 'function') {
-            return true;
-        }
-        return false;
+        return this.requirements && typeof this.requirements.before === 'function';
     }
 
     async before(request, response, requirements) {
@@ -23,10 +20,7 @@ class Endpoint {
     }
 
     get hasAfter() {
-        if (this.requirements && typeof this.requirements.after === 'function') {
-            return true;
-        }
-        return false;
+        return this.requirements && typeof this.requirements.after === 'function';
     }
 
     get method() {
@@ -41,16 +35,14 @@ class Endpoint {
     }
 
     get hasDataClass() {
-        if (this.requirements && this.requirements.dataClass) {
-            return true;
-        }
-        return false;
+        return this.requirements && this.requirements.dataClass;
     }
 
     dataClass(request) {
         if (this.hasDataClass) {
             return new this.requirements.dataClass(request);
         }
+        return {};
     }
 
     async run(request, response) {

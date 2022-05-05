@@ -4,8 +4,7 @@ class DirectoryResolver {
     resolve(request, response, base, controller) {
         try {
             const cleanedPaths = this.cleanUpPaths(request, base, controller);
-            const endpointPath = this.getEndpointPath(cleanedPaths);
-            return endpointPath;
+            return this.getEndpointPath(cleanedPaths);
         } catch (error) {
             response.code = 500;
             response.setError('router-config', error.message);

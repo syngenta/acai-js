@@ -10,11 +10,6 @@ describe('Test Request Client', () => {
     const requestClientRaw = new RequestClient(mockData.getDataRaw());
     const requestClientNoHeaders = new RequestClient(mockData.getDataNoHeaders());
     const requestClientOffline = new RequestClient(mockData.getDataOffline());
-    describe('test constructor', () => {
-        it('client took event', () => {
-            assert.equal(true, '__event' in requestClient);
-        });
-    });
     describe('test method', () => {
         it('method is GET', () => {
             assert.equal(requestClient.method, 'GET');

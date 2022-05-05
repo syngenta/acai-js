@@ -5,9 +5,6 @@ const mockData = require('../../mocks/dynamodb/mock-data');
 describe('Test DynamoDB Record Client', async () => {
     describe('test dynamoDB non-ttl stream', async () => {
         const record = new RecordClient(mockData.getData().Records[0]);
-        it('ddb: client took event', () => {
-            assert.equal(true, '_record' in record);
-        });
         it('ddb: eventID returned', () => {
             assert.equal(record.eventID, '9a37c0d03eb60f7cf70cabc823de9907');
         });
