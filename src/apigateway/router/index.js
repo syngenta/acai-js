@@ -1,6 +1,6 @@
 const EndpointConfig = require('../endpoint/config');
 const Logger = require('../../common/logger');
-const LoggerSetup = require('../../common/setup-logger.js');
+const LoggerSetup = require('../../common/logger.js');
 const RequestClient = require('../request-client');
 const RequestValidator = require('../validator/request-validator');
 const ResponseClient = require('../response-client');

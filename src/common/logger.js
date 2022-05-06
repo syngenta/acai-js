@@ -14,6 +14,12 @@ class Logger {
         };
     }
 
+    static setUpLogger(setup = true) {
+        if (!global.logger && setup) {
+            global.logger = new Logger();
+        }
+    }
+
     _calcTime() {
         const endTime = new Date();
         return endTime - this._startTime;

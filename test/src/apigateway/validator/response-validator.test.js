@@ -1,6 +1,8 @@
 const {assert, expect, use} = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const {Request, Response, ResponseValidator, Schema} = require('../../../../src').apigateway;
+const {Request, Response} = require('../../../../src').apigateway;
+const ResponseValidator = require('../../../../src/apigateway/validator/response-validator');
+const Schema = require('../../../../src/common/schema');
 const mockData = require('../../../mocks/apigateway/mock-data');
 
 use(chaiAsPromised);

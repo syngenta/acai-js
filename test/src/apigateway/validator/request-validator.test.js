@@ -1,5 +1,7 @@
 const {assert} = require('chai');
-const {Request, Response, RequestValidator, Schema} = require('../../../../src').apigateway;
+const {Request, Response} = require('../../../../src').apigateway;
+const RequestValidator = require('../../../../src/apigateway/validator/request-validator');
+const Schema = require('../../../../src/common/schema');
 const mockData = require('../../../mocks/apigateway/mock-data');
 
 describe('Test RequestValidator', () => {

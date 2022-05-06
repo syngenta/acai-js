@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 const RefParser = require('json-schema-ref-parser');
 const mergeAll = require('json-schema-merge-allof');
 
-class SchemaValidator {
+class Schema {
     constructor(openAPISchema) {
         this.__refParser = RefParser;
         this.__openAPISchema = openAPISchema;
@@ -13,11 +13,11 @@ class SchemaValidator {
 
     static fromFilePath(schemaPath) {
         const openAPISchema = yaml.load(fs.readFileSync(schemaPath, 'utf8'));
-        return new SchemaValidator(openAPISchema);
+        return new Schema(openAPISchema);
     }
 
     static fromObjectDefinition(schemaPath) {
-        return new SchemaValidator(schemaPath);
+        return new Schema(schemaPath);
     }
 
     async validate(entityName, data) {
@@ -44,4 +44,4 @@ class SchemaValidator {
     }
 }
 
-module.exports = SchemaValidator;
+module.exports = Schema;
