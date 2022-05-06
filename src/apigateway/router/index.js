@@ -43,7 +43,7 @@ class Router {
             await this.__withAuth(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasRequirements) {
-            await this.__requestValidator(request, response, endpoint.requirements);
+            await this.__requestValidator.isValid(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasBefore) {
             await endpoint.before(request, response);
@@ -56,7 +56,7 @@ class Router {
             await endpoint.run(request, response);
         }
         if (!response.hasErrors && endpoint.hasResponseBody) {
-            await this.__responseValidator(request, response, endpoint.requirements);
+            await this.__responseValidator.isValid(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasAfter) {
             await endpoint.after(request, response);

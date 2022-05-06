@@ -4,7 +4,7 @@ module.exports = {
         Response: require('./apigateway/response-client'),
         RequestValidator: require('./apigateway/validator/request-validator'),
         ResponseValidator: require('./apigateway/validator/response-validator'),
-        Schema: require('./apigateway/schema'),
+        Schema: require('./common/schema-validator'),
         Router: require('./apigateway/router')
     },
     dynamodb: {

@@ -1,26 +1,25 @@
 class RequestValidator {
-    constructor(EventClient, ResponseClient, schema) {
-        this._eventClient = EventClient;
-        this._responseClient = ResponseClient;
-        this._schema = schema;
+    constructor(request, response, schema) {
+        this.__request = request;
+        this.__response = response;
+        this.__schema = schema;
 
         this._validationPairings = {
-            requiredHeaders: {list: 'headers', func: '_validateRequiredFields'},
-            availableHeaders: {list: 'headers', func: '_validateAvailableFields'},
-            requiredParams: {list: 'params', func: '_validateRequiredFields'},
-            availableParams: {list: 'params', func: '_validateAvailableFields'},
-            requiredBody: {list: 'body', func: '_validateRequiredBody'},
-            requiredRouteParams: {list: 'path', func: '_validateRequiredRouteParams'}
+            requiredHeaders: {list: 'headers', func: '__validateRequiredFields'},
+            availableHeaders: {list: 'headers', func: '__validateAvailableFields'},
+            requiredParams: {list: 'params', func: '__validateRequiredFields'},
+            availableParams: {list: 'params', func: '__validateAvailableFields'},
+            requiredBody: {list: 'body', func: '__validateRequiredBody'}
         };
     }
 
     async isValid(params) {
-        await this._validateRequest(params);
-        return this._responseClient;
+        await this.__validateRequest(params);
+        return this.__response;
     }
 
-    async _validateRequest(params) {
-        const event = this._eventClient.request;
+    async __validateRequest(params) {
+        const event = this.__request.request;
         for (const validation of Object.keys(this._validationPairings)) {
             if (params[validation]) {
                 const list = this._validationPairings[validation].list;
@@ -30,29 +29,28 @@ class RequestValidator {
         }
     }
 
-    _validateAvailableFields(available, sent, listName) {
+    __validateAvailableFields(available, sent, listName) {
         Object.keys(sent).forEach((field) => {
             if (!available.includes(field)) {
-                this._responseClient.setError(listName, `${field} is not an available ${listName}`);
+                this.__response.setError(listName, `${field} is not an available ${listName}`);
             }
         });
     }
 
-    _validateRequiredFields(required, sent, listName) {
+    __validateRequiredFields(required, sent, listName) {
         required.forEach((field) => {
             if (sent[field] === undefined) {
-                this._responseClient.setError(listName, `Please provide ${field} for ${listName}`);
+                this.__response.setError(listName, `Please provide ${field} for ${listName}`);
             }
         });
     }
 
-    async _validateRequiredBody(requiredSchema, requestBody) {
-        const errors = await this._schema.validate(requiredSchema, requestBody);
-
+    async __validateRequiredBody(requiredSchema, requestBody) {
+        const errors = await this.__schema.validate(requiredSchema, requestBody);
         if (errors) {
             errors.forEach((error) => {
                 const dataPath = error.instancePath ? error.instancePath : 'root';
-                this._responseClient.setError(dataPath, error.message);
+                this.__response.setError(dataPath, error.message);
             });
         }
     }

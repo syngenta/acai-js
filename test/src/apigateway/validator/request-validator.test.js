@@ -7,9 +7,9 @@ describe('Test RequestValidator', () => {
     const responseClient = new Response();
     const schema = Schema.fromFilePath('test/mocks/openapi.yml');
     const requestValidator = new RequestValidator(eventClient, responseClient, schema);
-    describe('test _validateRequest', () => {
+    describe('test isValid', () => {
         it('valid request', () => {
-            requestValidator._validateRequest(
+            requestValidator.isValid(
                 {
                     requiredHeaders: ['x-api-key'],
                     requiredParams: ['name'],
@@ -20,7 +20,7 @@ describe('Test RequestValidator', () => {
             assert.equal(responseClient.hasErrors, false);
         });
         it('invalid header request', () => {
-            requestValidator._validateRequest(
+            requestValidator.isValid(
                 {
                     requiredHeaders: ['x-api-key-fail']
                 },
@@ -38,7 +38,7 @@ describe('Test RequestValidator', () => {
         });
         it('invalid query string params request', () => {
             responseClient._body = {};
-            requestValidator._validateRequest(
+            requestValidator.isValid(
                 {
                     requiredParams: ['name', 'failing-param']
                 },
@@ -56,7 +56,7 @@ describe('Test RequestValidator', () => {
         });
         it('invalid json body request: full request empty', async () => {
             responseClient._body = {};
-            await requestValidator._validateRequest(
+            await requestValidator.isValid(
                 {
                     requiredBody: 'v1-test-fail-request'
                 },
@@ -78,7 +78,7 @@ describe('Test RequestValidator', () => {
             const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
             responseClient2._body = {};
-            await requestValidator2._validateRequest(
+            await requestValidator2.isValid(
                 {
                     requiredBody: 'v1-test-fail-request'
                 },
@@ -105,7 +105,7 @@ describe('Test RequestValidator', () => {
         const schema = Schema.fromFilePath('test/mocks/openapi.yml');
         const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
-        await requestValidator2._validateRequest(
+        await requestValidator2.isValid(
             {
                 requiredBody: 'v1-test-nullable-field'
             },
@@ -128,7 +128,7 @@ describe('Test RequestValidator', () => {
         const schema = Schema.fromFilePath('test/mocks/openapi.yml');
         const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
-        await requestValidator2._validateRequest(
+        await requestValidator2.isValid(
             {
                 requiredBody: 'v1-response-test-all-of'
             },
@@ -143,7 +143,7 @@ describe('Test RequestValidator', () => {
         const schema = Schema.fromFilePath('test/mocks/openapi.yml');
         const requestValidator2 = new RequestValidator(eventClient2, responseClient2, schema);
         responseClient2._body = {};
-        await requestValidator2._validateRequest(
+        await requestValidator2.isValid(
             {
                 requiredBody: 'v1-response-test-all-of'
             },
