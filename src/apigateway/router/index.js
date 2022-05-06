@@ -2,9 +2,8 @@ const EndpointConfig = require('../endpoint/config');
 const Logger = require('../../common/logger');
 const LoggerSetup = require('../../common/logger.js');
 const RequestClient = require('../request-client');
-const RequestValidator = require('../validator/request-validator');
 const ResponseClient = require('../response-client');
-const ResponseValidator = require('../validator/response-validator');
+const Validator = require('../../common/validator');
 
 class Router {
     constructor(params) {
@@ -17,8 +16,7 @@ class Router {
         this.__onError = params.onError;
         this.__schema = params.schema || params.schemaPath;
         this.__logger = new Logger();
-        this.__requestValidator = new RequestValidator();
-        this.__responseValidator = new ResponseValidator();
+        this.__validator = new Validator();
         LoggerSetup.setUpLogger(params.globalLogger);
     }
 
@@ -43,7 +41,7 @@ class Router {
             await this.__withAuth(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasRequirements) {
-            await this.__requestValidator.isValid(request, response, endpoint.requirements);
+            await this.__validator.isValid(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasBefore) {
             await endpoint.before(request, response);
@@ -56,7 +54,7 @@ class Router {
             await endpoint.run(request, response);
         }
         if (!response.hasErrors && endpoint.hasResponseBody) {
-            await this.__responseValidator.isValid(request, response, endpoint.requirements);
+            await this.__validator.isValid(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasAfter) {
             await endpoint.after(request, response);

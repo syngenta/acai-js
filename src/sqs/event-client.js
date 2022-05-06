@@ -8,7 +8,7 @@ class EventClient {
 
     _setUpLogger(globalLogger = false) {
         if (globalLogger) {
-            require('../common/setup-logger.js').setUpLogger();
+            require('../common/logger.js').setUpLogger();
         }
     }
 
