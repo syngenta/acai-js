@@ -1,6 +1,6 @@
 const path = require('path');
 const Endpoint = require('./index');
-const RouteResolver = require('../route-resolver');
+const RouteResolver = require('../router/resolver');
 
 class EndpointConfig {
     static getEndpoint(request, response, base, controller) {

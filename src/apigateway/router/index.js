@@ -1,10 +1,10 @@
-const EndpointConfig = require('./endpoint/config');
-const Logger = require('../common/logger');
-const LoggerSetup = require('../common/setup-logger.js');
-const RequestClient = require('./request-client');
-const RequestValidator = require('./validator/request-validator');
-const ResponseClient = require('./response-client');
-const ResponseValidator = require('./validator/response-validator');
+const EndpointConfig = require('../endpoint/config');
+const Logger = require('../../common/logger');
+const LoggerSetup = require('../../common/setup-logger.js');
+const RequestClient = require('../request-client');
+const RequestValidator = require('../validator/request-validator');
+const ResponseClient = require('../response-client');
+const ResponseValidator = require('../validator/response-validator');
 
 class Router {
     constructor(params) {

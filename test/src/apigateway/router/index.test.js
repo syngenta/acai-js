@@ -1,8 +1,8 @@
 const {assert, expect} = require('chai');
 const sinon = require('sinon');
-const {Router} = require('../../../src').apigateway;
-const mockData = require('../../mocks/apigateway/mock-data');
-const mockPermissions = require('../../mocks/apigateway/mock-permissions-middleware');
+const {Router} = require('../../../../src').apigateway;
+const mockData = require('../../../mocks/apigateway/mock-data');
+const mockPermissions = require('../../../mocks/apigateway/mock-permissions-middleware');
 
 describe('Test Router', () => {
     describe('test route', () => {
