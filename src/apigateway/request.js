@@ -1,6 +1,6 @@
 const xml2js = require('xml2js').Parser({explicitArray: false});
 
-class RequestClient {
+class Request {
     constructor(event) {
         this.__event = event;
         this.__context = null;
@@ -104,4 +104,4 @@ class RequestClient {
     }
 }
 
-module.exports = RequestClient;
+module.exports = Request;

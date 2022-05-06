@@ -1,7 +1,7 @@
 module.exports = {
     apigateway: {
-        Request: require('./apigateway/request-client'),
-        Response: require('./apigateway/response-client'),
+        Request: require('./apigateway/request'),
+        Response: require('./apigateway/response'),
         Router: require('./apigateway/router')
     },
     dynamodb: {

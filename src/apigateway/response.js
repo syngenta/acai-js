@@ -1,4 +1,4 @@
-class ResponseClient {
+class Response {
     constructor() {
         this._body = {};
         this._code = 200;
@@ -74,4 +74,4 @@ class ResponseClient {
     }
 }
 
-module.exports = ResponseClient;
+module.exports = Response;

@@ -1,8 +1,8 @@
 const EndpointConfig = require('../endpoint/config');
 const Logger = require('../../common/logger');
 const LoggerSetup = require('../../common/logger.js');
-const RequestClient = require('../request-client');
-const ResponseClient = require('../response-client');
+const Request = require('../request');
+const Response = require('../response');
 const Validator = require('../../common/validator');
 
 class Router {
@@ -21,8 +21,8 @@ class Router {
     }
 
     async route() {
-        const request = new RequestClient(this.__event);
-        const response = new ResponseClient();
+        const request = new Request(this.__event);
+        const response = new Response();
         try {
             const routeResult = await this.__runRoute(request, response);
             return routeResult.response;
