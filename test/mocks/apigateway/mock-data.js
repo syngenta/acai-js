@@ -144,6 +144,35 @@ exports.getDataXml = () => {
     };
 };
 
+exports.getBadDataXml = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/xml'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        resource: '/{proxy+}',
+        pathParameters: {
+            proxy: 'hello'
+        },
+        httpMethod: 'POST',
+        queryStringParameters: {
+            name: 'me'
+        },
+        path: `unittest/v1/mock-handler`,
+        body: '<root><test>test2</test></root'
+    };
+};
+
 exports.getDataRaw = () => {
     return {
         headers: {

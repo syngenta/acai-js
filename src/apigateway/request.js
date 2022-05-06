@@ -49,7 +49,10 @@ class Request {
     get xml() {
         try {
             let result;
-            xml2js.parseString(this.__event.body, (_error, parsed) => {
+            xml2js.parseString(this.__event.body, (error, parsed) => {
+                if (error) {
+                    throw error;
+                }
                 result = parsed;
             });
             return result;

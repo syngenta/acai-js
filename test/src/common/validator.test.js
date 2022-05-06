@@ -32,7 +32,7 @@ describe('Test Validator', () => {
                 () => {}
             );
             assert.equal(response.hasErrors, true);
-            assert.deepEqual(response._body, {
+            assert.deepEqual(response.rawBody, {
                 errors: [
                     {
                         key_path: 'headers',
@@ -42,7 +42,7 @@ describe('Test Validator', () => {
             });
         });
         it('invalid query string params request', () => {
-            response._body = {};
+            response.body = {};
             validator.isValid(
                 {
                     requiredParams: ['name', 'failing-param']
@@ -50,7 +50,7 @@ describe('Test Validator', () => {
                 () => {}
             );
             assert.equal(response.hasErrors, true);
-            assert.deepEqual(response._body, {
+            assert.deepEqual(response.rawBody, {
                 errors: [
                     {
                         key_path: 'params',
@@ -60,7 +60,7 @@ describe('Test Validator', () => {
             });
         });
         it('invalid json body request: full request empty', async () => {
-            response._body = {};
+            response.body = {};
             await validator.isValid(
                 {
                     requiredBody: 'v1-test-fail-request'
@@ -68,7 +68,7 @@ describe('Test Validator', () => {
                 () => {}
             );
             assert.equal(response.hasErrors, true);
-            assert.deepEqual(response._body, {
+            assert.deepEqual(response.rawBody, {
                 errors: [
                     {
                         key_path: 'root',
@@ -82,7 +82,7 @@ describe('Test Validator', () => {
             const response = new Response();
             const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const validator2 = new Validator(request, response, schema);
-            response._body = {};
+            response.body = {};
             await validator2.isValid(
                 {
                     requiredBody: 'v1-test-fail-request'
@@ -90,7 +90,7 @@ describe('Test Validator', () => {
                 () => {}
             );
             assert.equal(response.hasErrors, true);
-            assert.deepEqual(response._body, {
+            assert.deepEqual(response.rawBody, {
                 errors: [
                     {
                         key_path: 'root',
@@ -156,7 +156,7 @@ describe('Test Validator', () => {
             const response = new Response();
             const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const validator2 = new Validator(request, response, schema);
-            response._body = {};
+            response.body = {};
             await validator2.isValid(
                 {
                     requiredBody: 'v1-test-nullable-field'
@@ -164,7 +164,7 @@ describe('Test Validator', () => {
                 () => {}
             );
             assert.equal(response.hasErrors, true);
-            assert.deepEqual(response._body, {
+            assert.deepEqual(response.rawBody, {
                 errors: [
                     {
                         key_path: '/non_nullable_field',
@@ -178,7 +178,7 @@ describe('Test Validator', () => {
             const response = new Response();
             const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const validator2 = new Validator(request, response, schema);
-            response._body = {};
+            response.body = {};
             await validator2.isValid(
                 {
                     requiredBody: 'v1-response-test-all-of'
@@ -192,7 +192,7 @@ describe('Test Validator', () => {
             const response = new Response();
             const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const validator2 = new Validator(request, response, schema);
-            response._body = {};
+            response.body = {};
             await validator2.isValid(
                 {
                     requiredBody: 'v1-response-test-all-of'
@@ -200,7 +200,7 @@ describe('Test Validator', () => {
                 () => {}
             );
             assert.isTrue(response.hasErrors);
-            assert.deepEqual(response._body, {
+            assert.deepEqual(response.rawBody, {
                 errors: [
                     {
                         key_path: 'root',

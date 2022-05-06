@@ -1,49 +1,49 @@
 class Response {
     constructor() {
-        this._body = {};
-        this._code = 200;
-        this._headers = {
+        this.__body = null;
+        this.__code = 200;
+        this.__headers = {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': '*'
         };
     }
 
     get headers() {
-        return this._headers;
+        return this.__headers;
     }
 
     set headers(headerObj) {
-        this._headers[headerObj.key] = headerObj.value;
+        this.__headers[headerObj.key] = headerObj.value;
     }
 
     get code() {
-        if (this._code === 200 && !this.body) {
+        if (this.__code === 200 && !this.__body) {
             return 204;
         }
-        if (this._code === 200 && this.hasErrors) {
+        if (this.__code === 200 && this.hasErrors) {
             return 400;
         }
-        return this._code;
+        return this.__code;
     }
 
     set code(code) {
-        this._code = code;
+        this.__code = code;
     }
 
     get rawBody() {
-        return this._body;
+        return this.__body;
     }
 
     get body() {
         try {
-            return JSON.stringify(this._body);
+            return JSON.stringify(this.__body);
         } catch (error) {
-            return this._body;
+            return this.__body;
         }
     }
 
     set body(body) {
-        this._body = body;
+        this.__body = body;
     }
 
     get response() {
@@ -55,21 +55,18 @@ class Response {
     }
 
     get hasErrors() {
-        if (typeof this._body === 'object' && this._body) {
-            return 'errors' in this._body;
+        if (typeof this.__body === 'object' && this.__body) {
+            return 'errors' in this.__body;
         }
         return false;
     }
 
-    setError(key_path, message, conflict = null) {
+    setError(key_path, message) {
         const error = {key_path, message};
         if (this.hasErrors) {
-            this._body.errors.push(error);
+            this.__body.errors.push(error);
         } else {
-            this._body = {errors: [error]};
-        }
-        if (conflict) {
-            this._body.current = conflict;
+            this.__body = {errors: [error]};
         }
     }
 }

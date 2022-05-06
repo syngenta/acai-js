@@ -11,7 +11,7 @@ describe('Test Endpoint Config', () => {
         const response = new Response();
         const endpoint = EndpointConfig.getEndpoint(request, response, base, controller);
         assert.equal(endpoint.httpMethod, 'get');
-        assert.equal(response.code, 200);
+        assert.equal(response.code, 204);
     });
     it('endpoint not found; correct error caught', async () => {
         const controller = 'test/mocks/apigateway/not-found';
