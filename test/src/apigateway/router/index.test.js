@@ -40,23 +40,6 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
-        it('router: found public route', async () => {
-            const router = new Router({
-                event: mockData.getApiGateWayRoute('client-'),
-                basePath: 'client-unittest/v1',
-                handlerPath: 'test/mocks/apigateway/',
-                schemaPath: 'test/mocks/openapi.yml'
-            });
-            const results = await router.route();
-            assert.deepEqual(results, {
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': '*'
-                },
-                statusCode: 200,
-                body: '{"test":true}'
-            });
-        });
         it('router: did not find route', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute('', '-fail'),
