@@ -16,10 +16,6 @@ class Schema {
         return new Schema(openAPISchema);
     }
 
-    static fromObjectDefinition(schemaPath) {
-        return new Schema(schemaPath);
-    }
-
     async validate(entityName, data) {
         const refSchema = await this.__refParser.dereference(this.__openAPISchema);
         const combinedSchema = await this.__combineSchemas(entityName, refSchema);
