@@ -5,19 +5,19 @@ module.exports = {
         Router: require('./apigateway/router')
     },
     dynamodb: {
-        Event: require('./dynamodb/event-client'),
-        Record: require('./dynamodb/record-client')
+        Event: require('./common/event'),
+        Record: require('./dynamodb/record')
     },
     logger: {
         setup: require('./common/logger').setUpLogger,
         Logger: require('./common/logger')
     },
     s3: {
-        Event: require('./s3/event-client'),
-        Record: require('./s3/record-client')
+        Event: require('./common/event'),
+        Record: require('./s3/record')
     },
     sqs: {
-        Event: require('./sqs/event-client'),
-        Record: require('./sqs/record-client')
+        Event: require('./common/event'),
+        Record: require('./sqs/record')
     }
 };
