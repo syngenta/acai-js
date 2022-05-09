@@ -17,7 +17,36 @@ exports.getData = (suffix = '') => {
         pathParameters: {
             proxy: 'hello'
         },
-        path: `unittest/v1/mock-handlers/basic${suffix}`,
+        path: `unittest/v1/basic${suffix}`,
+        resource: '/{proxy+}',
+        httpMethod: 'GET',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({body_key: 'body_value'})
+    };
+};
+
+exports.getBadImportData = () => {
+    return {
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        path: `unittest/v1/bad-import`,
         resource: '/{proxy+}',
         httpMethod: 'GET',
         queryStringParameters: {
