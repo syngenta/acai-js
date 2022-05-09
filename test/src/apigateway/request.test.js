@@ -55,7 +55,7 @@ describe('Test Request Client', () => {
                 path: {proxy: 'hello'},
                 body: {body_key: 'body_value'},
                 context: null,
-                route: `unittest/v1/mock-handler`
+                route: `unittest/v1/mock-handlers/basic`
             });
         });
     });

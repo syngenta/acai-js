@@ -8,11 +8,11 @@ describe('Test Resolver', () => {
     const request = new Request(mockData.getApiGateWayRoute());
     const response = new Response();
     const basePath = 'unittest/v1';
-    const handlerPath = 'test/mocks/apigateway/';
+    const handlerPath = 'test/mocks/apigateway/mock-handlers/';
     describe('basic test', () => {
         it('resolver successfully resovles', () => {
             const result = resolver.resolve(request, response, basePath, handlerPath);
-            assert.equal(result, 'test/mocks/apigateway/mock-handler.js');
+            assert.equal(result, 'test/mocks/apigateway/mock-handlers/basic.js');
         });
         it('resolver throw error', () => {
             const result = resolver.resolve(request, response, basePath, handlerPath, 'fail');
