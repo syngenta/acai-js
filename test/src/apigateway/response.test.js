@@ -2,16 +2,16 @@ const {assert} = require('chai');
 require('chai').should();
 const Response = require('../../../src').apigateway.Response;
 
-describe('Test Response', () => {
+describe('Test Response: src/apigateway/response.js', () => {
     describe('test headers', () => {
         const response = new Response();
-        it('default headers', () => {
+        it('should have these default headers', () => {
             assert.deepEqual(response.headers, {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Headers': '*'
             });
         });
-        it('custom headers', () => {
+        it('should be able to accept custom headers', () => {
             response.headers = {key: 'x-user-id', value: 'abc123'};
             assert.deepEqual(response.headers, {
                 'Access-Control-Allow-Origin': '*',
@@ -20,35 +20,35 @@ describe('Test Response', () => {
             });
         });
     });
-    describe('test code', () => {
-        it('no body code', () => {
+    describe('test response code', () => {
+        it('should default to 204 with empty body', () => {
             const response = new Response();
             assert.equal(response.code, 204);
         });
-        it('code with body', () => {
+        it('should default to 200 with body', () => {
             const response = new Response();
             response.body = {bodyKey: 'body'};
             assert.equal(response.code, 200);
         });
-        it('custom code with body', () => {
+        it('should be able to accept custom code', () => {
             const response = new Response();
             response.body = {bodyKey: 'body'};
-            response.code = 304;
-            assert.equal(response.code, 304);
+            response.code = 418;
+            assert.equal(response.code, 418);
         });
     });
     describe('test body', () => {
-        it('body is json string', () => {
+        it('should be a json string for the body', () => {
             const response = new Response();
             response.body = {bodyKey: 'body'};
             assert.equal(response.body, '{"bodyKey":"body"}');
         });
-        it('body is some other string', () => {
+        it('should be some other string for the body', () => {
             const response = new Response();
             response.body = 'some other string';
             assert.equal(response.body, '"some other string"');
         });
-        it('body is bad object', () => {
+        it('should be able to handle a bad object', () => {
             const response = new Response();
             const badObj = {};
             badObj.a = {b: badObj};
@@ -57,7 +57,7 @@ describe('Test Response', () => {
         });
     });
     describe('test raw body', () => {
-        it('raw is object', () => {
+        it('should be an object', () => {
             const response = new Response();
             response.body = {bodyKey: 'body'};
             assert.deepEqual(response.rawBody, {bodyKey: 'body'});
@@ -65,7 +65,7 @@ describe('Test Response', () => {
     });
     describe('test response', () => {
         const response = new Response();
-        it('full response', () => {
+        it('should be this full response', () => {
             response.body = {bodyKey: 'body'};
             response.code = 200;
             assert.deepEqual(response.response, {
@@ -80,14 +80,14 @@ describe('Test Response', () => {
     });
     describe('test hasErrors', () => {
         const response = new Response();
-        it('no errors', () => {
+        it('should start with no errors', () => {
             assert.equal(response.hasErrors, false);
         });
-        it('has errors', () => {
+        it('should know it has errors when it has errors', () => {
             response.setError('root', 'unittest has error');
             assert.equal(response.hasErrors, true);
         });
-        it('proper error response', () => {
+        it('should have proper error signature', () => {
             response.setError('root', 'unittest can set multiple errors');
             assert.deepEqual(response.response, {
                 headers: {

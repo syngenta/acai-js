@@ -6,7 +6,7 @@ const mockBeforeAll = require('../../../mocks/apigateway/mock-before-all');
 
 describe('Test Router', () => {
     describe('test routing', () => {
-        it('router: found app route', async () => {
+        it('should find route', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute(),
                 basePath: 'unittest/v1',
@@ -23,7 +23,7 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
-        it('router: found app route; no trailing /', async () => {
+        it('should find route wiht no trailing /', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute(),
                 basePath: 'unittest/v1',
@@ -40,7 +40,7 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
-        it('router: did not find route', async () => {
+        it('should not find route', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute('-fail'),
                 basePath: 'unittest/v1',
@@ -57,7 +57,7 @@ describe('Test Router', () => {
                 body: '{"errors":[{"key_path":"url","message":"endpoint not found"}]}'
             });
         });
-        it('router: method not allowed', async () => {
+        it('should not allow method', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute('', 'GET'),
                 basePath: 'unittest/v1',
@@ -74,7 +74,7 @@ describe('Test Router', () => {
                 body: '{"errors":[{"key_path":"method","message":"method not allowed"}]}'
             });
         });
-        it('router: failed same with same file & directory', async () => {
+        it('should fail when app has same with same file & directory', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayCustomRoute('same-file-directory'),
                 basePath: 'unittest/v1',
@@ -92,7 +92,7 @@ describe('Test Router', () => {
                     '{"errors":[{"key_path":"router-config","message":"file & directory share name in the same directory"}]}'
             });
         });
-        it('router: falls back to index.js', async () => {
+        it('should fall back to index.js when route ends as a directory', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayCustomRoute('directory'),
                 basePath: 'unittest/v1',
@@ -134,7 +134,7 @@ describe('Test Router', () => {
         });
     });
     describe('test route basic validation', () => {
-        it('router: ran route without the need of requirements export', async () => {
+        it('should run route without the need of requirements export', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayRouteNoRequirements(),
                 basePath: 'unittest/v1',
@@ -151,7 +151,7 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
-        it('router: pass required query string requirements', async () => {
+        it('should pass required query string requirements', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayRouteValidation('DELETE'),
                 basePath: 'unittest/v1',
@@ -168,7 +168,7 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
-        it('router: fails required query string requirements', async () => {
+        it('should fail required query string requirements', async () => {
             const event = mockData.getApiGateWayRouteValidation('DELETE');
             delete event.queryStringParameters.test;
             const router = new Router({
@@ -187,7 +187,7 @@ describe('Test Router', () => {
                 body: '{"errors":[{"key_path":"params","message":"Please provide test for params"}]}'
             });
         });
-        it('router: passes available query string requirements', async () => {
+        it('should pass available query string requirements', async () => {
             const event = mockData.getApiGateWayRouteValidation('GET');
             const router = new Router({
                 event,
@@ -205,7 +205,7 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
-        it('router: fails available query string requirements', async () => {
+        it('should fail available query string requirements', async () => {
             const event = mockData.getApiGateWayRouteValidation('GET');
             event.queryStringParameters.fail = 1;
             const router = new Router({
@@ -224,7 +224,7 @@ describe('Test Router', () => {
                 body: '{"errors":[{"key_path":"params","message":"fail is not an available params"}]}'
             });
         });
-        it('router: pass with endpoint before', async () => {
+        it('should pass with endpoint before', async () => {
             const event = mockData.getApiGateWayRouteValidation('PUT');
             const router = new Router({
                 event,
@@ -242,7 +242,7 @@ describe('Test Router', () => {
                 body: '{"data_class":true}'
             });
         });
-        it('router: fail with endpoint before', async () => {
+        it('should fail with endpoint before', async () => {
             const event = mockData.getApiGateWayRouteValidation('PUT');
             event.headers.fail = 'fail';
             const router = new Router({
@@ -261,7 +261,7 @@ describe('Test Router', () => {
                 body: '{"errors":[{"key_path":"header","message":"before failed"}]}'
             });
         });
-        it('router: pass response body valid', async () => {
+        it('should pass response body valid', async () => {
             const event = mockData.getApiGateWayRouteValidation('LINK');
             const router = new Router({
                 event,
@@ -279,7 +279,7 @@ describe('Test Router', () => {
                 body: '{"id":"true"}'
             });
         });
-        it('router: pass response body invalid', async () => {
+        it('should pass response body invalid', async () => {
             const event = mockData.getApiGateWayRouteValidation('UNLINK');
             const router = new Router({
                 event,
@@ -299,7 +299,7 @@ describe('Test Router', () => {
         });
     });
     describe('test route custom validation', () => {
-        it('router: test beforeAll fails', async () => {
+        it('should return errors when beforeAll fails', async () => {
             const router = new Router({
                 event: mockData.getApiGateWayRouteValidation('PATCH'),
                 basePath: 'unittest/v1',
@@ -317,7 +317,7 @@ describe('Test Router', () => {
                 body: '{"errors":[{"key_path":"headers","message":"in appropriate api-key"}]}'
             });
         });
-        it('router: test beforeAll pass', async () => {
+        it('should pass when beforeAll pass', async () => {
             const event = mockData.getApiGateWayRouteValidation('PATCH');
             event.headers['x-api-key'] = 'passing-key';
             const router = new Router({
@@ -337,7 +337,7 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
-        it('router: test afterAll is called', async () => {
+        it('should call afterAll when provided', async () => {
             const event = mockData.getApiGateWayRouteValidation('PATCH');
             const spyFn = sinon.fake();
             const router = new Router({
