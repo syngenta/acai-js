@@ -4,11 +4,19 @@ class Endpoint {
         this.__method = method.toLowerCase();
     }
 
+    get hasRequirements() {
+        return Boolean(this.requirements);
+    }
+
     get requirements() {
         if (this.__endpoint.requirements) {
             return this.__endpoint.requirements[this.__method];
         }
         return {};
+    }
+
+    get hasAuth() {
+        return this.requirements && this.requirements.requiredAuth;
     }
 
     get hasBefore() {
@@ -37,6 +45,10 @@ class Endpoint {
 
     get hasDataClass() {
         return Boolean(this.requirements && this.requirements.dataClass);
+    }
+
+    get hasResponseBody() {
+        return Boolean(this.requirements && this.requirements.responseBody);
     }
 
     dataClass(request) {

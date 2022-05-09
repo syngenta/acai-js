@@ -3,6 +3,7 @@ const Logger = require('../../common/logger');
 const LoggerSetup = require('../../common/logger.js');
 const Request = require('../request');
 const Response = require('../response');
+const Schema = require('../../common/schema.js');
 const Validator = require('../../common/validator');
 
 class Router {
@@ -14,7 +15,7 @@ class Router {
         this.__afterAll = params.afterAll;
         this.__withAuth = params.withAuth;
         this.__onError = params.onError;
-        this.__schema = params.schema || params.schemaPath;
+        this.__schema = Schema.fromFilePath(params.schema || params.schemaPath);
         this.__logger = new Logger();
         this.__validator = new Validator(this.__schema);
         LoggerSetup.setUpLogger(params.globalLogger);
@@ -37,11 +38,11 @@ class Router {
         if (!response.hasErrors && typeof this.__beforeAll === 'function') {
             await this.__beforeAll(request, response, endpoint.requirements);
         }
-        if (!response.hasErrors && endpoint.hasAuth) {
+        if (!response.hasErrors && endpoint.hasAuth && typeof this.__withAuth === 'function') {
             await this.__withAuth(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasRequirements) {
-            await this.__validator.isValid(request, response, endpoint.requirements);
+            await this.__validator.isValid(request, response, endpoint.requirements, 'request');
         }
         if (!response.hasErrors && endpoint.hasBefore) {
             await endpoint.before(request, response);
@@ -54,7 +55,7 @@ class Router {
             await endpoint.run(request, response);
         }
         if (!response.hasErrors && endpoint.hasResponseBody) {
-            await this.__validator.isValid(request, response, endpoint.requirements);
+            await this.__validator.isValid(request, response, endpoint.requirements, 'response');
         }
         if (!response.hasErrors && endpoint.hasAfter) {
             await endpoint.after(request, response);
@@ -77,15 +78,12 @@ class Router {
     }
 
     __logError(request, response, error) {
-        if (!process.env.unittest) {
-            this.__logger.error({
-                error_messsage: error.message,
-                error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
-                event: this.__event,
-                request: request.request,
-                response: response.response
-            });
-        }
+        this.__logger.error({
+            error_messsage: error.message,
+            event: this.__event,
+            request: request.request,
+            response: response.response
+        });
     }
 }
 

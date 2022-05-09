@@ -1,5 +1,8 @@
 const before = (request, response, requirements) => {
     request.context = {before: true};
+    if (request.headers['fail'] === 'fail') {
+        response.setError('header', 'before failed');
+    }
     return {before: true, request: request.request, response: response.response, requirements};
 };
 
@@ -17,20 +20,30 @@ class DataClass {
 
 exports.requirements = {
     get: {
-        requiredParams: ['test', 'unit']
+        availableParams: ['test', 'unit']
     },
     post: {
         requiredBody: 'v1-test-request'
     },
     patch: {
         requiredBody: 'v1-test-request',
-        requiredPermissions: ['run-test']
+        requiredPermissions: ['run-test'],
+        requiredAuth: true
     },
     put: {
         requiredParams: ['test', 'unit'],
         before: before,
         after: after,
         dataClass: DataClass
+    },
+    delete: {
+        requiredParams: ['test', 'unit']
+    },
+    link: {
+        responseBody: 'v1-response-result'
+    },
+    unlink: {
+        responseBody: 'v1-response-result'
     }
 };
 
@@ -51,5 +64,20 @@ exports.patch = async (request, response) => {
 
 exports.put = async (dataClass, response) => {
     response.body = {data_class: dataClass.exists};
+    return response;
+};
+
+exports.delete = async (request, response) => {
+    response.body = {test: true};
+    return response;
+};
+
+exports.link = async (request, response) => {
+    response.body = {id: 'true'};
+    return response;
+};
+
+exports.unlink = async (request, response) => {
+    response.body = {id_fail: 1};
     return response;
 };

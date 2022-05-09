@@ -124,21 +124,21 @@ describe('Test Validator', () => {
         it('response is invalid', async () => {
             const response = new Response();
             const requirements = {responseBody: 'v1-required-response'};
-            await validator.isValid(request, response, requirements);
+            await validator.isValid(request, response, requirements, 'response');
             assert.isTrue(response.hasErrors);
         });
         it('response is invalid: not object', async () => {
             const response = new Response();
             response.body = '';
             const requirements = {responseBody: 'v1-required-response'};
-            await validator.isValid(request, response, requirements);
+            await validator.isValid(request, response, requirements, 'response');
             assert.equal(response.hasErrors, true);
         });
         it('response is invalid: proper error message', async () => {
             const response = new Response();
             response.body = {};
             const requirements = {responseBody: 'v1-response-test-all-of'};
-            await validator.isValid(request, response, requirements);
+            await validator.isValid(request, response, requirements, 'response');
             assert.deepEqual(response.rawBody, {
                 errors: [
                     {key_path: 'root', message: "must have required property 'data'"},
@@ -149,7 +149,7 @@ describe('Test Validator', () => {
         it('throw error when entity not found', () => {
             const response = new Response();
             const requirements = {responseBody: 'random-string-$$$'};
-            const checkFn = async () => await validator.isValid(request, response, requirements);
+            const checkFn = async () => await validator.isValid(request, response, requirements, 'response');
             expect(checkFn()).to.be.rejectedWith('');
         });
     });

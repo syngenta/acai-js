@@ -2,23 +2,25 @@ class Validator {
     constructor(schema) {
         this.__schema = schema;
         this.__pairings = {
-            requiredHeaders: {event: 'request', source: 'headers', method: '__validateRequiredFields', code: 400},
-            availableHeaders: {event: 'request', source: 'headers', method: '__validateAvailableFields', code: 400},
-            requiredParams: {event: 'request', source: 'params', method: '__validateRequiredFields', code: 400},
-            availableParams: {event: 'request', source: 'params', method: '__validateAvailableFields', code: 400},
-            requiredBody: {event: 'request', source: 'body', method: '__validateRequiredBody', code: 400},
-            responseBody: {event: 'response', source: 'rawBody', method: '__validateRequiredBody', code: 500}
+            requiredHeaders: {target: 'request', source: 'headers', method: '__validateRequiredFields', code: 400},
+            availableHeaders: {target: 'request', source: 'headers', method: '__validateAvailableFields', code: 400},
+            requiredParams: {target: 'request', source: 'params', method: '__validateRequiredFields', code: 400},
+            availableParams: {target: 'request', source: 'params', method: '__validateAvailableFields', code: 400},
+            requiredBody: {target: 'request', source: 'body', method: '__validateRequiredBody', code: 400},
+            responseBody: {target: 'response', source: 'rawBody', method: '__validateRequiredBody', code: 500}
         };
     }
 
-    async isValid(request, response, requirements) {
-        for (const validation of Object.keys(this.__pairings)) {
-            if (requirements && requirements[validation]) {
-                const event = this.__pairings[validation].event === 'request' ? request : response;
-                const source = this.__pairings[validation].source;
-                const code = this.__pairings[validation].code;
-                const part = event[source];
-                await this[this.__pairings[validation].method](response, requirements[validation], part, source, code);
+    async isValid(request, response, requirements, target = 'request') {
+        for (const pairing of Object.keys(this.__pairings)) {
+            const requirement = requirements[pairing];
+            const pairingTarget = this.__pairings[pairing].target;
+            const event = target === 'request' ? request : response;
+            const source = this.__pairings[pairing].source;
+            const code = this.__pairings[pairing].code;
+            const part = event[source];
+            if (requirement && pairingTarget === target) {
+                await this[this.__pairings[pairing].method](response, requirement, part, source, code);
             }
         }
         return response;
