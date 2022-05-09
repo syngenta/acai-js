@@ -1,160 +1,102 @@
 class Logger {
-    constructor() {
-        this.__startTime = new Date();
+    constructor(params = {}) {
+        this.__callback = params.callback;
         this.__minLevel = process.env.MIN_LOG_LEVEL || 'INFO';
-        this.__methodMap = {
-            INFO: console.info,
-            WARN: console.warn,
-            ERROR: console.error
-        };
-        this.__logLevelMap = {
+        this.__logLevels = {
             INFO: 1,
+            DEBUG: 1,
             WARN: 2,
-            ERROR: 3
+            ERROR: 3,
+            OFF: 4
         };
     }
 
-    static setUpLogger(setup = true) {
+    static setUpGlobal(setup = true, params = {}) {
         if (!global.logger && setup) {
-            global.logger = new Logger();
+            global.logger = new Logger(params);
         }
     }
 
-    __calcTime() {
-        const endTime = new Date();
-        return endTime - this.__startTime;
+    log(...logs) {
+        const normalized = this.__normalizeLogs(logs);
+        const log = this.__getLog(normalized.level, normalized.log);
+        this.__invokeConsoleMethod(log);
+        this.__invokeCallback(log);
     }
 
-    __getStackSafely(stack) {
-        const errorStack = [];
-        for (const errorString of stack.split('\n')) {
-            if (errorString !== 'Error') {
-                errorStack.push(errorString.replace('at', '').trim());
-            }
+    info(...logs) {
+        this.log({level: 'INFO', log: logs});
+    }
+
+    debug(...logs) {
+        this.log({level: 'DEBUG', log: logs});
+    }
+
+    warn(...logs) {
+        this.log({level: 'WARN', log: logs});
+    }
+
+    error(...logs) {
+        this.log({level: 'ERROR', log: logs});
+    }
+
+    __normalizeLogs(logs) {
+        if (logs && logs[0] && logs[0].level && logs[0].log) {
+            return logs[0];
         }
-        return errorStack;
+        if (!logs || !logs[0] || !logs[0].level || !logs[0].log) {
+            return {level: 'INFO', log: logs};
+        }
+    }
+
+    __getLog(level = 'INFO', logs) {
+        return {
+            level,
+            time: new Date().toISOString(),
+            stack: this.__getStack(),
+            log: logs.length > 1 ? logs : logs[0]
+        };
+    }
+
+    __getStack() {
+        const stack = new Error().stack;
+        const clean = stack.split('\n').filter((trace) => !trace.includes('Logger.'));
+        return clean;
     }
 
     __shouldLog(level) {
-        if (process.env.UNIT_TEST) {
-            return false;
-        }
-        level = isNaN(level) ? this.__logLevelMap[level] : level;
-        this.__minLevel = isNaN(this.__minLevel) ? this.__logLevelMap[this.__minLevel] : this.__minLevel;
-        return level >= parseInt(this.__minLevel, 10);
-    }
-
-    __logToConsole(level, stack, args = []) {
-        if (this.__shouldLog(level)) {
-            this.__methodMap[level](
-                JSON.stringify(
-                    {
-                        level,
-                        time: this.__calcTime(),
-                        stack: this.__getStackSafely(stack),
-                        log: args
-                    },
-                    null,
-                    4
-                )
-            );
+        try {
+            if (!(level in this.__logLevels)) {
+                throw new Error(`log level must be one of 4: INFO, DEBUG, WARN, ERROR | provided: ${level}`);
+            }
+            if (!(this.__minLevel in this.__logLevels)) {
+                throw new Error(
+                    `MIN_LOG_LEVEL must be one of 4: INFO, DEBUG, WARN, ERROR, OFF | provided: ${this.__minLevel};`
+                );
+            }
+            const logLevel = isNaN(level) ? this.__logLevels[level] : level;
+            const systemLevel = isNaN(this.__minLevel) ? this.__logLevels[this.__minLevel] : this.__minLevel;
+            return logLevel >= parseInt(systemLevel, 10);
+        } catch (error) {
+            console.log(error.message);
+            return true;
         }
     }
 
-    info(...args) {
-        const {stack} = new Error();
-        this.__logToConsole('INFO', stack.toString(), args);
+    __invokeConsoleMethod(log) {
+        if (this.__shouldLog(log.level)) {
+            console.log(JSON.stringify(log, null, 4));
+        }
     }
 
-    log(...args) {
-        const {stack} = new Error();
-        this.__logToConsole('INFO', stack.toString(), args);
-    }
-
-    warn(...args) {
-        const {stack} = new Error();
-        this.__logToConsole('WARN', stack.toString(), args);
-    }
-
-    error(...args) {
-        const {stack} = new Error();
-        this.__logToConsole('ERROR', stack.toString(), args);
-    }
-
-    dir(...args) {
-        console.dir(args);
-    }
-
-    time(...args) {
-        console.time(args);
-    }
-
-    timeEnd(...args) {
-        console.timeEnd(args);
-    }
-
-    timeLog(...args) {
-        console.timeLog(args);
-    }
-
-    trace(...args) {
-        console.trace(args);
-    }
-
-    clear(...args) {
-        console.clear(args);
-    }
-
-    count(...args) {
-        console.count(args);
-    }
-
-    countReset(...args) {
-        console.countReset(args);
-    }
-
-    group(...args) {
-        console.group(args);
-    }
-
-    groupEnd(...args) {
-        console.groupEnd(args);
-    }
-
-    table(...args) {
-        console.table(args);
-    }
-
-    debug(...args) {
-        console.debug(args);
-    }
-
-    dirxml(...args) {
-        console.dirxml(args);
-    }
-
-    groupCollapsed(...args) {
-        console.groupCollapsed(args);
-    }
-
-    Console(...args) {
-        console.Console(args);
-    }
-
-    profile(...args) {
-        console.profile(args);
-    }
-
-    profileEnd(...args) {
-        console.profileEnd(args);
-    }
-
-    timeStamp(...args) {
-        console.timeStamp(args);
-    }
-
-    context(...args) {
-        console.context(args);
+    __invokeCallback(log) {
+        if (this.__callback && typeof this.__callback === 'function') {
+            try {
+                this.__callback(log);
+            } catch (error) {
+                console.log(`error with call back: ${error.message}`);
+            }
+        }
     }
 }
 

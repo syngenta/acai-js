@@ -13,9 +13,8 @@
         "url": "https://github.com/syngenta-digital/package-node-alc/issues"
     },
     "scripts": {
-        "test-single": "unittest=true nyc mocha test/src/common/logger.test.js",
         "test": "unittest=true nyc mocha test/**/**.test.js",
-        "report": "UNIT_TEST=true nyc report --reporter=lcov",
+        "report": "MIN_LOG_LEVEL=OFF nyc report --reporter=lcov",
         "lint": "eslint src/**"
     },
     "dependencies": {

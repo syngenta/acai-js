@@ -18,7 +18,7 @@ class Router {
         this.__schema = Schema.fromFilePath(params.schema || params.schemaPath);
         this.__logger = new Logger();
         this.__validator = new Validator(this.__schema);
-        LoggerSetup.setUpLogger(params.globalLogger);
+        LoggerSetup.setUpGlobal(params.globalLogger);
     }
 
     async route() {

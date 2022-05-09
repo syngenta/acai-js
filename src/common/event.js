@@ -11,7 +11,7 @@ class Event {
             'aws:sqs': SQSRecord,
             'aws:dynamodb': DynamoDBRecord
         };
-        Logger.setUpLogger(params.globalLogger);
+        Logger.setUpGlobal(params.globalLogger);
     }
 
     get records() {

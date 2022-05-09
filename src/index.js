@@ -9,7 +9,7 @@ module.exports = {
         Record: require('./dynamodb/record')
     },
     logger: {
-        setup: require('./common/logger').setUpLogger,
+        setup: require('./common/logger').setUpGlobal,
         Logger: require('./common/logger')
     },
     s3: {
