@@ -16,7 +16,7 @@ class Router {
         this.__onError = params.onError;
         this.__schema = params.schema || params.schemaPath;
         this.__logger = new Logger();
-        this.__validator = new Validator();
+        this.__validator = new Validator(this.__schema);
         LoggerSetup.setUpLogger(params.globalLogger);
     }
 

@@ -376,7 +376,8 @@ exports.getApiGateWayRouteValidation = (method = 'POST') => {
         },
         resource: '/{proxy+}',
         queryStringParameters: {
-            name: 'me'
+            test: 'getApiGateWayRouteValidation',
+            unit: 'test'
         },
         body: JSON.stringify({
             test_id: 'test_id',

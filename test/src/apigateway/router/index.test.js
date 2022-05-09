@@ -128,6 +128,44 @@ describe('Test Router', () => {
                 body: '{"test":true}'
             });
         });
+        it('router: pass query string requirements', async () => {
+            const router = new Router({
+                event: mockData.getApiGateWayRouteValidation('GET'),
+                basePath: 'unittest/v1',
+                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                schemaPath: 'test/mocks/openapi.yml'
+            });
+            const results = await router.route();
+            assert.deepEqual(results, {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': '*'
+                },
+                statusCode: 200,
+                body: '{"test":true}'
+            });
+        });
+        it('router: fails query string requirements', async () => {
+            const event = mockData.getApiGateWayRouteValidation('GET');
+            delete event.queryStringParameters.test;
+            console.log(event.queryStringParameters);
+            const router = new Router({
+                event,
+                basePath: 'unittest/v1',
+                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                schemaPath: 'test/mocks/openapi.yml'
+            });
+            const results = await router.route();
+            console.log(results);
+            // assert.deepEqual(results, {
+            //     headers: {
+            //         'Access-Control-Allow-Origin': '*',
+            //         'Access-Control-Allow-Headers': '*'
+            //     },
+            //     statusCode: 200,
+            //     body: '{"test":true}'
+            // });
+        });
     });
     describe('test route custom validation', () => {
         it('router: test beforeAll fails', async () => {

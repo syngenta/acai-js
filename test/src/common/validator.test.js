@@ -8,23 +8,24 @@ const mockData = require('../../mocks/apigateway/mock-data');
 use(chaiAsPromised);
 
 describe('Test Validator', () => {
+    const request = new Request(mockData.getValidBodyData());
+    const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+    const validator = new Validator(schema);
     describe('test request', () => {
-        const request = new Request(mockData.getValidBodyData());
-        const response = new Response();
-        const schema = Schema.fromFilePath('test/mocks/openapi.yml');
-        const validator = new Validator(request, response, schema);
         it('valid request', () => {
-            validator.isValid({
+            const response = new Response();
+            const requirements = {
                 requiredHeaders: ['x-api-key'],
                 requiredParams: ['name'],
                 requiredBody: 'v1-test-request'
-            });
+            };
+            validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, false);
         });
         it('invalid header request', () => {
-            validator.isValid({
-                requiredHeaders: ['x-api-key-fail']
-            });
+            const response = new Response();
+            const requirements = {requiredHeaders: ['x-api-key-fail']};
+            validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -37,10 +38,8 @@ describe('Test Validator', () => {
         });
         it('invalid available header request', () => {
             const response = new Response();
-            const validator = new Validator(request, response, schema);
-            validator.isValid({
-                availableHeaders: ['x-api-key-fail']
-            });
+            const requirements = {availableHeaders: ['x-api-key-fail']};
+            validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -57,17 +56,14 @@ describe('Test Validator', () => {
         });
         it('valid available header request', () => {
             const response = new Response();
-            const validator = new Validator(request, response, schema);
-            validator.isValid({
-                availableHeaders: ['x-api-key', 'content-type']
-            });
+            const requirements = {availableHeaders: ['x-api-key', 'content-type']};
+            validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, false);
         });
         it('invalid query string params request', () => {
-            response.body = {};
-            validator.isValid({
-                requiredParams: ['name', 'failing-param']
-            });
+            const response = new Response();
+            const requirements = {requiredParams: ['name', 'failing-param']};
+            validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -79,10 +75,9 @@ describe('Test Validator', () => {
             });
         });
         it('invalid json body request: full request empty', async () => {
-            response.body = {};
-            await validator.isValid({
-                requiredBody: 'v1-test-fail-request'
-            });
+            const response = new Response();
+            const requirements = {requiredBody: 'v1-test-fail-request'};
+            await validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -96,12 +91,8 @@ describe('Test Validator', () => {
         it('invalid json body request: extra params', async () => {
             const request = new Request(mockData.getInvalidBodyData());
             const response = new Response();
-            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
-            const validator2 = new Validator(request, response, schema);
-            response.body = {};
-            await validator2.isValid({
-                requiredBody: 'v1-test-fail-request'
-            });
+            const requirements = {requiredBody: 'v1-test-fail-request'};
+            await validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -118,33 +109,36 @@ describe('Test Validator', () => {
         });
     });
     describe('test response', () => {
-        const request = new Request(mockData.getValidBodyData());
-        const response = new Response();
-        const schema = Schema.fromFilePath('test/mocks/openapi.yml');
-        const validator = new Validator(request, response, schema);
         it('response is valid', async () => {
+            const response = new Response();
             response.body = {
                 pageNumber: 0,
                 data: {
                     id: 'string'
                 }
             };
-            await validator.isValid({responseBody: 'v1-required-response'});
+            const requirements = {responseBody: 'v1-required-response'};
+            await validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, false);
         });
         it('response is invalid', async () => {
-            response.body = {};
-            await validator.isValid({responseBody: 'v1-required-response'});
+            const response = new Response();
+            const requirements = {responseBody: 'v1-required-response'};
+            await validator.isValid(request, response, requirements);
             assert.isTrue(response.hasErrors);
         });
         it('response is invalid: not object', async () => {
+            const response = new Response();
             response.body = '';
-            await validator.isValid({responseBody: 'v1-required-response'});
+            const requirements = {responseBody: 'v1-required-response'};
+            await validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, true);
         });
         it('response is invalid: proper error message', async () => {
+            const response = new Response();
             response.body = {};
-            await validator.isValid({responseBody: 'v1-response-test-all-of'});
+            const requirements = {responseBody: 'v1-response-test-all-of'};
+            await validator.isValid(request, response, requirements);
             assert.deepEqual(response.rawBody, {
                 errors: [
                     {key_path: 'root', message: "must have required property 'data'"},
@@ -153,25 +147,18 @@ describe('Test Validator', () => {
             });
         });
         it('throw error when entity not found', () => {
-            response.body = {};
-            const checkFn = async () => await validator.isValid({responseBody: 'random-string-$$$'});
+            const response = new Response();
+            const requirements = {responseBody: 'random-string-$$$'};
+            const checkFn = async () => await validator.isValid(request, response, requirements);
             expect(checkFn()).to.be.rejectedWith('');
         });
     });
     describe('test improper json', () => {
-        const request = new Request(mockData.getValidBodyData());
-        const response = new Response();
-        const schema = Schema.fromFilePath('test/mocks/openapi.yml');
-        const validator = new Validator(request, response, schema);
         it('invalid json: nullable field', async () => {
             const request = new Request(mockData.getBodyDataWithNullableField());
             const response = new Response();
-            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
-            const validator2 = new Validator(request, response, schema);
-            response.body = {};
-            await validator2.isValid({
-                requiredBody: 'v1-test-nullable-field'
-            });
+            const requirements = {requiredBody: 'v1-test-nullable-field'};
+            await validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -185,23 +172,15 @@ describe('Test Validator', () => {
         it('valid json: complex schema with allOfs', async () => {
             const request = new Request(mockData.getBodyDataWithComplexObject());
             const response = new Response();
-            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
-            const validator2 = new Validator(request, response, schema);
-            response.body = {};
-            await validator2.isValid({
-                requiredBody: 'v1-response-test-all-of'
-            });
+            const requirements = {requiredBody: 'v1-response-test-all-of'};
+            await validator.isValid(request, response, requirements);
             assert.isFalse(response.hasErrors);
         });
         it('invalid json: complex schema with allOfs', async () => {
             const request = new Request(mockData.getBodyDataWithInvalidComplexObject());
             const response = new Response();
-            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
-            const validator2 = new Validator(request, response, schema);
-            response.body = {};
-            await validator2.isValid({
-                requiredBody: 'v1-response-test-all-of'
-            });
+            const requirements = {requiredBody: 'v1-response-test-all-of'};
+            await validator.isValid(request, response, requirements);
             assert.isTrue(response.hasErrors);
             assert.deepEqual(response.rawBody, {
                 errors: [
