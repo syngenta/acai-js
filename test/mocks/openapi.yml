@@ -91,3 +91,52 @@ components:
             properties:
                 id:
                     type: string
+        v1-response-fail:
+            type: object
+            required:
+                - id
+            properties:
+                id:
+                    type: number
+        v1-ddb-record:
+            type: object
+            required:
+                - example_id
+                - note
+                - active
+                - personal
+                - transportation
+            properties:
+                example_id:
+                    type: string
+                note:
+                    type: string
+                active:
+                    type: boolean
+                personal:
+                    type: object
+                    properties:
+                        gender:
+                            type: string
+                        last_name:
+                            type: string
+                        first_name:
+                            type: string
+                transportation:
+                    type: array
+        v1-ddb-record-fail:
+            type: object
+            required:
+                - example_id
+                - note
+                - active
+                - transportation
+            properties:
+                example_id:
+                    type: string
+                note:
+                    type: string
+                active:
+                    type: number
+                transportation:
+                    type: array

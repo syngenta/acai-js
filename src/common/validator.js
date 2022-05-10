@@ -26,8 +26,16 @@ class Validator {
         return response;
     }
 
-    async isValidRecord() {
-        return true;
+    async isValidRecord(entityName = '', record = {}) {
+        const errors = await this.__schema.validate(entityName, record.body);
+        if (errors) {
+            const throwables = [];
+            errors.forEach((error) => {
+                const path = error.instancePath ? error.instancePath : 'root';
+                throwables.push({path, message: error.message});
+            });
+            throw new Error(JSON.stringify(throwables));
+        }
     }
 
     __validateAvailableFields(response, available, sent, source, code) {

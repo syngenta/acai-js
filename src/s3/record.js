@@ -46,6 +46,14 @@ class RecordClient {
     get s3SchemaVersion() {
         return this._record.s3.s3SchemaVersion;
     }
+
+    set body(body) {
+        this._record.body = body;
+    }
+
+    get body() {
+        return this._record.body;
+    }
 }
 
 module.exports = RecordClient;

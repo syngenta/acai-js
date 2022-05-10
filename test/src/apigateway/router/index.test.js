@@ -111,7 +111,6 @@ describe('Test Router', () => {
         });
         it('should catch unhandled property', async () => {
             const event = mockData.getApiGateWayRouteValidation('PATCH');
-            const spyFn = sinon.fake();
             const error = new Error();
             const router = new Router({
                 event,
