@@ -10,7 +10,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute(),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -27,7 +27,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute(),
                 basePath: 'unittest/v1',
-                handlerPath: '/test/mocks/apigateway/mock-handlers',
+                handlerPath: '/test/mocks/apigateway/mock-directory-handlers',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -44,7 +44,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute('-fail'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -61,7 +61,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayRoute('', 'GET'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -78,7 +78,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayCustomRoute('same-file-directory'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -96,7 +96,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayCustomRoute('directory'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -115,7 +115,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: () => {
                     throw error;
@@ -137,7 +137,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayRouteNoRequirements(),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -154,7 +154,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayRouteValidation('DELETE'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -173,7 +173,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -191,7 +191,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -210,7 +210,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -228,7 +228,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -247,7 +247,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -265,7 +265,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -283,7 +283,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
             const results = await router.route();
@@ -302,7 +302,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event: mockData.getApiGateWayRouteValidation('PATCH'),
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: mockBeforeAll.checkPermissions
             });
@@ -322,7 +322,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: mockBeforeAll.checkPermissions
             });
@@ -342,7 +342,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 afterAll: spyFn
             });
@@ -356,7 +356,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 withAuth: spyFn
             });
@@ -371,7 +371,7 @@ describe('Test Router', () => {
             const router = new Router({
                 event,
                 basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-handlers/',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: () => {
                     throw error;
