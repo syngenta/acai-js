@@ -1,34 +1,21 @@
 const fs = require('fs');
+const PathCleaner = require('./path-cleaner');
 const RouteError = require('./route-error');
 
 class DirectoryResolver {
+    constructor() {
+        this.__pathCleaner = new PathCleaner();
+    }
+
     resolve(request, response, base, controller) {
         try {
-            const cleanedPaths = this.cleanUpPaths(request, base, controller);
+            const cleanedPaths = this.__pathCleaner.cleanUpPaths(request, base, controller);
             return this.getEndpointPath(cleanedPaths);
         } catch (error) {
             response.code = error.code;
             response.setError(error.key, error.message);
             return '';
         }
-    }
-
-    cleanUpPaths(request, base, controller) {
-        const basePath = this.cleanPath(base);
-        const controllerFilePrefix = this.cleanPath(controller);
-        const requestedRoutePath = this.cleanPath(request.route);
-        const requestedFilePath = this.cleanPath(requestedRoutePath.replace(basePath, ''));
-        return {basePath, controllerFilePrefix, requestedRoutePath, requestedFilePath};
-    }
-
-    cleanPath(dirtyPath) {
-        if (dirtyPath.startsWith('/')) {
-            dirtyPath = dirtyPath.substr(1);
-        }
-        if (dirtyPath.endsWith('/')) {
-            dirtyPath = dirtyPath.slice(0, -1);
-        }
-        return dirtyPath;
     }
 
     getEndpointPath({controllerFilePrefix, requestedFilePath}) {

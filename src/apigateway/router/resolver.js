@@ -1,4 +1,5 @@
 const DirectoryResolver = require('./directory-resolver');
+const PatternResolver = require('./pattern-resolver');
 
 class RouteResolver {
     resolve(request, response, base, controller, config = 'directory') {
@@ -15,6 +16,9 @@ class RouteResolver {
     getResolver(config) {
         if (config === 'directory') {
             return new DirectoryResolver();
+        }
+        if (config === 'directory') {
+            return new PatternResolver();
         }
         throw new Error('routingMode must be either directory or pattern');
     }
