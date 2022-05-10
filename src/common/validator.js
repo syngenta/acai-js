@@ -6,8 +6,8 @@ class Validator {
             availableHeaders: {target: 'request', source: 'headers', method: '__validateAvailableFields', code: 400},
             requiredParams: {target: 'request', source: 'params', method: '__validateRequiredFields', code: 400},
             availableParams: {target: 'request', source: 'params', method: '__validateAvailableFields', code: 400},
-            requiredBody: {target: 'request', source: 'body', method: '__validateRequiredBody', code: 400},
-            responseBody: {target: 'response', source: 'rawBody', method: '__validateRequiredBody', code: 500}
+            requiredBody: {target: 'request', source: 'body', method: '__validateApigatewayBody', code: 400},
+            responseBody: {target: 'response', source: 'rawBody', method: '__validateApigatewayBody', code: 500}
         };
     }
 
@@ -24,6 +24,10 @@ class Validator {
             }
         }
         return response;
+    }
+
+    async isValidRecord() {
+        return true;
     }
 
     __validateAvailableFields(response, available, sent, source, code) {
@@ -44,7 +48,7 @@ class Validator {
         });
     }
 
-    async __validateRequiredBody(response, schema, body, code) {
+    async __validateApigatewayBody(response, schema, body, code) {
         const errors = await this.__schema.validate(schema, body);
         if (errors) {
             response.code = code;

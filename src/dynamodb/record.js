@@ -34,6 +34,10 @@ class RecordClient {
         return this._converter(this._record.dynamodb.NewImage);
     }
 
+    get body() {
+        return this.newImage;
+    }
+
     get eventSourceARN() {
         return this._record.eventSourceARN;
     }

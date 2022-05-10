@@ -2,25 +2,25 @@ const {assert} = require('chai');
 const RecordClient = require('../../../src').dynamodb.Record;
 const mockData = require('../../mocks/dynamodb/mock-data');
 
-describe('Test DynamoDB Record Client', async () => {
-    describe('test dynamoDB non-ttl stream', async () => {
+describe('Test DynamoDB Record Client: src/dynamodb/record.js', () => {
+    describe('test dynamoDB non-ttl stream', () => {
         const record = new RecordClient(mockData.getData().Records[0]);
-        it('ddb: eventID returned', () => {
+        it('should have property for eventID', () => {
             assert.equal(record.eventID, '9a37c0d03eb60f7cf70cabc823de9907');
         });
-        it('ddb: eventName returned', () => {
+        it('should have property for eventName', () => {
             assert.equal(record.eventName, 'INSERT');
         });
-        it('ddb: eventSource returned', () => {
+        it('should have property for eventSource', () => {
             assert.deepEqual(record.eventSource, 'aws:dynamodb');
         });
-        it('ddb: keys returned', () => {
+        it('should have property for keys', () => {
             assert.deepEqual(record.keys, {example_id: '123456789'});
         });
-        it('ddb: oldImage returned', () => {
+        it('should have property for old image', () => {
             assert.deepEqual(record.oldImage, {});
         });
-        it('ddb: newImage returned', () => {
+        it('should have property for new image', () => {
             assert.deepEqual(record.newImage, {
                 example_id: '123456789',
                 note: 'Hosrawguw verrig zogupap ce so fajdis vub mos sif mawpowpug kif kihane.',
@@ -29,40 +29,49 @@ describe('Test DynamoDB Record Client', async () => {
                 transportation: ['public-transit', 'car-access']
             });
         });
-        it('ddb: eventSourceARN returned', () => {
+        it('should have property for body (which is new image)', () => {
+            assert.deepEqual(record.body, {
+                example_id: '123456789',
+                note: 'Hosrawguw verrig zogupap ce so fajdis vub mos sif mawpowpug kif kihane.',
+                active: true,
+                personal: {gender: 'male', last_name: 'Mcneil', first_name: 'Mannix'},
+                transportation: ['public-transit', 'car-access']
+            });
+        });
+        it('should have property for eventSourceARN', () => {
             assert.equal(
                 record.eventSourceARN,
                 'arn:aws:dynamodb:us-east-1:771875143460:table/test-example/stream/2019-10-04T23:18:26.340'
             );
         });
-        it('ddb: eventVersion returned', () => {
+        it('should have property for eventVersion', () => {
             assert.equal(record.eventVersion, mockData.getData().Records[0].eventVersion);
         });
-        it('ddb: streamViewType returned', () => {
+        it('should have property for streamViewType', () => {
             assert.equal(record.streamViewType, mockData.getData().Records[0].dynamodb.StreamViewType);
         });
-        it('ddb: sizeBytes returned', () => {
+        it('should have property for sizeBytes', () => {
             assert.equal(record.sizeBytes, mockData.getData().Records[0].dynamodb.SizeBytes);
         });
-        it('ddb: approximateCreationDateTime returned', () => {
+        it('should have property for approximateCreationDateTime', () => {
             assert.equal(
                 record.approximateCreationDateTime,
                 mockData.getData().Records[0].dynamodb.ApproximateCreationDateTime
             );
         });
-        it('ddb: userIdentity returned null', () => {
+        it('should have property for userIdentity as null', () => {
             assert.equal(record.userIdentity, mockData.getData().Records[0].dynamodb.userIdentity);
         });
-        it('ddb: timeToLiveExpired returned false', () => {
+        it('should have property for ttl as false', () => {
             assert.equal(record.timeToLiveExpired, false);
         });
     });
-    describe('test dynamoDB ttl stream', async () => {
+    describe('test dynamoDB ttl stream', () => {
         const record = new RecordClient(mockData.getTTLData().Records[0]);
-        it('ddb: userIdentity returned object', () => {
+        it('should have property for userIdentity as object', () => {
             assert.deepEqual(record.userIdentity, mockData.getTTLData().Records[0].userIdentity);
         });
-        it('ddb: timeToLiveExpired returned true', () => {
+        it('should have property for ttl as false', () => {
             assert.equal(record.timeToLiveExpired, true);
         });
     });
