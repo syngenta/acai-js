@@ -13,8 +13,12 @@ class Logger {
 
     static setUpGlobal(setup = true, params = {}) {
         if (!global.logger && setup) {
-            global.logger = new Logger(params);
+            new Logger(params).setUp();
         }
+    }
+
+    setUp() {
+        global.logger = this;
     }
 
     log(...logs) {

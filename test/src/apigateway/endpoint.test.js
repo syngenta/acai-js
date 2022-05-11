@@ -1,10 +1,10 @@
 const {assert} = require('chai');
-const mockData = require('../../../mocks/apigateway/mock-data');
-const Endpoint = require('../../../../src/apigateway/endpoint');
-const {Request, Response} = require('../../../../src').apigateway;
+const mockData = require('../../mocks/apigateway/mock-data');
+const Endpoint = require('../../../src/apigateway/endpoint');
+const {Request, Response} = require('../../../src').apigateway;
 
 describe('Test Endpoint', () => {
-    const module = require('../../../mocks/apigateway/mock-directory-handlers/with-requirements');
+    const module = require('../../mocks/apigateway/mock-directory-handlers/with-requirements');
     describe('test basic endpoint settings', () => {
         const endpoint = new Endpoint(module, 'GET');
         it('should have an endpoint with correct http method', async () => {

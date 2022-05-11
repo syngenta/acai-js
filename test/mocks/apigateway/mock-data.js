@@ -353,6 +353,47 @@ exports.getApiGateWayRoute = (suffix = '', method = 'POST') => {
     };
 };
 
+exports.getApiGateWayRouteBadImport = () => {
+    return {
+        path: `unittest/v1/bad-import`,
+        httpMethod: 'POST',
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'hello'
+        },
+        resource: '/{proxy+}',
+        queryStringParameters: {
+            name: 'me'
+        },
+        body: JSON.stringify({
+            test_id: 'test_id',
+            object_key: {
+                string_key: 'test'
+            },
+            array_number: [1],
+            array_objects: [
+                {
+                    array_string_key: 'string',
+                    array_number_key: 3
+                }
+            ]
+        })
+    };
+};
+
 exports.getApiGateWayRouteValidation = (method = 'POST') => {
     return {
         path: `unittest/v1/with-requirements`,

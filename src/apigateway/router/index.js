@@ -1,7 +1,7 @@
-const EndpointConfig = require('../endpoint/config');
 const Logger = require('../../common/logger');
 const LoggerSetup = require('../../common/logger.js');
 const Request = require('../request');
+const RouteResolver = require('./resolver');
 const Response = require('../response');
 const Schema = require('../../common/schema.js');
 const Validator = require('../../common/validator');
@@ -16,9 +16,10 @@ class Router {
         this.__withAuth = params.withAuth;
         this.__onError = params.onError;
         this.__schema = Schema.fromFilePath(params.schema || params.schemaPath);
-        this.__logger = new Logger();
+        this.__logger = new Logger(params);
+        this.__resolver = new RouteResolver(params.routingMode, params.routingPattern);
         this.__validator = new Validator(this.__schema);
-        LoggerSetup.setUpGlobal(params.globalLogger);
+        this.__logger.setUp();
     }
 
     async route() {
@@ -34,7 +35,7 @@ class Router {
     }
 
     async __runRoute(request, response) {
-        const endpoint = EndpointConfig.getEndpoint(request, response, this.__basePath, this.__controllerPath);
+        const endpoint = this.__resolver.getEndpoint(request, response, this.__basePath, this.__controllerPath);
         if (!response.hasErrors && typeof this.__beforeAll === 'function') {
             await this.__beforeAll(request, response, endpoint.requirements);
         }
