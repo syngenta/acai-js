@@ -74,41 +74,6 @@ describe('Test Router', () => {
                 body: '{"errors":[{"key_path":"method","message":"method not allowed"}]}'
             });
         });
-        it('should fail when app has same with same file & directory', async () => {
-            const router = new Router({
-                event: mockData.getApiGateWayCustomRoute('same-file-directory'),
-                basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
-                schemaPath: 'test/mocks/openapi.yml'
-            });
-            const results = await router.route();
-            assert.deepEqual(results, {
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': '*'
-                },
-                statusCode: 500,
-                body:
-                    '{"errors":[{"key_path":"router-config","message":"file & directory share name in the same directory"}]}'
-            });
-        });
-        it('should fall back to index.js when route ends as a directory', async () => {
-            const router = new Router({
-                event: mockData.getApiGateWayCustomRoute('directory'),
-                basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
-                schemaPath: 'test/mocks/openapi.yml'
-            });
-            const results = await router.route();
-            assert.deepEqual(results, {
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': '*'
-                },
-                statusCode: 200,
-                body: '{"directory":true}'
-            });
-        });
         it('should catch unhandled property', async () => {
             const event = mockData.getApiGateWayRouteValidation('PATCH');
             const error = new Error();

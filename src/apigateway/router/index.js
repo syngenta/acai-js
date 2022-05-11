@@ -9,15 +9,13 @@ const Validator = require('../../common/validator');
 class Router {
     constructor(params) {
         this.__event = params.event;
-        this.__basePath = params.basePath;
-        this.__controllerPath = params.controllerPath || params.handlerPath;
         this.__beforeAll = params.beforeAll;
         this.__afterAll = params.afterAll;
         this.__withAuth = params.withAuth;
         this.__onError = params.onError;
-        this.__schema = Schema.fromFilePath(params.schema || params.schemaPath);
+        this.__schema = Schema.fromFilePath(params.schemaPath);
         this.__logger = new Logger(params);
-        this.__resolver = new RouteResolver(params.routingMode, params.routingPattern);
+        this.__resolver = new RouteResolver(params);
         this.__validator = new Validator(this.__schema);
         this.__logger.setUp();
     }
@@ -35,7 +33,7 @@ class Router {
     }
 
     async __runRoute(request, response) {
-        const endpoint = this.__resolver.getEndpoint(request, response, this.__basePath, this.__controllerPath);
+        const endpoint = this.__resolver.getEndpoint(request, response);
         if (!response.hasErrors && typeof this.__beforeAll === 'function') {
             await this.__beforeAll(request, response, endpoint.requirements);
         }

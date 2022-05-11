@@ -4,13 +4,12 @@ const DirectoryResolver = require('./directory-resolver');
 const PatternResolver = require('./pattern-resolver');
 
 class RouteResolver {
-    constructor(routingMode = 'directory', routingPattern = '') {
-        this.mode = routingMode;
-        this.pattern = routingPattern;
+    constructor(params) {
+        this.__params = params;
     }
 
-    getEndpoint(request, response, base, controller) {
-        const resolved = this.getResolver().resolve(request, response, base, controller);
+    getEndpoint(request, response) {
+        const resolved = this.getResolver().resolve(request, response);
         if (!response.hasErrors) {
             const endpointModule = this.getModule(resolved, response);
             return new Endpoint(endpointModule, request.method);
@@ -19,11 +18,11 @@ class RouteResolver {
     }
 
     getResolver() {
-        if (this.mode === 'directory') {
-            return new DirectoryResolver();
+        if (this.__params.routingMode === 'pattern') {
+            return new PatternResolver(this.__params);
         }
-        if (this.mode === 'directory') {
-            return new PatternResolver();
+        if (this.__params.routingMode === 'directory' || !this.__params.routingMode) {
+            return new DirectoryResolver(this.__params);
         }
         throw new Error('routingMode must be either directory or pattern');
     }

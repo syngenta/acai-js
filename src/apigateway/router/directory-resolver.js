@@ -3,13 +3,15 @@ const PathCleaner = require('./path-cleaner');
 const RouteError = require('./route-error');
 
 class DirectoryResolver {
-    constructor() {
+    constructor(params) {
         this.__pathCleaner = new PathCleaner();
+        this.__basePath = params.basePath;
+        this.__handlerPath = params.handlerPath;
     }
 
-    resolve(request, response, base, controller) {
+    resolve(request, response) {
         try {
-            const cleanedPaths = this.__pathCleaner.cleanUpPaths(request, base, controller);
+            const cleanedPaths = this.cleanUpPaths(request);
             return this.getEndpointPath(cleanedPaths);
         } catch (error) {
             response.code = error.code;
@@ -18,8 +20,16 @@ class DirectoryResolver {
         }
     }
 
-    getEndpointPath({controllerFilePrefix, requestedFilePath}) {
-        const endpointPath = `${controllerFilePrefix}/${requestedFilePath}`;
+    cleanUpPaths(request) {
+        const basePath = this.__pathCleaner.cleanPath(this.__basePath);
+        const handlerFilePrefix = this.__pathCleaner.cleanPath(this.__handlerPath);
+        const requestedRoutePath = this.__pathCleaner.cleanPath(request.route);
+        const requestedFilePath = this.__pathCleaner.cleanPath(requestedRoutePath.replace(basePath, ''));
+        return {basePath, handlerFilePrefix, requestedRoutePath, requestedFilePath};
+    }
+
+    getEndpointPath({handlerFilePrefix, requestedFilePath}) {
+        const endpointPath = `${handlerFilePrefix}/${requestedFilePath}`;
         const isDirectory = this.isDirectory(endpointPath);
         const isFile = this.isFile(`${endpointPath}.js`);
         if (isDirectory && isFile) {

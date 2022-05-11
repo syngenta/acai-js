@@ -13,7 +13,7 @@
         "url": "https://github.com/syngenta-digital/package-node-alc/issues"
     },
     "scripts": {
-        "test-single": "unittest=true nyc mocha test/src/apigateway/router/directory-resolver.test.js",
+        "test-single": "unittest=true mocha test/src/apigateway/router/pattern-resolver.test.js",
         "test": "unittest=true nyc mocha test/**/**.test.js",
         "report": "MIN_LOG_LEVEL=OFF nyc report --reporter=lcov",
         "lint": "eslint src/**"
@@ -22,6 +22,7 @@
         "ajv": "8.10.0",
         "aws-lambda": "^1.0.7",
         "aws-sdk": "2.1125.0",
+        "glob-fs": "^0.1.7",
         "js-yaml": "4.1.0",
         "json-schema-merge-allof": "^0.8.1",
         "json-schema-ref-parser": "9.0.9",
