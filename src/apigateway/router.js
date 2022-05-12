@@ -1,10 +1,10 @@
-const Logger = require('../../common/logger');
-const LoggerSetup = require('../../common/logger.js');
-const Request = require('../request');
+const Logger = require('../common/logger');
+const LoggerSetup = require('../common/logger.js');
+const Request = require('./request');
 const RouteResolver = require('./resolver');
-const Response = require('../response');
-const Schema = require('../../common/schema.js');
-const Validator = require('../../common/validator');
+const Response = require('./response');
+const Schema = require('../common/schema.js');
+const Validator = require('../common/validator');
 
 class Router {
     constructor(params) {
@@ -14,9 +14,9 @@ class Router {
         this.__withAuth = params.withAuth;
         this.__onError = params.onError;
         this.__schema = Schema.fromFilePath(params.schemaPath);
-        this.__logger = new Logger(params);
         this.__resolver = new RouteResolver(params);
         this.__validator = new Validator(this.__schema);
+        this.__logger = new Logger(params);
         this.__logger.setUp();
     }
 
@@ -46,10 +46,6 @@ class Router {
         if (!response.hasErrors && endpoint.hasBefore) {
             await endpoint.before(request, response);
         }
-        if (!response.hasErrors && typeof endpoint.method !== 'function') {
-            response.code = 403;
-            response.setError('method', 'method not allowed');
-        }
         if (!response.hasErrors) {
             await endpoint.run(request, response);
         }
@@ -77,11 +73,14 @@ class Router {
     }
 
     __logError(request, response, error) {
-        this.__logger.error({
-            error_messsage: error.message,
-            event: this.__event,
-            request: request.request,
-            response: response.response
+        this.__logger.log({
+            level: 'ERROR',
+            log: {
+                message: error.message,
+                event: this.__event,
+                request: request.request,
+                response: response.response
+            }
         });
     }
 }

@@ -1,4 +1,4 @@
-class RouteError {
+class ImportError {
     constructor(code = 500, key = 'unknown', message = 'something went wrong') {
         this.code = code;
         this.key = key;
@@ -6,4 +6,4 @@ class RouteError {
     }
 }
 
-module.exports = RouteError;
+module.exports = ImportError;

@@ -1,10 +1,10 @@
 const {assert} = require('chai');
 const sinon = require('sinon');
-const {Router} = require('../../../../src').apigateway;
-const mockData = require('../../../mocks/apigateway/mock-data');
-const mockBeforeAll = require('../../../mocks/apigateway/mock-before-all');
+const {Router} = require('../../../src').apigateway;
+const mockData = require('../../mocks/apigateway/mock-data');
+const mockBeforeAll = require('../../mocks/apigateway/mock-before-all');
 
-describe('Test Router', () => {
+describe('Test Router: src/apigateway/router.js', () => {
     describe('test routing', () => {
         it('should find route', async () => {
             const router = new Router({
