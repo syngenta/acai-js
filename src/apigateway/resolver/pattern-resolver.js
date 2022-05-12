@@ -11,12 +11,12 @@ class PatternResolver {
     }
 
     resolve(request) {
-        const files = this.getFiles(request.route);
-        const endpointPath = this.getEndpointPath(files);
+        const files = this.__getFilePaths(request.route);
+        const endpointPath = this.__getEndpointPath(files);
         return this.__importer.importModuleFromPath(endpointPath);
     }
 
-    getFiles(route) {
+    __getFilePaths(route) {
         const globFiles = glob.readdirSync(this.__pattern, {});
         const splitPattern = this.__pattern.split('*');
         const fileSuffix = splitPattern[splitPattern.length - 1];
@@ -27,16 +27,14 @@ class PatternResolver {
         return {requestedFile, fileSuffix, lastFile, globFiles};
     }
 
-    getEndpointPath({requestedFile, fileSuffix, lastFile, globFiles}) {
-        const mvcFiles = globFiles.filter((file) => file.includes(`${requestedFile}${fileSuffix}`));
-        const mvvmFiles = globFiles.filter((file) => file.includes(`${requestedFile}/${lastFile}${fileSuffix}`));
-        const directories = globFiles.filter((file) => file.endsWith(lastFile));
-        if (
-            directories.length &&
-            mvcFiles.length &&
-            this.__importer.isFile(mvcFiles[0]) &&
-            this.__importer.isDirectory(directories[0])
-        ) {
+    __getEndpointPath({requestedFile, fileSuffix, lastFile, globFiles}) {
+        const mvcFiles = globFiles.filter(
+            (file) =>
+                file.endsWith(`${requestedFile}${fileSuffix}`) &&
+                !file.endsWith(`${requestedFile}/${lastFile}${fileSuffix}`)
+        );
+        const mvvmFiles = globFiles.filter((file) => file.endsWith(`${requestedFile}/${lastFile}${fileSuffix}`));
+        if (mvcFiles.length && mvvmFiles.length) {
             throw new ImportError(500, 'router-config', 'file & directory cant share name in the same directory');
         }
         if (mvvmFiles.length && this.__importer.isFile(mvvmFiles[0])) {

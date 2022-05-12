@@ -34,31 +34,6 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
                 assert.equal(error.message, 'routingMode must be either directory or pattern');
             }
         });
-        // it('should return module', () => {
-        //     const basePath = 'unittest/v1';
-        //     const routingMode = 'directory';
-        //     const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
-        //     const resolver = new RouteResolver({basePath, routingMode, handlerPath});
-        //     const resolved = 'test/mocks/apigateway/mock-directory-handlers/basic';
-        //     const response = new Response();
-        //     const module = resolver.getModule(resolved, response);
-        //     assert.isFalse(response.hasErrors);
-        //     assert.deepEqual(module.requirements, {
-        //         post: {
-        //             requiredBody: 'v1-test-request'
-        //         }
-        //     });
-        // });
-        // it('should not return module', () => {
-        //     const resolved = 'test/mocks/apigateway/mock-directory-handlers/basic-fail';
-        //     const basePath = 'unittest/v1';
-        //     const routingMode = 'directory';
-        //     const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
-        //     const resolver = new RouteResolver({basePath, routingMode, handlerPath});
-        //     const response = new Response();
-        //     const module = resolver.getModule(resolved, response);
-        //     assert.isTrue(response.hasErrors);
-        // });
         it('should not be able to find endpoint and throws unhandled error', async () => {
             const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
             const basePath = 'unittest/v1';

@@ -11,12 +11,11 @@ class RouteResolver {
 
     getEndpoint(request, response) {
         try {
-            const endpointModule = this.getResolver().resolve(request, response);
-            const endpoint = new Endpoint(endpointModule, request.method);
-            if (typeof endpoint.method !== 'function') {
+            const endpointModule = this.getResolver().resolve(request);
+            if (typeof endpointModule[request.method.toLowerCase()] !== 'function') {
                 throw new ImportError(403, 'method', 'method not allowed');
             }
-            return endpoint;
+            return new Endpoint(endpointModule, request.method);
         } catch (error) {
             response.code = error.code;
             response.setError(error.key, error.message);

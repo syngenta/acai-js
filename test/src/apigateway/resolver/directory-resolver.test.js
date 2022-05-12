@@ -13,10 +13,16 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
         const result = resolver.resolve(request);
         assert.isTrue(typeof result.post === 'function');
     });
+    it('should find the file with nested structure', () => {
+        const request = new Request(mockData.getApiGateWayCustomRoute('nested-1/nested-2/basic'));
+        const result = resolver.resolve(request);
+        assert.isTrue(typeof result.post === 'function');
+    });
     it('should not find the file', () => {
         const request = new Request(mockData.getApiGateWayRoute('-fail'));
         try {
             resolver.resolve(request);
+            assert.isFalse(true);
         } catch (error) {
             assert.equal(error.code, 404);
             assert.equal(error.key, 'url');
@@ -27,6 +33,7 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
         const request = new Request(mockData.getApiGateWayCustomRoute('same-file-directory'));
         try {
             resolver.resolve(request);
+            assert.isFalse(true);
         } catch (error) {
             assert.equal(error.code, 500);
             assert.equal(error.key, 'router-config');

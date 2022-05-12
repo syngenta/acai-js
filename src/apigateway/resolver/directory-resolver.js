@@ -9,12 +9,12 @@ class DirectoryResolver {
     }
 
     resolve(request) {
-        const cleanedPaths = this.cleanUpPaths(request);
-        const endpointPath = this.getEndpointPath(cleanedPaths);
+        const cleanedPaths = this.__getFilePaths(request);
+        const endpointPath = this.__getEndpointPath(cleanedPaths);
         return this.__importManager.importModuleFromPath(endpointPath);
     }
 
-    cleanUpPaths(request) {
+    __getFilePaths(request) {
         const basePath = this.__importManager.cleanPath(this.__basePath);
         const handlerFilePrefix = this.__importManager.cleanPath(this.__handlerPath);
         const requestedRoutePath = this.__importManager.cleanPath(request.route);
@@ -22,7 +22,7 @@ class DirectoryResolver {
         return {basePath, handlerFilePrefix, requestedRoutePath, requestedFilePath};
     }
 
-    getEndpointPath({handlerFilePrefix, requestedFilePath}) {
+    __getEndpointPath({handlerFilePrefix, requestedFilePath}) {
         const endpointPath = `${handlerFilePrefix}/${requestedFilePath}`;
         const isDirectory = this.__importManager.isDirectory(endpointPath);
         const isFile = this.__importManager.isFile(`${endpointPath}.js`);
