@@ -21,18 +21,48 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}).getResolver();
             assert.isTrue(resolver instanceof PatternResolver);
         });
-        it('should throw error for improper configuration', () => {
+        it('should throw error for improper routingMode configuration', () => {
             const basePath = 'unittest/v1';
             const routingMode = 'fail';
             const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
             const resolver = new RouteResolver({basePath, routingMode, handlerPath});
             const request = new Request(mockData.getApiGateWayRouteBadImport());
             const response = new Response();
-            try {
-                resolver.getEndpoint(request, response);
-            } catch (error) {
-                assert.equal(error.message, 'routingMode must be either directory or pattern');
-            }
+            resolver.getEndpoint(request, response);
+            assert.equal(response.code, 500);
+            assert.equal(response.hasErrors, true);
+            assert.equal(
+                response.body,
+                '{"errors":[{"key_path":"router-config","message":"routingMode must be either directory or pattern"}]}'
+            );
+        });
+        it('should throw error for improper directory configuration missing handlerPath', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'directory';
+            const resolver = new RouteResolver({basePath, routingMode});
+            const request = new Request(mockData.getApiGateWayRouteBadImport());
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.equal(response.code, 500);
+            assert.equal(response.hasErrors, true);
+            assert.equal(
+                response.body,
+                '{"errors":[{"key_path":"router-config","message":"handlerPath config is requied when routingMode is directory"}]}'
+            );
+        });
+        it('should throw error for improper pattern configuration missing handlerPattern', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'pattern';
+            const resolver = new RouteResolver({basePath, routingMode});
+            const request = new Request(mockData.getApiGateWayRouteBadImport());
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.equal(response.code, 500);
+            assert.equal(response.hasErrors, true);
+            assert.equal(
+                response.body,
+                '{"errors":[{"key_path":"router-config","message":"handlerPattern config is requied when routingMode is pattern"}]}'
+            );
         });
         it('should not be able to find endpoint and throws unhandled error', async () => {
             const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';

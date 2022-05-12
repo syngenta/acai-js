@@ -7,10 +7,12 @@ const PatternResolver = require('./pattern-resolver');
 class RouteResolver {
     constructor(params) {
         this.__params = params;
+        this.__params.routingMode = params.routingMode || 'directory';
     }
 
     getEndpoint(request, response) {
         try {
+            this.__validateConfigs();
             const endpointModule = this.getResolver().resolve(request);
             if (typeof endpointModule[request.method.toLowerCase()] !== 'function') {
                 throw new ImportError(403, 'method', 'method not allowed');
@@ -27,10 +29,21 @@ class RouteResolver {
         if (this.__params.routingMode === 'pattern') {
             return new PatternResolver(this.__params);
         }
-        if (this.__params.routingMode === 'directory' || !this.__params.routingMode) {
+        if (this.__params.routingMode === 'directory') {
             return new DirectoryResolver(this.__params);
         }
-        throw new ImportError(500, 'router-config', 'routingMode must be either directory or pattern');
+    }
+
+    __validateConfigs() {
+        if (this.__params.routingMode !== 'pattern' && this.__params.routingMode !== 'directory') {
+            throw new ImportError(500, 'router-config', 'routingMode must be either directory or pattern');
+        }
+        if (this.__params.routingMode === 'directory' && !this.__params.handlerPath) {
+            throw new ImportError(500, 'router-config', 'handlerPath config is requied when routingMode is directory');
+        }
+        if (this.__params.routingMode === 'pattern' && !this.__params.handlerPattern) {
+            throw new ImportError(500, 'router-config', 'handlerPattern config is requied when routingMode is pattern');
+        }
     }
 }
 
