@@ -2,6 +2,7 @@ const path = require('path');
 const Endpoint = require('../endpoint');
 const ImportError = require('../import-manager/import-error');
 const DirectoryResolver = require('./directory-resolver');
+const ListResolver = require('./list-resolver');
 const PatternResolver = require('./pattern-resolver');
 
 class RouteResolver {
@@ -10,7 +11,8 @@ class RouteResolver {
         this.__params.routingMode = params.routingMode || 'directory';
         this.__resolvers = {
             pattern: PatternResolver,
-            directory: DirectoryResolver
+            directory: DirectoryResolver,
+            list: ListResolver
         };
     }
 
@@ -34,14 +36,18 @@ class RouteResolver {
     }
 
     __validateConfigs() {
-        if (this.__params.routingMode !== 'pattern' && this.__params.routingMode !== 'directory') {
-            throw new ImportError(500, 'router-config', 'routingMode must be either directory or pattern');
+        const {routingMode, handlerPath, handlerPattern, handlerList} = this.__params;
+        if (routingMode !== 'pattern' && routingMode !== 'directory' && routingMode !== 'list') {
+            throw new ImportError(500, 'router-config', 'routingMode must be either directory, pattern or list');
         }
-        if (this.__params.routingMode === 'directory' && !this.__params.handlerPath) {
+        if (routingMode === 'directory' && !handlerPath) {
             throw new ImportError(500, 'router-config', 'handlerPath config is requied when routingMode is directory');
         }
-        if (this.__params.routingMode === 'pattern' && !this.__params.handlerPattern) {
+        if (routingMode === 'pattern' && !handlerPattern) {
             throw new ImportError(500, 'router-config', 'handlerPattern config is requied when routingMode is pattern');
+        }
+        if (routingMode === 'list' && !handlerList) {
+            throw new ImportError(500, 'router-config', 'handlerList config is requied when routingMode is list');
         }
     }
 }

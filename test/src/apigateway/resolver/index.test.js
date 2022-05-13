@@ -2,6 +2,7 @@ const {assert} = require('chai');
 const RouteResolver = require('../../../../src/apigateway/resolver');
 const DirectoryResolver = require('../../../../src/apigateway/resolver/directory-resolver');
 const PatternResolver = require('../../../../src/apigateway/resolver/pattern-resolver');
+const ListResolver = require('../../../../src/apigateway/resolver/list-resolver');
 const {Request, Response} = require('../../../../src').apigateway;
 const mockData = require('../../../mocks/apigateway/mock-data');
 
@@ -21,6 +22,13 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}).getResolver();
             assert.isTrue(resolver instanceof PatternResolver);
         });
+        it('should return an instance of ListResolver', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'list';
+            const handlerList = [];
+            const resolver = new RouteResolver({basePath, routingMode, handlerList}).getResolver();
+            assert.isTrue(resolver instanceof ListResolver);
+        });
         it('should throw error for improper routingMode configuration', () => {
             const basePath = 'unittest/v1';
             const routingMode = 'fail';
@@ -33,7 +41,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             assert.equal(response.hasErrors, true);
             assert.equal(
                 response.body,
-                '{"errors":[{"key_path":"router-config","message":"routingMode must be either directory or pattern"}]}'
+                '{"errors":[{"key_path":"router-config","message":"routingMode must be either directory, pattern or list"}]}'
             );
         });
         it('should throw error for improper directory configuration missing handlerPath', () => {
@@ -62,6 +70,20 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             assert.equal(
                 response.body,
                 '{"errors":[{"key_path":"router-config","message":"handlerPattern config is requied when routingMode is pattern"}]}'
+            );
+        });
+        it('should throw error for improper list configuration missing handlerList', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'list';
+            const resolver = new RouteResolver({basePath, routingMode});
+            const request = new Request(mockData.getApiGateWayRouteBadImport());
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.equal(response.code, 500);
+            assert.equal(response.hasErrors, true);
+            assert.equal(
+                response.body,
+                '{"errors":[{"key_path":"router-config","message":"handlerList config is requied when routingMode is list"}]}'
             );
         });
         it('should not be able to find endpoint and throws unhandled error', async () => {

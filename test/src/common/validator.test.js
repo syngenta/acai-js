@@ -146,7 +146,7 @@ describe('Test Validator', () => {
                 ]
             });
         });
-        it('should throw and error when error is not found', () => {
+        it('should throw an error when error is not found', () => {
             const response = new Response();
             const requirements = {responseBody: 'random-string-$$$'};
             const checkFn = async () => await validator.isValid(request, response, requirements, 'response');
