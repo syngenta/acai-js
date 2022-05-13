@@ -27,7 +27,10 @@ describe('Test Request Client', () => {
             });
         });
         it('should have params as an object', () => {
-            assert.deepEqual(request.params, {
+            assert.deepEqual(request.params, {query: {name: 'me'}, path: {proxy: 'hello'}});
+        });
+        it('should have query as an object', () => {
+            assert.deepEqual(request.query, {
                 name: 'me'
             });
         });
@@ -51,8 +54,9 @@ describe('Test Request Client', () => {
                     integrationLatency: 572
                 },
                 headers: {'x-api-key': 'SOME-KEY', 'content-type': 'application/json'},
-                params: {name: 'me'},
+                query: {name: 'me'},
                 path: {proxy: 'hello'},
+                params: {query: {name: 'me'}, path: {proxy: 'hello'}},
                 body: {body_key: 'body_value'},
                 context: null,
                 route: `unittest/v1/basic`
@@ -99,10 +103,10 @@ describe('Test Request Client', () => {
             });
         });
     });
-    describe('test no params', () => {
+    describe('test no query', () => {
         const request = new Request(mockData.getDataNoParams());
-        it('should have params as an empty object with no params', () => {
-            assert.deepEqual(request.params, {});
+        it('should have query as an empty object with no params', () => {
+            assert.deepEqual(request.query, {});
         });
     });
     describe('test bad body', () => {

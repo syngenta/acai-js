@@ -8,6 +8,10 @@ class RouteResolver {
     constructor(params) {
         this.__params = params;
         this.__params.routingMode = params.routingMode || 'directory';
+        this.__resolvers = {
+            pattern: PatternResolver,
+            directory: DirectoryResolver
+        };
     }
 
     getEndpoint(request, response) {
@@ -26,12 +30,7 @@ class RouteResolver {
     }
 
     getResolver() {
-        if (this.__params.routingMode === 'pattern') {
-            return new PatternResolver(this.__params);
-        }
-        if (this.__params.routingMode === 'directory') {
-            return new DirectoryResolver(this.__params);
-        }
+        return new this.__resolvers[this.__params.routingMode](this.__params);
     }
 
     __validateConfigs() {

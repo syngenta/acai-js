@@ -4,8 +4,8 @@ class Validator {
         this.__pairings = {
             requiredHeaders: {target: 'request', source: 'headers', method: '__validateRequiredFields', code: 400},
             availableHeaders: {target: 'request', source: 'headers', method: '__validateAvailableFields', code: 400},
-            requiredParams: {target: 'request', source: 'params', method: '__validateRequiredFields', code: 400},
-            availableParams: {target: 'request', source: 'params', method: '__validateAvailableFields', code: 400},
+            requiredParams: {target: 'request', source: 'query', method: '__validateRequiredFields', code: 400},
+            availableParams: {target: 'request', source: 'query', method: '__validateAvailableFields', code: 400},
             requiredBody: {target: 'request', source: 'body', method: '__validateApigatewayBody', code: 400},
             responseBody: {target: 'response', source: 'rawBody', method: '__validateApigatewayBody', code: 500}
         };

@@ -68,8 +68,8 @@ describe('Test Validator', () => {
             assert.deepEqual(response.rawBody, {
                 errors: [
                     {
-                        key_path: 'params',
-                        message: 'Please provide failing-param for params'
+                        key_path: 'query',
+                        message: 'Please provide failing-param for query'
                     }
                 ]
             });

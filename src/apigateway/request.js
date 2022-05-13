@@ -31,11 +31,17 @@ class Request {
     }
 
     get params() {
+        const query = this.query;
+        const path = this.path;
+        return {query, path};
+    }
+
+    get query() {
         return this.__event.queryStringParameters ? this.__event.queryStringParameters : {};
     }
 
     get path() {
-        return this.__event.pathParameters;
+        return this.__event.pathParameters ? this.__event.pathParameters : {};
     }
 
     get route() {
@@ -99,6 +105,7 @@ class Request {
             authorizer: this.authorizer,
             headers: this.headers,
             params: this.params,
+            query: this.query,
             path: this.path,
             route: this.route,
             context: this.context,
