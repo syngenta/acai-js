@@ -17,33 +17,61 @@ class PatternResolver {
     }
 
     __getFilePaths(route) {
-        const globFiles = glob.readdirSync(this.__pattern, {});
-        const splitPattern = this.__pattern.split('*');
-        const fileSuffix = splitPattern[splitPattern.length - 1];
-        const base = this.__importer.cleanPath(this.__basePath);
-        const requestedFile = this.__importer.cleanPath(route.replace(base, ''));
-        const splitFile = requestedFile.split('/');
-        const lastFile = splitFile[splitFile.length - 1];
-        return {requestedFile, fileSuffix, lastFile, globFiles};
+        const root = this.__getPatternRoute();
+        const directory = this.__getRequestDirectoryPath(route);
+        const file = this.__getRequestHandlerFile(route);
+        const sub = this.__getSubDirectory(route);
+        const files = this.__findFilesFromGlob();
+        const mvc = `${root}/${directory}/${file}`.replace(/\/\//g, '/');
+        const mvvm = `${root}/${directory}/${sub}/${file}`.replace(/\/\//g, '/');
+        return {mvvm, mvc, files};
     }
 
-    __getEndpointPath({requestedFile, fileSuffix, lastFile, globFiles}) {
-        const mvcFiles = globFiles.filter(
-            (file) =>
-                file.endsWith(`${requestedFile}${fileSuffix}`) &&
-                !file.endsWith(`${requestedFile}/${lastFile}${fileSuffix}`)
-        );
-        const mvvmFiles = globFiles.filter((file) => file.endsWith(`${requestedFile}/${lastFile}${fileSuffix}`));
-        if (mvcFiles.length && mvvmFiles.length) {
+    __getEndpointPath({mvc, mvvm, files}) {
+        const mvvmFile = files.find((file) => file.includes(mvc));
+        const mvcFile = files.find((file) => file.includes(mvvm));
+        if (mvvmFile && mvcFile) {
             throw new ImportError(500, 'router-config', 'file & directory cant share name in the same directory');
         }
-        if (mvvmFiles.length && this.__importer.isFile(mvvmFiles[0])) {
-            return mvvmFiles[0];
+        if (mvvmFile && this.__importer.isFile(mvvmFile)) {
+            return mvvmFile;
         }
-        if (mvcFiles.length && this.__importer.isFile(mvcFiles[0])) {
-            return mvcFiles[0];
+        if (mvcFile && this.__importer.isFile(mvcFile)) {
+            return mvcFile;
         }
         throw new ImportError(404, 'url', 'endpoint not found');
+    }
+
+    __getPatternRoute() {
+        const split = this.__pattern.split('*');
+        return this.__importer.cleanPath(split[0]);
+    }
+
+    __getRequestDirectoryPath(route) {
+        const base = this.__importer.cleanPath(this.__basePath);
+        const noBaseRoute = route.replace(base, '');
+        const noBaseSplit = noBaseRoute.split('/');
+        noBaseSplit.pop();
+        return this.__importer.cleanPath(noBaseSplit.join('/'));
+    }
+
+    __getRequestHandlerFile(route) {
+        const splitPattern = this.__pattern.split('/');
+        const splitRoute = route.split('/');
+        const lastRoute = splitRoute[splitRoute.length - 1];
+        const filePattern = splitPattern[splitPattern.length - 1];
+        return filePattern.replace('*', lastRoute);
+    }
+
+    __findFilesFromGlob() {
+        const globArray = glob.readdirSync(this.__pattern, {});
+        const globSet = new Set(globArray);
+        return [...globSet];
+    }
+
+    __getSubDirectory(route) {
+        const splitRoute = route.split('/');
+        return splitRoute[splitRoute.length - 1];
     }
 }
 
