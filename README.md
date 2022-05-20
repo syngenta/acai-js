@@ -9,6 +9,7 @@ Auto-loading, self-validating, minimalist node framework for Amazon Web Service 
   * Focus remove unnecessary boilerplate from your development process
   * Ease-of-use with the [serverless framework](https://www.serverless.com/)
   * Local Development support
+  * Happy Path Programming (HPP)
 
 ## Philosophy
 
