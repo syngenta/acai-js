@@ -14,31 +14,73 @@ class ListResolver {
     }
 
     __getEndpointPath(request) {
-        const requestPath = this.__getRequestPath(request.route);
-        const filteredHandlers = this.__filterHandlerByMethod(request.method);
-        const endpointPath = filteredHandlers[requestPath];
-        if (!this.__importManager.isFile(endpointPath)) {
+        const handlersFiltered = this.__filterHandlerByMethod(request.method);
+        const requestFiltered = this.__filterRequestedPath(request.route);
+        const requestPath = this.__getPathFromRequest(requestFiltered, handlersFiltered);
+        if (requestPath.files.length === 0) {
             throw new ImportError(404, 'url', 'endpoint not found');
         }
-        return endpointPath;
+        if (requestPath.files.length > 1) {
+            throw new ImportError(500, 'router-config', `found two conflicting routes: ${requestPath.paths.join(',')}`);
+        }
+        if (!this.__importManager.isFile(requestPath.files[0])) {
+            throw new ImportError(500, 'router-config', `file not found: ${requestPath.files[0]}`);
+        }
+        return requestPath.files[0];
     }
 
-    __getRequestPath(route) {
-        const basePath = this.__importManager.cleanPath(this.__basePath);
-        const cleanRoute = this.__importManager.cleanPath(route);
-        const requestedRoute = cleanRoute.replace(basePath, '');
-        return this.__importManager.cleanPath(requestedRoute);
-    }
     __filterHandlerByMethod(method) {
         const filteredHandlers = {};
         for (const handlerRoute in this.__list) {
-            const methodKey = `${method.toLowerCase()}:`;
+            if (!handlerRoute.includes('::')) {
+                throw new ImportError(
+                    500,
+                    'router-config',
+                    `route does not follow pattern <METHOD>::route ${handlerRoute}`
+                );
+            }
+            const methodKey = `${method.toLowerCase()}::`;
             if (handlerRoute.toLowerCase().includes(methodKey)) {
                 const routeOnly = handlerRoute.toLowerCase().split(methodKey)[1];
                 filteredHandlers[routeOnly] = this.__list[handlerRoute];
             }
         }
         return filteredHandlers;
+    }
+
+    __filterRequestedPath(route) {
+        const basePath = this.__importManager.cleanPath(this.__basePath);
+        const cleanRoute = this.__importManager.cleanPath(route);
+        const requestedRoute = cleanRoute.replace(basePath, '');
+        return this.__importManager.cleanPath(requestedRoute);
+    }
+
+    __getPathFromRequest(request, handlers) {
+        const routes = {paths: [], files: []};
+        for (const [route, file] of Object.entries(handlers)) {
+            if (this.__requestMatchesRoute(route, request)) {
+                routes.files.push(file);
+                routes.paths.push(route);
+            }
+        }
+        return routes;
+    }
+
+    __requestMatchesRoute(route, request) {
+        const splitRoute = route.split('/');
+        const splitRequest = request.split('/');
+        if (splitRoute.length !== splitRequest.length) {
+            return false;
+        }
+        for (const index in splitRequest) {
+            if (splitRoute[index] && splitRoute[index].startsWith(':')) {
+                continue;
+            }
+            if (!splitRoute[index] || splitRoute[index] !== splitRequest[index]) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
