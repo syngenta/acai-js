@@ -20,7 +20,7 @@ class DataClass {
 
 exports.requirements = {
     get: {
-        availableParams: ['test', 'unit']
+        availableQuery: ['test', 'unit']
     },
     post: {
         requiredBody: 'v1-test-request'
@@ -31,13 +31,13 @@ exports.requirements = {
         requiredAuth: true
     },
     put: {
-        requiredParams: ['test', 'unit'],
+        requiredQuery: ['test', 'unit'],
         before: before,
         after: after,
         dataClass: DataClass
     },
     delete: {
-        requiredParams: ['test', 'unit']
+        requiredQuery: ['test', 'unit']
     },
     link: {
         responseBody: 'v1-response-result'

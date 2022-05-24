@@ -49,9 +49,6 @@ class Router {
         if (!response.hasErrors) {
             await endpoint.run(request, response);
         }
-        if (!response.hasErrors && endpoint.hasResponseBody) {
-            await this.__validator.isValid(request, response, endpoint.requirements, 'response');
-        }
         if (!response.hasErrors && endpoint.hasAfter) {
             await endpoint.after(request, response);
         }

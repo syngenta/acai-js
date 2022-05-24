@@ -47,10 +47,6 @@ class Endpoint {
         return Boolean(this.requirements && this.requirements.dataClass);
     }
 
-    get hasResponseBody() {
-        return Boolean(this.requirements && this.requirements.responseBody);
-    }
-
     dataClass(request) {
         if (this.hasDataClass) {
             return new this.requirements.dataClass(request);

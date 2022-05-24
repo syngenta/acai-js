@@ -225,42 +225,6 @@ describe('Test Router: src/apigateway/router.js', () => {
                 body: '{"errors":[{"key_path":"header","message":"before failed"}]}'
             });
         });
-        it('should pass response body valid', async () => {
-            const event = mockData.getApiGateWayRouteValidation('LINK');
-            const router = new Router({
-                event,
-                basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
-                schemaPath: 'test/mocks/openapi.yml'
-            });
-            const results = await router.route();
-            assert.deepEqual(results, {
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': '*'
-                },
-                statusCode: 200,
-                body: '{"id":"true"}'
-            });
-        });
-        it('should pass response body invalid', async () => {
-            const event = mockData.getApiGateWayRouteValidation('UNLINK');
-            const router = new Router({
-                event,
-                basePath: 'unittest/v1',
-                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
-                schemaPath: 'test/mocks/openapi.yml'
-            });
-            const results = await router.route();
-            assert.deepEqual(results, {
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': '*'
-                },
-                statusCode: 'rawBody',
-                body: `{"errors":[{"key_path":"root","message":"must have required property 'id'"},{"key_path":"root","message":"must NOT have additional properties"}]}`
-            });
-        });
     });
     describe('test route custom validation', () => {
         it('should return errors when beforeAll fails', async () => {

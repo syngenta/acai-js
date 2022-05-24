@@ -2,24 +2,23 @@ class Validator {
     constructor(schema) {
         this.__schema = schema;
         this.__pairings = {
-            requiredHeaders: {target: 'request', source: 'headers', method: '__validateRequiredFields', code: 400},
-            availableHeaders: {target: 'request', source: 'headers', method: '__validateAvailableFields', code: 400},
-            requiredParams: {target: 'request', source: 'query', method: '__validateRequiredFields', code: 400},
-            availableParams: {target: 'request', source: 'query', method: '__validateAvailableFields', code: 400},
-            requiredBody: {target: 'request', source: 'body', method: '__validateApigatewayBody', code: 400},
-            responseBody: {target: 'response', source: 'rawBody', method: '__validateApigatewayBody', code: 500}
+            requiredHeaders: {source: 'headers', method: '__validateRequiredFields', code: 400},
+            availableHeaders: {source: 'headers', method: '__validateAvailableFields', code: 400},
+            requiredQuery: {source: 'query', method: '__validateRequiredFields', code: 400},
+            availableQuery: {source: 'query', method: '__validateAvailableFields', code: 400},
+            requiredPath: {source: 'path', method: '__validateRequiredFields', code: 400},
+            availablePath: {source: 'path', method: '__validateAvailableFields', code: 400},
+            requiredBody: {source: 'body', method: '__validateApigatewayBody', code: 400}
         };
     }
 
-    async isValid(request, response, requirements, target = 'request') {
+    async isValid(request, response, requirements) {
         for (const pairing of Object.keys(this.__pairings)) {
             const requirement = requirements[pairing];
-            const pairingTarget = this.__pairings[pairing].target;
-            const event = target === 'request' ? request : response;
             const source = this.__pairings[pairing].source;
             const code = this.__pairings[pairing].code;
-            const part = event[source];
-            if (requirement && pairingTarget === target) {
+            const part = request[source];
+            if (requirement) {
                 await this[this.__pairings[pairing].method](response, requirement, part, source, code);
             }
         }

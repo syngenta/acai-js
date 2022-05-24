@@ -16,7 +16,7 @@ class ListResolver {
     __getEndpointPath(request) {
         const handlersFiltered = this.__filterHandlerByMethod(request.method);
         const requestFiltered = this.__filterRequestedPath(request.route);
-        const requestPath = this.__getPathFromRequest(requestFiltered, handlersFiltered);
+        const requestPath = this.__getPathFromRequest(requestFiltered, handlersFiltered, request);
         if (requestPath.files.length === 0) {
             throw new ImportError(404, 'url', 'endpoint not found');
         }
@@ -55,10 +55,10 @@ class ListResolver {
         return this.__importManager.cleanPath(requestedRoute);
     }
 
-    __getPathFromRequest(request, handlers) {
+    __getPathFromRequest(path, handlers, request) {
         const routes = {paths: [], files: []};
         for (const [route, file] of Object.entries(handlers)) {
-            if (this.__requestMatchesRoute(route, request)) {
+            if (this.__requestMatchesRoute(path, route, request)) {
                 routes.files.push(file);
                 routes.paths.push(route);
             }
@@ -66,14 +66,17 @@ class ListResolver {
         return routes;
     }
 
-    __requestMatchesRoute(route, request) {
+    __requestMatchesRoute(path, route, request) {
         const splitRoute = route.split('/');
-        const splitRequest = request.split('/');
+        const splitRequest = path.split('/');
         if (splitRoute.length !== splitRequest.length) {
             return false;
         }
         for (const index in splitRequest) {
             if (splitRoute[index] && splitRoute[index].startsWith(':')) {
+                const key = splitRoute[index].split(':');
+                const value = splitRequest[index];
+                request.path = {key, value};
                 continue;
             }
             if (!splitRoute[index] || splitRoute[index] !== splitRequest[index]) {

@@ -16,7 +16,7 @@ describe('Test Validator', () => {
             const response = new Response();
             const requirements = {
                 requiredHeaders: ['x-api-key'],
-                requiredParams: ['name'],
+                requiredQuery: ['name'],
                 requiredBody: 'v1-test-request'
             };
             await validator.isValid(request, response, requirements);
@@ -62,7 +62,7 @@ describe('Test Validator', () => {
         });
         it('should see request as valid with correct available headers', async () => {
             const response = new Response();
-            const requirements = {requiredParams: ['name', 'failing-param']};
+            const requirements = {requiredQuery: ['name', 'failing-param']};
             await validator.isValid(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
@@ -106,51 +106,6 @@ describe('Test Validator', () => {
                     }
                 ]
             });
-        });
-    });
-    describe('test response', () => {
-        it('should return that response is valid', async () => {
-            const response = new Response();
-            response.body = {
-                pageNumber: 0,
-                data: {
-                    id: 'string'
-                }
-            };
-            const requirements = {responseBody: 'v1-required-response'};
-            await validator.isValid(request, response, requirements);
-            assert.equal(response.hasErrors, false);
-        });
-        it('should return that response is invalid because it doesnt schema', async () => {
-            const response = new Response();
-            const requirements = {responseBody: 'v1-required-response'};
-            await validator.isValid(request, response, requirements, 'response');
-            assert.isTrue(response.hasErrors);
-        });
-        it('should return that response is invalid because response isnt an object', async () => {
-            const response = new Response();
-            response.body = '';
-            const requirements = {responseBody: 'v1-required-response'};
-            await validator.isValid(request, response, requirements, 'response');
-            assert.equal(response.hasErrors, true);
-        });
-        it('should return that response is invalid with proper error message', async () => {
-            const response = new Response();
-            response.body = {};
-            const requirements = {responseBody: 'v1-response-test-all-of'};
-            await validator.isValid(request, response, requirements, 'response');
-            assert.deepEqual(response.rawBody, {
-                errors: [
-                    {key_path: 'root', message: "must have required property 'data'"},
-                    {key_path: 'root', message: "must have required property 'pageNumber'"}
-                ]
-            });
-        });
-        it('should throw an error when error is not found', () => {
-            const response = new Response();
-            const requirements = {responseBody: 'random-string-$$$'};
-            const checkFn = async () => await validator.isValid(request, response, requirements, 'response');
-            expect(checkFn()).to.be.rejectedWith('');
         });
     });
     describe('test improper json', () => {

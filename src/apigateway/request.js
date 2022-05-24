@@ -4,6 +4,7 @@ class Request {
     constructor(event) {
         this.__event = event;
         this.__context = null;
+        this.__pathParameters = {};
     }
 
     get method() {
@@ -41,7 +42,11 @@ class Request {
     }
 
     get path() {
-        return this.__event.pathParameters ? this.__event.pathParameters : {};
+        return this.__pathParameters;
+    }
+
+    set path({key, value}) {
+        this.__pathParameters[key] = value;
     }
 
     get route() {
@@ -67,23 +72,10 @@ class Request {
         }
     }
 
-    get raw() {
-        return this.__event.body;
-    }
-
-    get _bodyParsers() {
-        return {
-            'application/json': 'json',
-            'application/xml': 'xml',
-            'text/xml': 'xml',
-            raw: 'raw'
-        };
-    }
-
     get body() {
         try {
             const type = this.headers['content-type'].split(';')[0];
-            const parser = this._bodyParsers[type] ? this._bodyParsers[type] : 'raw';
+            const parser = this.__bodyParsers[type] ? this.__bodyParsers[type] : 'raw';
             return this[parser];
         } catch (error) {
             return this.__event.body;
@@ -96,6 +88,19 @@ class Request {
 
     set context(context) {
         this.__context = context;
+    }
+
+    get raw() {
+        return this.__event.body;
+    }
+
+    get __bodyParsers() {
+        return {
+            'application/json': 'json',
+            'application/xml': 'xml',
+            'text/xml': 'xml',
+            raw: 'raw'
+        };
     }
 
     get request() {

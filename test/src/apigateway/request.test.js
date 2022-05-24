@@ -27,7 +27,7 @@ describe('Test Request Client', () => {
             });
         });
         it('should have params as an object', () => {
-            assert.deepEqual(request.params, {query: {name: 'me'}, path: {proxy: 'hello'}});
+            assert.deepEqual(request.params, {query: {name: 'me'}, path: {}});
         });
         it('should have query as an object', () => {
             assert.deepEqual(request.query, {
@@ -35,9 +35,7 @@ describe('Test Request Client', () => {
             });
         });
         it('should have path as an object', () => {
-            assert.deepEqual(request.path, {
-                proxy: 'hello'
-            });
+            assert.deepEqual(request.path, {});
         });
         it('should have body as an object', () => {
             assert.deepEqual(request.body, {body_key: 'body_value'});
@@ -55,8 +53,8 @@ describe('Test Request Client', () => {
                 },
                 headers: {'x-api-key': 'SOME-KEY', 'content-type': 'application/json'},
                 query: {name: 'me'},
-                path: {proxy: 'hello'},
-                params: {query: {name: 'me'}, path: {proxy: 'hello'}},
+                path: {},
+                params: {query: {name: 'me'}, path: {}},
                 body: {body_key: 'body_value'},
                 context: null,
                 route: `unittest/v1/basic`
