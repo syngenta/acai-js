@@ -6,6 +6,7 @@ class ListResolver {
         this.__importManager = new ImportManager();
         this.__basePath = params.basePath;
         this.__list = params.handlerList;
+        this.hasPathParams = false;
     }
 
     resolve(request) {
@@ -74,9 +75,7 @@ class ListResolver {
         }
         for (const index in splitRequest) {
             if (splitRoute[index] && splitRoute[index].startsWith(':')) {
-                const key = splitRoute[index].split(':');
-                const value = splitRequest[index];
-                request.path = {key, value};
+                this.hasPathParams = true;
                 continue;
             }
             if (!splitRoute[index] || splitRoute[index] !== splitRequest[index]) {

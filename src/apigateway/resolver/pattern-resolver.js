@@ -8,6 +8,7 @@ class PatternResolver {
         this.__importer = new ImportManager();
         this.__basePath = params.basePath;
         this.__pattern = params.handlerPattern;
+        this.hasPathParams = false;
     }
 
     resolve(request) {

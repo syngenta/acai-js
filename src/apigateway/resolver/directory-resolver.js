@@ -6,6 +6,7 @@ class DirectoryResolver {
         this.__importManager = new ImportManager();
         this.__basePath = params.basePath;
         this.__handlerPath = params.handlerPath;
+        this.hasPathParams = false;
     }
 
     resolve(request) {
@@ -23,7 +24,8 @@ class DirectoryResolver {
     }
 
     __getEndpointPath({handlerFilePrefix, requestedFilePath}) {
-        const endpointPath = `${handlerFilePrefix}/${requestedFilePath}`;
+        const requestPath = this.__getPathFromRequest(handlerFilePrefix, requestedFilePath);
+        const endpointPath = `${handlerFilePrefix}/${requestPath}`;
         const isDirectory = this.__importManager.isDirectory(endpointPath);
         const isFile = this.__importManager.isFile(`${endpointPath}.js`);
         const hasIndexFile = this.__importManager.isFile(`${endpointPath}/index.js`);
@@ -37,6 +39,21 @@ class DirectoryResolver {
             return `${endpointPath}/index.js`;
         }
         throw new ImportError(404, 'url', 'endpoint not found');
+    }
+    __getPathFromRequest(handlerFilePrefix, requestedFilePath) {
+        const pathParts = [];
+        const splitRequest = requestedFilePath.split('/');
+        for (const requestPart of splitRequest) {
+            const currentPath = pathParts.length ? `/${pathParts.join('/')}/` : '/';
+            const requestFile = `${handlerFilePrefix}${currentPath}${requestPart}.js`;
+            const requestDirectory = `${handlerFilePrefix}${currentPath}${requestPart}`;
+            if (this.__importManager.isFile(requestFile) || this.__importManager.isDirectory(requestDirectory)) {
+                pathParts.push(requestPart);
+            } else {
+                this.hasPathParams = true;
+            }
+        }
+        return pathParts.join('/');
     }
 }
 

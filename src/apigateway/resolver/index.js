@@ -1,5 +1,6 @@
 const path = require('path');
 const Endpoint = require('../endpoint');
+const ImportManager = require('../import-manager');
 const ImportError = require('../import-manager/import-error');
 const DirectoryResolver = require('./directory-resolver');
 const ListResolver = require('./list-resolver');
@@ -7,6 +8,7 @@ const PatternResolver = require('./pattern-resolver');
 
 class RouteResolver {
     constructor(params) {
+        this.__importManager = new ImportManager();
         this.__params = params;
         this.__params.routingMode = params.routingMode || 'directory';
         this.__resolvers = {
@@ -19,9 +21,13 @@ class RouteResolver {
     getEndpoint(request, response) {
         try {
             this.__validateConfigs();
-            const endpointModule = this.getResolver().resolve(request);
+            const resolver = this.getResolver();
+            const endpointModule = resolver.resolve(request);
             if (typeof endpointModule[request.method.toLowerCase()] !== 'function') {
                 throw new ImportError(403, 'method', 'method not allowed');
+            }
+            if (!this.__hasRequiredPath(resolver, endpointModule, request)) {
+                throw new ImportError(404, 'url', 'endpoint not found');
             }
             return new Endpoint(endpointModule, request.method);
         } catch (error) {
@@ -49,6 +55,37 @@ class RouteResolver {
         if (routingMode === 'list' && !handlerList) {
             throw new ImportError(500, 'router-config', 'handlerList config is requied when routingMode is list');
         }
+    }
+
+    __hasRequiredPath(resovler, endpoint, request) {
+        const method = request.method.toLowerCase();
+        if (!resovler.hasPathParams) {
+            return true;
+        }
+        if (
+            resovler.hasPathParams &&
+            endpoint.requirements &&
+            endpoint.requirements[method] &&
+            !endpoint.requirements[method].requiredPath
+        ) {
+            return false;
+        }
+        const requestedRoute = request.route.replace(this.__params.basePath, '');
+        const requestSplit = this.__importManager.cleanPath(requestedRoute).split('/');
+        const requiredPath = endpoint.requirements[method].requiredPath;
+        const pathSplit = this.__importManager.cleanPath(requiredPath).split('/');
+        if (pathSplit.length !== requestSplit.length) {
+            return false;
+        }
+        for (const index in requestSplit) {
+            if (pathSplit[index] && pathSplit[index].startsWith(':')) {
+                const key = pathSplit[index].split(':')[1];
+                const value = requestSplit[index];
+                request.path = {key, value};
+                continue;
+            }
+        }
+        return true;
     }
 }
 

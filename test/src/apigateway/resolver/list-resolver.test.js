@@ -9,7 +9,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
         const handlerList = {
             'GET::basic/no-file': 'test/mocks/apigateway/mock-list-handlers/no-file.js',
             'POST::basic': 'test/mocks/apigateway/mock-list-handlers/basic.js',
-            'GET::nested-1/nested-2/basic': 'test/mocks/apigateway/mock-list-handlers/nested-1/nested-2/basic.js'
+            'GET::n1/n2/basic': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js'
         };
         const resolver = new ListResolver({basePath, handlerList});
         const response = new Response();
@@ -20,7 +20,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
             assert.isTrue(typeof result.post === 'function');
         });
         it('should resolve with nested structure', () => {
-            const mock = mockData.getApiGateWayCustomRoute('nested-1/nested-2/basic');
+            const mock = mockData.getApiGateWayCustomRoute('n1/n2/basic');
             const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.get === 'function');
@@ -54,10 +54,8 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
         const basePath = 'unittest/v1';
         const handlerList = {
             'POST::basic/:id': 'test/mocks/apigateway/mock-list-handlers/basic.js',
-            'GET::nested-1/nested-2/:nested/basic':
-                'test/mocks/apigateway/mock-list-handlers/nested-1/nested-2/basic.js',
-            'PATCH::nested-1/nested-2/:nested/basic/:id':
-                'test/mocks/apigateway/mock-list-handlers/nested-1/nested-2/basic.js',
+            'GET::n1/n2/:org/basic': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
+            'PATCH::n1/n2/:org/basic/:id': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
             'POST::basic/:id/fake': 'test/mocks/apigateway/mock-list-handlers/fake.js'
         };
         const resolver = new ListResolver({basePath, handlerList});
@@ -85,7 +83,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
             }
         });
         it('should resolve with nested structure no end variable', () => {
-            const route = 'nested-1/nested-2/org/basic';
+            const route = 'n1/n2/org/basic';
             const method = 'GET';
             const mock = mockData.getApiGateWayCustomRouteWithParams(route, method);
             const request = new Request(mock);
@@ -93,7 +91,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
             assert.isTrue(typeof result.get === 'function');
         });
         it('should resolve with nested structure and end variable', () => {
-            const route = 'nested-1/nested-2/org/basic/1';
+            const route = 'n1/n2/org/basic/1';
             const method = 'PATCH';
             const mock = mockData.getApiGateWayCustomRouteWithParams(route, method);
             const request = new Request(mock);

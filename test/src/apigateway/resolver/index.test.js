@@ -7,7 +7,7 @@ const {Request, Response} = require('../../../../src').apigateway;
 const mockData = require('../../../mocks/apigateway/mock-data');
 
 describe('Test Resolver: src/apigateway/resolver/index.js', () => {
-    describe('test top level static methods', () => {
+    describe('test top level methods', () => {
         it('should return an instance of DirectoryResolver', () => {
             const basePath = 'unittest/v1';
             const routingMode = 'directory';
@@ -34,7 +34,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const routingMode = 'fail';
             const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
             const resolver = new RouteResolver({basePath, routingMode, handlerPath});
-            const request = new Request(mockData.getApiGateWayRouteBadImport());
+            const mock = mockData.getApiGateWayRouteBadImport();
+            const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.equal(response.code, 500);
@@ -48,7 +49,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const basePath = 'unittest/v1';
             const routingMode = 'directory';
             const resolver = new RouteResolver({basePath, routingMode});
-            const request = new Request(mockData.getApiGateWayRouteBadImport());
+            const mock = mockData.getApiGateWayRouteBadImport();
+            const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.equal(response.code, 500);
@@ -62,7 +64,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const basePath = 'unittest/v1';
             const routingMode = 'pattern';
             const resolver = new RouteResolver({basePath, routingMode});
-            const request = new Request(mockData.getApiGateWayRouteBadImport());
+            const mock = mockData.getApiGateWayRouteBadImport();
+            const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.equal(response.code, 500);
@@ -76,7 +79,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const basePath = 'unittest/v1';
             const routingMode = 'list';
             const resolver = new RouteResolver({basePath, routingMode});
-            const request = new Request(mockData.getApiGateWayRouteBadImport());
+            const mock = mockData.getApiGateWayRouteBadImport();
+            const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.equal(response.code, 500);
@@ -91,7 +95,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const basePath = 'unittest/v1';
             const routingMode = 'directory';
             const resolver = new RouteResolver({basePath, routingMode, handlerPath});
-            const request = new Request(mockData.getBadImportData());
+            const mock = mockData.getBadImportData();
+            const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.equal(response.code, 500);
@@ -102,11 +107,120 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const basePath = 'unittest/v1';
             const routingMode = 'directory';
             const resolver = new RouteResolver({basePath, routingMode, handlerPath});
-            const request = new Request(mockData.getApiGateWayRouteBadImport());
+            const mock = mockData.getApiGateWayRouteBadImport();
+            const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.equal(response.code, 500);
             assert.equal(response.hasErrors, true);
+        });
+    });
+    describe('test directory resolver with path parameters', () => {
+        it('should resolve endpoint with trailing path parameter', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1'});
+        });
+        it('should not resolve endpoint with path parameter but wrong path requiredPath', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('bad-path-parameters/1', 'post');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.equal(response.code, 404);
+            assert.equal(response.hasErrors, true);
+        });
+        it('should not resolve endpoint with trailing path parameter but missing requiredPath', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('bad-path-parameters/1', 'delete');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.equal(response.code, 404);
+            assert.equal(response.hasErrors, true);
+        });
+        it('should find the nested file with trailing path parameter', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/nested-2/path-parameters/1', 'patch');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1'});
+        });
+        it('should find the nested file with middle and trailing path parameter', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'delete');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1', org: 'syngenta'});
+        });
+        it('should resolve endpoint with trailing path parameter', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1'});
+        });
+    });
+    describe('test list resolver with path parameters', () => {
+        const basePath = 'unittest/v1';
+        const handlerList = {
+            'POST::basic/:id': 'test/mocks/apigateway/mock-list-handlers/basic.js',
+            'PUT::n1/n2/basic/:id': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
+            'PATCH::n1/n2/:nested/basic/:id': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js'
+        };
+        it('should resolve endpoint with trailing path parameter', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'list';
+            const resolver = new RouteResolver({basePath, routingMode, handlerList});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('basic/1', 'post');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1'});
+        });
+        it('should find the nested file with trailing path parameter', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'list';
+            const resolver = new RouteResolver({basePath, routingMode, handlerList});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('n1/n2/basic/1', 'put');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1'});
+        });
+        it('should find the nested file with middle and trailing path parameter', () => {
+            const basePath = 'unittest/v1';
+            const routingMode = 'list';
+            const resolver = new RouteResolver({basePath, routingMode, handlerList});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('n1/n2/syngenta/basic/1', 'patch');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1', nested: 'syngenta'});
         });
     });
 });
