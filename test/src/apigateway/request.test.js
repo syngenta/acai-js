@@ -60,6 +60,56 @@ describe('Test Request Client', () => {
                 route: `unittest/v1/basic`
             });
         });
+        it('should have query as an empty object with no params', () => {
+            const request = new Request(mockData.getDataNoParams());
+            assert.deepEqual(request.query, {});
+        });
+        it('should body as a string when its JSON string', () => {
+            const request = new Request(mockData.getBadData());
+            assert.equal(request.body, '{body_key: "body_value"},#');
+        });
+        it('should be an object from XML', () => {
+            const request = new Request(mockData.getDataXml());
+            assert.deepEqual(request.body, {
+                root: {
+                    someobject: ['1', '2'],
+                    test: 'test2'
+                }
+            });
+        });
+        it('should be a string from bad XML', () => {
+            const request = new Request(mockData.getBadDataXml());
+            assert.equal(request.body, '<root><test>test2</test></root');
+        });
+        it('should be exactly what was sent when body is raw data', () => {
+            const request = new Request(mockData.getDataRaw());
+            assert.equal(
+                request.body,
+                '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
+            );
+        });
+        it('should have headers as an object form offline data', () => {
+            const request = new Request(mockData.getDataOffline());
+            assert.deepEqual(request.authorizer, {
+                'x-api-key': 'SOME-KEY',
+                'content-type': 'application/json'
+            });
+        });
+        it('should default content-type to application json', () => {
+            const request = new Request(mockData.getDataNoHeaders());
+            assert.deepEqual(request.headers, {'content-type': 'application/json'});
+        });
+        it('should have path as an empty object with no params', () => {
+            const request = new Request(mockData.getDataNoParams());
+            assert.deepEqual(request.path, {});
+        });
+        it('should be able to set request path from key/value object', () => {
+            const request = new Request(mockData.getData());
+            const key = 'key';
+            const value = 'value';
+            request.path = {key, value};
+            assert.deepEqual(request.path, {key: 'value'});
+        });
     });
     describe('test assignable context', () => {
         it('should have context default as null', () => {
@@ -84,57 +134,6 @@ describe('Test Request Client', () => {
             assert.deepEqual(request.context, {key1: 'value1'});
             request.context.key2 = 'value2';
             assert.deepEqual(request.context, {key1: 'value1', key2: 'value2'});
-        });
-    });
-    describe('test no-headers', () => {
-        const request = new Request(mockData.getDataNoHeaders());
-        it('should default content-type to application json', () => {
-            assert.deepEqual(request.headers, {'content-type': 'application/json'});
-        });
-    });
-    describe('test offline authorizer headers', () => {
-        const request = new Request(mockData.getDataOffline());
-        it('should have headers as an object form offline data', () => {
-            assert.deepEqual(request.authorizer, {
-                'x-api-key': 'SOME-KEY',
-                'content-type': 'application/json'
-            });
-        });
-    });
-    describe('test no query', () => {
-        const request = new Request(mockData.getDataNoParams());
-        it('should have query as an empty object with no params', () => {
-            assert.deepEqual(request.query, {});
-        });
-    });
-    describe('test bad body', () => {
-        const request = new Request(mockData.getBadData());
-        it('should body as a string when its JSON string', () => {
-            assert.equal(request.body, '{body_key: "body_value"},#');
-        });
-    });
-    describe('test request xml body', () => {
-        it('should be an object from XML', () => {
-            const request = new Request(mockData.getDataXml());
-            assert.deepEqual(request.body, {
-                root: {
-                    someobject: ['1', '2'],
-                    test: 'test2'
-                }
-            });
-        });
-        it('should be a string from bad XML', () => {
-            const request = new Request(mockData.getBadDataXml());
-            assert.equal(request.body, '<root><test>test2</test></root');
-        });
-    });
-    describe('test request raw body', () => {
-        const request = new Request(mockData.getDataRaw());
-        it('should be exactly what was sent when body is raw data', () => {
-            assert.equal(
-                request.body,
-                '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
-            );
         });
     });
 });
