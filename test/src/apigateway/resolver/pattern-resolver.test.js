@@ -168,4 +168,45 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
             assert.isTrue(typeof result.put === 'function');
         });
     });
+    describe('test prefix pattern routing with path parameters', () => {
+        const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/prefix/**/controller.*.js';
+        const basePath = 'unittest/v1';
+        const resolver = new PatternResolver({handlerPattern, basePath});
+        it('should find the file with mvc structure with trailing parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.get === 'function');
+        });
+        it('should find the file with mvvm structure with trailing parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters-mvvm/1', 'put');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.put === 'function');
+        });
+        it('should find the nested file with mvc structure with trailing parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/path-parameters/1', 'post');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.post === 'function');
+        });
+        it('should find the nested file with mvvm structure with trailing parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/path-parameters-mvvm/1', 'patch');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.patch === 'function');
+        });
+        it('should find the nested file with mvc structure with trailing and middle parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'delete');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.delete === 'function');
+        });
+        it('should find the nested file with mvvm structure with trailing and middle parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters-mvvm/1', 'put');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.put === 'function');
+        });
+    });
 });
