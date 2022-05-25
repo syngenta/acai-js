@@ -54,14 +54,6 @@ class Validator {
         });
     }
 
-    // __validateRequiredpath(response, required, sent, source, code){
-    // split on slack of required path
-    // then gather all pieces that start with ":", in an array
-    // loop through colon array and check to make sure the request has the key in path object
-    // add type checks if :id<type> (int, float, str)
-    //     console.log(response, required, sent, source, code);
-    // }
-
     async __validateApigatewayBody(response, schema, body, code) {
         const errors = await this.__schema.validate(schema, body);
         if (errors) {
