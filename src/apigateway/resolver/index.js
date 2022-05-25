@@ -22,11 +22,11 @@ class RouteResolver {
             this.__validateConfigs();
             const resolver = this.getResolver();
             const endpointModule = resolver.resolve(request);
-            if (typeof endpointModule[request.method.toLowerCase()] !== 'function') {
-                throw new ImportError(403, 'method', 'method not allowed');
-            }
             if (!this.__hasRequiredPath(resolver, endpointModule, request)) {
                 throw new ImportError(404, 'url', 'endpoint not found');
+            }
+            if (typeof endpointModule[request.method.toLowerCase()] !== 'function') {
+                throw new ImportError(403, 'method', 'method not allowed');
             }
             return new Endpoint(endpointModule, request.method);
         } catch (error) {
@@ -61,12 +61,10 @@ class RouteResolver {
         if (!resovler.hasPathParams) {
             return true;
         }
-        if (
-            resovler.hasPathParams &&
-            endpoint.requirements &&
-            endpoint.requirements[method] &&
-            !endpoint.requirements[method].requiredPath
-        ) {
+        if (!endpoint.requirements || (endpoint.requirements && !endpoint.requirements[method])) {
+            return false;
+        }
+        if (resovler.hasPathParams && endpoint.requirements[method] && !endpoint.requirements[method].requiredPath) {
             return false;
         }
         const requestedRoute = request.route.replace(this.__params.basePath, '');
