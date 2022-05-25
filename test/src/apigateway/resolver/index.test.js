@@ -185,6 +185,53 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             assert.deepEqual(request.path, {id: '1'});
         });
     });
+    describe('test pattern resolver with path parameters', () => {
+        it('should resolve endpoint with trailing path parameter and have path params', () => {
+            const basePath = 'unittest/v1';
+            const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js';
+            const routingMode = 'pattern';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPattern});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1'});
+        });
+        it('should resolve endpoint with nested file and trailing path parameter and have path params', () => {
+            const basePath = 'unittest/v1';
+            const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js';
+            const routingMode = 'pattern';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPattern});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/path-parameters/1', 'post');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1'});
+        });
+        it('should resolve endpoint with nested file, middle & trailing path parameters and have path params', () => {
+            const basePath = 'unittest/v1';
+            const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js';
+            const routingMode = 'pattern';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPattern});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'delete');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.path, {id: '1', org: 'syngenta'});
+        });
+        it('should not resolve endpoint with nested file, with bad path params', () => {
+            const basePath = 'unittest/v1';
+            const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js';
+            const routingMode = 'pattern';
+            const resolver = new RouteResolver({basePath, routingMode, handlerPattern});
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1/2', 'delete');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.equal(response.code, 404);
+            assert.equal(response.hasErrors, true);
+        });
+    });
     describe('test list resolver with path parameters', () => {
         const basePath = 'unittest/v1';
         const handlerList = {

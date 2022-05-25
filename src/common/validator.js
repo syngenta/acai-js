@@ -6,8 +6,7 @@ class Validator {
             availableHeaders: {source: 'headers', method: '__validateAvailableFields', code: 400},
             requiredQuery: {source: 'query', method: '__validateRequiredFields', code: 400},
             availableQuery: {source: 'query', method: '__validateAvailableFields', code: 400},
-            requiredPath: {source: 'path', method: '__validateRequiredFields', code: 400},
-            availablePath: {source: 'path', method: '__validateAvailableFields', code: 400},
+            requiredPath: {source: 'path', method: '__validateRequiredpath', code: 400},
             requiredBody: {source: 'body', method: '__validateApigatewayBody', code: 400}
         };
     }
@@ -54,6 +53,14 @@ class Validator {
             }
         });
     }
+
+    // __validateRequiredpath(response, required, sent, source, code){
+    // split on slack of required path
+    // then gather all pieces that start with ":", in an array
+    // loop through colon array and check to make sure the request has the key in path object
+    // add type checks if :id<type> (int, float, str)
+    //     console.log(response, required, sent, source, code);
+    // }
 
     async __validateApigatewayBody(response, schema, body, code) {
         const errors = await this.__schema.validate(schema, body);

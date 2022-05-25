@@ -9,27 +9,32 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
         const basePath = 'unittest/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvc structure', () => {
-            const request = new Request(mockData.getApiGateWayRoute());
+            const mock = mockData.getApiGateWayRoute();
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.get === 'function');
         });
         it('should find the file with mvvm structure', () => {
-            const request = new Request(mockData.getApiGateWayCustomRoute('mvvm'));
+            const mock = mockData.getApiGateWayCustomRoute('mvvm');
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.patch === 'function');
         });
         it('should find the file with nested mvc structure', () => {
-            const request = new Request(mockData.getApiGateWayCustomRoute('nested-1/nested-2/basic'));
+            const mock = mockData.getApiGateWayCustomRoute('nested-1/nested-2/basic');
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.post === 'function');
         });
         it('should find the file with nested mvvm structure', () => {
-            const request = new Request(mockData.getApiGateWayCustomRoute('nested-1/nested-2/nested-3'));
+            const mock = mockData.getApiGateWayCustomRoute('nested-1/nested-2/nested-3');
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.delete === 'function');
         });
         it('should not find the file', () => {
-            const request = new Request(mockData.getApiGateWayRoute('-fail'));
+            const mock = mockData.getApiGateWayRoute('-fail');
+            const request = new Request(mock);
             try {
                 resolver.resolve(request);
                 assert.isFalse(true);
@@ -40,7 +45,8 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
             }
         });
         it('should throw error for same direcotry & file', () => {
-            const request = new Request(mockData.getApiGateWayCustomRoute('same-file-directory'));
+            const mock = mockData.getApiGateWayCustomRoute('same-file-directory');
+            const request = new Request(mock);
             try {
                 resolver.resolve(request);
                 assert.isFalse(true);
@@ -56,27 +62,32 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
         const basePath = 'unittest/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvc structure', () => {
-            const request = new Request(mockData.getApiGateWayRoute());
+            const mock = mockData.getApiGateWayRoute();
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.get === 'function');
         });
         it('should find the file with mvvm structure', () => {
-            const request = new Request(mockData.getApiGateWayCustomRoute('mvvm'));
+            const mock = mockData.getApiGateWayCustomRoute('mvvm');
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.patch === 'function');
         });
         it('should find the file with nested mvc structure', () => {
-            const request = new Request(mockData.getApiGateWayCustomRoute('nested-1/nested-2/basic'));
+            const mock = mockData.getApiGateWayCustomRoute('nested-1/nested-2/basic');
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.post === 'function');
         });
         it('should find the file with nested mvvm structure', () => {
-            const request = new Request(mockData.getApiGateWayCustomRoute('nested-1/nested-2/nested-3'));
+            const mock = mockData.getApiGateWayCustomRoute('nested-1/nested-2/nested-3');
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.delete === 'function');
         });
         it('should not find the file', () => {
-            const request = new Request(mockData.getApiGateWayRoute('-fail'));
+            const mock = mockData.getApiGateWayRoute('-fail');
+            const request = new Request(mock);
             try {
                 resolver.resolve(request);
                 assert.isFalse(true);
@@ -92,17 +103,20 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
         const basePath = 'unittest/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvvm structure', () => {
-            const request = new Request(mockData.getApiGateWayRoute());
+            const mock = mockData.getApiGateWayRoute();
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.post === 'function');
         });
         it('should find the file with nested mvvm structure', () => {
-            const request = new Request(mockData.getApiGateWayCustomRoute('nested-1/nested-2/nested-3'));
+            const mock = mockData.getApiGateWayCustomRoute('nested-1/nested-2/nested-3');
+            const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.post === 'function');
         });
         it('should not find the file', () => {
-            const request = new Request(mockData.getApiGateWayRoute('-fail'));
+            const mock = mockData.getApiGateWayRoute('-fail');
+            const request = new Request(mock);
             try {
                 resolver.resolve(request);
                 assert.isFalse(true);
@@ -111,6 +125,47 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
                 assert.equal(error.key, 'url');
                 assert.equal(error.message, 'endpoint not found');
             }
+        });
+    });
+    describe('test suffix pattern routing with path parameters', () => {
+        const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js';
+        const basePath = 'unittest/v1';
+        const resolver = new PatternResolver({handlerPattern, basePath});
+        it('should find the file with mvc structure with trailing parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.get === 'function');
+        });
+        it('should find the file with mvvm structure with trailing parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters-mvvm/1', 'put');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.put === 'function');
+        });
+        it('should find the nested file with mvc structure with trailing parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/path-parameters/1', 'post');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.post === 'function');
+        });
+        it('should find the nested file with mvvm structure with trailing parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/path-parameters-mvvm/1', 'patch');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.patch === 'function');
+        });
+        it('should find the nested file with mvc structure with trailing and middle parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'delete');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.delete === 'function');
+        });
+        it('should find the nested file with mvvm structure with trailing and middle parameter', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters-mvvm/1', 'put');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.put === 'function');
         });
     });
 });

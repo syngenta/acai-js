@@ -1,5 +1,3 @@
-const fs = require('fs');
-const glob = require('glob-fs')({gitignore: true});
 const ImportManager = require('../import-manager');
 const ImportError = require('../import-manager/import-error');
 
@@ -12,35 +10,16 @@ class PatternResolver {
     }
 
     resolve(request) {
-        const files = this.__getFilePaths(request.route);
-        const endpointPath = this.__getEndpointPath(files);
-        return this.__importer.importModuleFromPath(endpointPath);
-    }
-
-    __getFilePaths(route) {
-        const root = this.__getPatternRoute();
-        const directory = this.__getRequestDirectoryPath(route);
-        const file = this.__getRequestHandlerFile(route);
-        const sub = this.__getSubDirectory(route);
-        const files = this.__findFilesFromGlob();
-        const mvc = `${root}/${directory}/${file}`.replace(/\/\//g, '/');
-        const mvvm = `${root}/${directory}/${sub}/${file}`.replace(/\/\//g, '/');
-        return {mvvm, mvc, files};
-    }
-
-    __getEndpointPath({mvc, mvvm, files}) {
-        const mvvmFile = files.find((file) => file.includes(mvc));
-        const mvcFile = files.find((file) => file.includes(mvvm));
-        if (mvvmFile && mvcFile) {
-            throw new ImportError(500, 'router-config', 'file & directory cant share name in the same directory');
-        }
-        if (mvvmFile && this.__importer.isFile(mvvmFile)) {
-            return mvvmFile;
-        }
-        if (mvcFile && this.__importer.isFile(mvcFile)) {
-            return mvcFile;
+        const filePath = this.__getFilePath(request.route);
+        if (filePath && this.__importer.isFile(filePath)) {
+            return this.__importer.importModuleFromPath(filePath);
         }
         throw new ImportError(404, 'url', 'endpoint not found');
+    }
+
+    __getFilePath(route) {
+        const root = this.__getPatternRoute();
+        return this.__getRequestFilePath(root, route);
     }
 
     __getPatternRoute() {
@@ -48,31 +27,38 @@ class PatternResolver {
         return this.__importer.cleanPath(split[0]);
     }
 
-    __getRequestDirectoryPath(route) {
+    __getRequestFilePath(patternRoute, route) {
         const base = this.__importer.cleanPath(this.__basePath);
-        const noBaseRoute = route.replace(base, '');
-        const noBaseSplit = noBaseRoute.split('/');
-        noBaseSplit.pop();
-        return this.__importer.cleanPath(noBaseSplit.join('/'));
+        const noBaseRoute = this.__importer.cleanPath(route.replace(base, ''));
+        return this.__getPathFromRequest(patternRoute, noBaseRoute);
     }
 
-    __getRequestHandlerFile(route) {
+    __getPathFromRequest(patternBase, requestedFilePath) {
+        const pathParts = [];
+        const splitRequest = requestedFilePath.split('/');
         const splitPattern = this.__pattern.split('/');
-        const splitRoute = route.split('/');
-        const lastRoute = splitRoute[splitRoute.length - 1];
         const filePattern = splitPattern[splitPattern.length - 1];
-        return filePattern.replace('*', lastRoute);
-    }
-
-    __findFilesFromGlob() {
-        const globArray = glob.readdirSync(this.__pattern, {});
-        const globSet = new Set(globArray);
-        return [...globSet];
-    }
-
-    __getSubDirectory(route) {
-        const splitRoute = route.split('/');
-        return splitRoute[splitRoute.length - 1];
+        for (const requestPart of splitRequest) {
+            const currentPath = pathParts.length ? `/${pathParts.join('/')}/` : '/';
+            const file = filePattern.replace('*', requestPart);
+            const mvc = `${patternBase}${currentPath}${file}`;
+            const mvvm = `${patternBase}${currentPath}${requestPart}/${file}`;
+            const directory = `${patternBase}${currentPath}${requestPart}`;
+            if (this.__importer.isDirectory(directory) && this.__importer.isFile(mvc)) {
+                throw new ImportError(500, 'router-config', 'file & directory cant share name in the same directory');
+            } else if (this.__importer.isFile(mvc)) {
+                pathParts.push(file);
+            } else if (this.__importer.isFile(mvvm)) {
+                pathParts.push(requestPart);
+                pathParts.push(file);
+            } else if (this.__importer.isDirectory(directory)) {
+                pathParts.push(requestPart);
+            } else {
+                this.hasPathParams = true;
+            }
+        }
+        pathParts.unshift(patternBase);
+        return pathParts.join('/');
     }
 }
 

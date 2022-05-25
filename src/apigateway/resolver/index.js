@@ -1,4 +1,3 @@
-const path = require('path');
 const Endpoint = require('../endpoint');
 const ImportManager = require('../import-manager');
 const ImportError = require('../import-manager/import-error');
