@@ -8,6 +8,7 @@ const Validator = require('./validator.js');
 
 class Event {
     constructor(event, params = {}) {
+        this.__params = params;
         this.__before = params.before;
         this.__requiredBody = params.requiredBody;
         this.__schemaPath = params.schemaPath;
@@ -99,8 +100,8 @@ class Event {
 
     async __validateRecords(records) {
         const schema = this.__schemaPath
-            ? Schema.fromFilePath(this.__schemaPath)
-            : Schema.fromInlineSchema(this.__requiredBody);
+            ? Schema.fromFilePath(this.__schemaPath, this.__params)
+            : Schema.fromInlineSchema(this.__requiredBody, this.__params);
         const entityName = typeof this.__requiredBody === 'string' ? this.__requiredBody : null;
         const validator = new Validator(schema);
         for (const record of records) {

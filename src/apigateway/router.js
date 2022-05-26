@@ -13,7 +13,8 @@ class Router {
         this.__afterAll = params.afterAll;
         this.__withAuth = params.withAuth;
         this.__onError = params.onError;
-        this.__schema = Schema.fromFilePath(params.schemaPath);
+        this.__autoValidate = params.autoValidate;
+        this.__schema = Schema.fromFilePath(params.schemaPath, params);
         this.__resolver = new RouteResolver(params);
         this.__validator = new Validator(this.__schema);
         this.__logger = new Logger(params);
@@ -40,8 +41,11 @@ class Router {
         if (!response.hasErrors && endpoint.hasAuth && typeof this.__withAuth === 'function') {
             await this.__withAuth(request, response, endpoint.requirements);
         }
-        if (!response.hasErrors && endpoint.hasRequirements) {
-            await this.__validator.isValid(request, response, endpoint.requirements, 'request');
+        if (!response.hasErrors && this.__autoValidate) {
+            await this.__validator.validateWithOpenAPI(request, response);
+        }
+        if (!response.hasErrors && endpoint.hasRequirements && !this.__autoValidate) {
+            await this.__validator.isValid(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasBefore) {
             await endpoint.before(request, response);

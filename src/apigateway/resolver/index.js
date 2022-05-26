@@ -82,6 +82,7 @@ class RouteResolver {
                 continue;
             }
         }
+        request.pathParam = `/${this.__importManager.cleanPath(requiredPath)}`;
         return true;
     }
 }

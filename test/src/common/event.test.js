@@ -67,10 +67,12 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
             assert.equal(records.length, 1);
         });
         it('should throw error with schemaPath validation', async () => {
-            const ddbEvent = new DDBEvent(mockDDBData.getData(), {
+            const mock = mockDDBData.getData();
+            const ddbEvent = new DDBEvent(mock, {
                 globalLogger: true,
                 requiredBody: 'v1-ddb-record-fail',
-                schemaPath: 'test/mocks/openapi.yml'
+                schemaPath: 'test/mocks/openapi.yml',
+                strict: true
             });
             try {
                 const records = await ddbEvent.getRecords();

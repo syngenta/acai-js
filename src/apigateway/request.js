@@ -5,6 +5,7 @@ class Request {
         this.__event = event;
         this.__context = null;
         this.__pathParameters = {};
+        this.__paramPath = '';
     }
 
     get method() {
@@ -47,6 +48,14 @@ class Request {
 
     set path({key, value}) {
         this.__pathParameters[key] = value;
+    }
+
+    get paramPath() {
+        return this.__paramPath;
+    }
+
+    set paramPath(paramPath) {
+        this.__paramPath = paramPath;
     }
 
     get route() {

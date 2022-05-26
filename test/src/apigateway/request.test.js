@@ -136,4 +136,15 @@ describe('Test Request Client', () => {
             assert.deepEqual(request.context, {key1: 'value1', key2: 'value2'});
         });
     });
+    describe('test assignable paramPath', () => {
+        it('should have paramPath default as emptu string', () => {
+            const request = new Request(mockData.getData());
+            assert.equal(request.paramPath, '');
+        });
+        it('should have paramPath as assignable', () => {
+            const request = new Request(mockData.getData());
+            request.paramPath = '/grower/:id';
+            assert.equal(request.paramPath, '/grower/:id');
+        });
+    });
 });

@@ -66,5 +66,78 @@ describe('Test Schema: src/common/schema', () => {
                 }
             ]);
         });
+        it('should validate from openapi with no errors (query string)', async () => {
+            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+            const request = {
+                queryParameters: {test_id: 'test_id', unit_id: 'unit_id'}
+            };
+            const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'get', request);
+            assert.equal(errors.length, 0);
+        });
+        it('should validate from openapi with errors (missing query string)', async () => {
+            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+            const request = {
+                queryParameters: {test_id: 'test_id'}
+            };
+            const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'get', request);
+            assert.equal(errors.length, 1);
+        });
+        it('should validate from openapi with no errors (body) ', async () => {
+            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+            const request = {
+                body: {
+                    name: 'Paul Cruse',
+                    email: 'email@email.com',
+                    phone: 123456789,
+                    active: true
+                }
+            };
+            const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'post', request);
+            assert.equal(errors.length, 0);
+        });
+        it('should validate from openapi with errors (body) ', async () => {
+            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+            const request = {
+                body: {
+                    name: 'Paul Cruse',
+                    email: 'email@email.com',
+                    phone: 123456789,
+                    active: 'true'
+                }
+            };
+            const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'post', request);
+            assert.equal(errors.length, 1);
+        });
+        it('should validate from openapi with no errors (all parts) ', async () => {
+            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+            const request = {
+                headers: {key: 'key'},
+                queryParameters: {unit_id: 'unit_id'},
+                body: {
+                    test_id: 'test_id',
+                    name: 'Paul Cruse',
+                    email: 'email@email.com',
+                    phone: 123456789,
+                    active: true
+                }
+            };
+            const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'patch', request);
+            assert.equal(errors.length, 0);
+        });
+        it('should validate from openapi with errors (all parts) ', async () => {
+            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+            const request = {
+                headers: {key: 'key'},
+                queryParameters: {test_id: 'wrong_id'},
+                body: {
+                    name: 'Paul Cruse',
+                    email: 'email@email.com',
+                    phone: 123456789,
+                    active: true
+                }
+            };
+            const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'patch', request);
+            assert.equal(errors.length, 2);
+        });
     });
 });

@@ -11,6 +11,11 @@ class Validator {
         };
     }
 
+    async validateWithOpenAPI(request, response) {
+        console.log('shit');
+        this.__schema.validateOpenApi();
+    }
+
     async isValid(request, response, requirements) {
         for (const pairing of Object.keys(this.__pairings)) {
             const requirement = requirements[pairing];

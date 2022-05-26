@@ -1,24 +1,34 @@
 const fs = require('fs');
 const Ajv = require('ajv/dist/2020');
-const yaml = require('js-yaml');
-const RefParser = require('json-schema-ref-parser');
 const mergeAll = require('json-schema-merge-allof');
+const yaml = require('js-yaml');
+const Reva = require('@apideck/reva').Reva;
+const RefParser = require('json-schema-ref-parser');
 
 class Schema {
-    constructor(openAPISchema = {}, inlineSchema = {}) {
+    constructor(openAPISchema = {}, inlineSchema = {}, params = {}) {
         this.__refParser = RefParser;
         this.__openAPISchema = openAPISchema;
+        this.__openApliValidator = new Reva();
         this.__inlineSchema = inlineSchema;
-        this.__ajv = new Ajv({allErrors: true});
+        this.__additionalProperties = !params.strict;
+        this.__ajv = new Ajv({allErrors: true, validateFormats: params.strict});
     }
 
-    static fromFilePath(schemaPath) {
+    static fromFilePath(schemaPath, params = {}) {
         const openAPISchema = yaml.load(fs.readFileSync(schemaPath, 'utf8'));
-        return new Schema(openAPISchema);
+        return new Schema(openAPISchema, {}, params);
     }
 
-    static fromInlineSchema(inlineSchema) {
-        return new Schema({}, inlineSchema);
+    static fromInlineSchema(inlineSchema, params = {}) {
+        return new Schema({}, inlineSchema, params);
+    }
+
+    async validateOpenApi(path, method, request) {
+        const refSchema = await this.__refParser.dereference(this.__openAPISchema);
+        const operation = this.__getOperationSchema(refSchema, path, method);
+        const result = this.__openApliValidator.validate({operation, request});
+        return result.errors || [];
     }
 
     async validate(entityName = '', data) {
@@ -37,7 +47,7 @@ class Schema {
     __combineSchemas(schemaComponentName, refSchema) {
         const schemaWithInlinedRefs = this.__getEntityRulesFromSchema(schemaComponentName, refSchema);
         const schemaWithMergedAllOf = mergeAll(schemaWithInlinedRefs, {ignoreAdditionalProperties: true});
-        schemaWithMergedAllOf.additionalProperties = false;
+        schemaWithMergedAllOf.additionalProperties = this.__additionalProperties;
         return schemaWithMergedAllOf;
     }
 
@@ -49,6 +59,13 @@ class Schema {
             }
         }
         throw new Error(`Schema with name ${schemaComponentName} is not found`);
+    }
+    __getOperationSchema(refSchema, path, method) {
+        try {
+            return refSchema.paths[path][method];
+        } catch (error) {
+            throw new Error(`problem with importing your schema for: ${method}::${path}`);
+        }
     }
 }
 

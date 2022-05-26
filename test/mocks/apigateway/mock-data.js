@@ -655,7 +655,7 @@ exports.getBodyDataWithComplexObject = () => {
             name: 'me'
         },
         body: JSON.stringify({
-            pageNumber: 0,
+            page_number: 0,
             data: {
                 id: 'string'
             }
@@ -687,7 +687,7 @@ exports.getBodyDataWithInvalidComplexObject = () => {
             name: 'me'
         },
         body: JSON.stringify({
-            pageNumber: 0
+            page_number: 0
         })
     };
 };

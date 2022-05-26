@@ -4,15 +4,92 @@ info:
     version: '1.0'
 servers:
     - url: 'http://localhost:3000'
-paths: {}
+tags:
+    -
+        name: unit-test
+paths:
+    /unit-test/v1/schema:
+        get:
+            tags:
+                - unit-test
+            operationId: GetSchema
+            deprecated: false
+            parameters:
+                -   in: query
+                    name: test_id
+                    description: The test_id to search for
+                    required: false
+                    schema:
+                        type: string
+                        default: "{{test_id}}"
+                -   in: query
+                    name: unit_id
+                    description: The unit_id to search for
+                    required: true
+                    schema:
+                        type: string
+                        default: "{{unit_id}}"
+            responses:
+                200:
+                    description: Company successfully retrieved
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+        post:
+            tags:
+                - unit-test
+            operationId: PostSchema
+            deprecated: false
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-post-request-test'
+            responses:
+                200:
+                    description: Company successfully retrieved
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+        patch:
+            tags:
+                - unit-test
+            operationId: PostSchema
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: key
+                    required: true
+                    description: an api key
+                    schema:
+                        type: string
+                        default: "{{key}}"
+                -   in: query
+                    name: unit_id
+                    description: The unit_id to search for
+                    required: false
+                    schema:
+                        type: string
+                        default: "{{unit_id}}"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-patch-request-test'
+            responses:
+                200:
+                    description: Company successfully retrieved
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
 components:
     schemas:
-        test_ref_model_level_1:
-            type: object
-            properties:
-                complex:
-                    $ref: '#/components/schemas/test_ref_model'
-        test_ref_model:
+        v1-test-reference-model:
             type: object
             properties:
                 test_id:
@@ -39,21 +116,21 @@ components:
                     type: string
         v1-test-request:
             allOf:
-                -   $ref: '#/components/schemas/test_ref_model'
-                -   required:
-                        - test_id
-                        - object_key
-                        - array_number
-                        - array_objects
+                - $ref: '#/components/schemas/v1-test-reference-model'
+                - required:
+                    - test_id
+                    - object_key
+                    - array_number
+                    - array_objects
         v1-test-fail-request:
             allOf:
-                -   $ref: '#/components/schemas/test_ref_model'
-                -   required:
-                        - test_id
-                        - object_key
-                        - array_number
-                        - array_objects
-                        - fail_id
+                - $ref: '#/components/schemas/v1-test-reference-model'
+                - required:
+                    - test_id
+                    - object_key
+                    - array_number
+                    - array_objects
+                    - fail_id
         v1-test-nullable-field:
             type: object
             required:
@@ -66,24 +143,55 @@ components:
                 non_nullable_field:
                     type: string
         v1-required-response:
-                $ref: '#/components/schemas/v1-response-test-all-of'
+            $ref: '#/components/schemas/v1-response-test-all-of'
         v1-response-test-all-of:
             allOf:
-                -   $ref: '#/components/schemas/v1-response-page'
-                -   type: object
+                - $ref: '#/components/schemas/v1-response-page'
+                -
+                    type: object
                     required:
                         - data
                     properties:
                         data:
                             $ref: '#/components/schemas/v1-response-result'
-
+        v1-post-request-test:
+            type: object
+            required:
+                - name
+                - email
+                - phone
+                - active
+            properties:
+                name:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: number
+                active:
+                    type: boolean
+        v1-patch-request-test:
+            type: object
+            required:
+                - test_id
+            properties:
+                test_id:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: number
+                active:
+                    type: boolean
         v1-response-page:
             type: object
             properties:
-                pageNumber:
+                page_number:
                     type: number
             required:
-                - pageNumber
+                - page_number
         v1-response-result:
             type: object
             required:

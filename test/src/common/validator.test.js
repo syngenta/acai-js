@@ -8,8 +8,9 @@ const mockData = require('../../mocks/apigateway/mock-data');
 use(chaiAsPromised);
 
 describe('Test Validator', () => {
-    const request = new Request(mockData.getValidBodyData());
-    const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+    const mock = mockData.getValidBodyData();
+    const request = new Request(mock);
+    const schema = Schema.fromFilePath('test/mocks/openapi.yml', {strict: true});
     const validator = new Validator(schema);
     describe('test request', () => {
         it('should validate valid request', async () => {
