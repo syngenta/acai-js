@@ -137,7 +137,7 @@ describe('Test Schema: src/common/schema', () => {
                 }
             };
             const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'patch', request);
-            assert.equal(errors.length, 2);
+            assert.equal(errors.length, 3);
         });
     });
 });

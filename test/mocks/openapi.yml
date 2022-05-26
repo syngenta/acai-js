@@ -70,7 +70,7 @@ paths:
                 -   in: query
                     name: unit_id
                     description: The unit_id to search for
-                    required: false
+                    required: true
                     schema:
                         type: string
                         default: "{{unit_id}}"
@@ -80,6 +80,40 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/v1-patch-request-test'
+            responses:
+                200:
+                    description: Company successfully retrieved
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+    /unit-test/v1/schema/{test_id}:
+        put:
+            tags:
+                - unit-test
+            operationId: PutSchemaWithId
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: key
+                    required: true
+                    description: an api key
+                    schema:
+                        type: string
+                        default: "{{key}}"
+                -   in: path
+                    name: test_id
+                    description: The test_id to update
+                    required: true
+                    schema:
+                        type: number
+                        default: "{{test_id}}"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-post-request-test'
             responses:
                 200:
                     description: Company successfully retrieved
