@@ -12,20 +12,18 @@ class Validator {
     }
 
     async validateWithOpenAPI(request, response) {
-        const method = request.method;
-        const path = this.__convertPathToOpenAPI(request.path);
-        return path;
+        const route = this.__convertRouteToOpenAPI(request.route);
         const translatedRequest = {
             headers: request.headers,
             queryParameters: request.queryParams,
             pathParameters: request.path,
             body: request.body
         };
-        const errors = this.__schema.validateOpenApi(path, method, translatedRequest);
-        return errors;
+        const errors = await this.__schema.validateOpenApi(route, request.method, translatedRequest);
+        this.__translateOpenAPIErrors(errors, response);
     }
 
-    async isValid(request, response, requirements) {
+    async validateWithRequirements(request, response, requirements) {
         for (const pairing of Object.keys(this.__pairings)) {
             const requirement = requirements[pairing];
             const source = this.__pairings[pairing].source;
@@ -38,7 +36,7 @@ class Validator {
         return response;
     }
 
-    async isValidRecord(entityName = '', record = {}) {
+    async validateWithRequirementsRecord(entityName = '', record = {}) {
         const errors = await this.__schema.validate(entityName, record.body);
         if (errors) {
             const throwables = [];
@@ -73,18 +71,29 @@ class Validator {
         if (errors) {
             response.code = code;
             errors.forEach((error) => {
-                const dataPath = error.instancePath ? error.instancePath : 'root';
-                response.setError(dataPath, error.message);
+                const key = error.instancePath ? error.instancePath : 'root';
+                response.setError(key, error.message);
             });
         }
     }
 
-    __convertPathToOpenAPI(path) {
+    __convertRouteToOpenAPI(path) {
         const matches = path.matchAll(':(.*?)($|/)', 'g');
         Array.from(matches).forEach((match) => {
             path = path.replace(`:${match[1]}`, `{${match[1]}}`);
         });
         return path;
+    }
+
+    __translateOpenAPIErrors(errors, response) {
+        if (errors) {
+            response.code = 400;
+            errors.forEach((error) => {
+                const key = error.path.split('.')[1];
+                const value = error.message;
+                response.setError(key, value);
+            });
+        }
     }
 }
 

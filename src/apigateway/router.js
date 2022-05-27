@@ -45,7 +45,7 @@ class Router {
             await this.__validator.validateWithOpenAPI(request, response);
         }
         if (!response.hasErrors && endpoint.hasRequirements && !this.__autoValidate) {
-            await this.__validator.isValid(request, response, endpoint.requirements);
+            await this.__validator.validateWithRequirements(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasBefore) {
             await endpoint.before(request, response);

@@ -105,7 +105,7 @@ class Event {
         const entityName = typeof this.__requiredBody === 'string' ? this.__requiredBody : null;
         const validator = new Validator(schema);
         for (const record of records) {
-            await validator.isValidRecord(entityName, record);
+            await validator.validateWithRequirementsRecord(entityName, record);
         }
     }
 

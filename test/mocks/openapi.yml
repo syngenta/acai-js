@@ -95,25 +95,18 @@ paths:
             deprecated: false
             parameters:
                 -   in: header
-                    name: key
+                    name: x-api-key
                     required: true
                     description: an api key
                     schema:
                         type: string
-                        default: "{{key}}"
-                -   in: path
-                    name: test_id
-                    description: The test_id to update
-                    required: true
-                    schema:
-                        type: number
-                        default: "{{test_id}}"
+                        default: "{{x-api-key}}"
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/v1-post-request-test'
+                            $ref: '#/components/schemas/v1-test-reference-model'
             responses:
                 200:
                     description: Company successfully retrieved

@@ -20,13 +20,13 @@ describe('Test Validator', () => {
                 requiredQuery: ['name'],
                 requiredBody: 'v1-test-request'
             };
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.equal(response.hasErrors, false);
         });
         it('should see request as invalid becuase of missing required headers', async () => {
             const response = new Response();
             const requirements = {requiredHeaders: ['x-api-key-fail']};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -40,7 +40,7 @@ describe('Test Validator', () => {
         it('should see request as invalid becuase of not available headers', async () => {
             const response = new Response();
             const requirements = {availableHeaders: ['x-api-key-fail']};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -58,13 +58,13 @@ describe('Test Validator', () => {
         it('should see request as valid with correct required headers', async () => {
             const response = new Response();
             const requirements = {availableHeaders: ['x-api-key', 'content-type']};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.equal(response.hasErrors, false);
         });
         it('should see request as valid with correct available headers', async () => {
             const response = new Response();
             const requirements = {requiredQuery: ['name', 'failing-param']};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -78,7 +78,7 @@ describe('Test Validator', () => {
         it('should see request as invalid because request body is empty', async () => {
             const response = new Response();
             const requirements = {requiredBody: 'v1-test-fail-request'};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -94,7 +94,7 @@ describe('Test Validator', () => {
             const request = new Request(mock);
             const response = new Response();
             const requirements = {requiredBody: 'v1-test-fail-request'};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -116,7 +116,7 @@ describe('Test Validator', () => {
             const request = new Request(mock);
             const response = new Response();
             const requirements = {requiredBody: 'v1-test-nullable-field'};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.equal(response.hasErrors, true);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -132,7 +132,7 @@ describe('Test Validator', () => {
             const request = new Request(mock);
             const response = new Response();
             const requirements = {requiredBody: 'v1-response-test-all-of'};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.isFalse(response.hasErrors);
         });
         it('should be able to handle complex schema import and provide an error', async () => {
@@ -140,7 +140,7 @@ describe('Test Validator', () => {
             const request = new Request(mock);
             const response = new Response();
             const requirements = {requiredBody: 'v1-response-test-all-of'};
-            await validator.isValid(request, response, requirements);
+            await validator.validateWithRequirements(request, response, requirements);
             assert.isTrue(response.hasErrors);
             assert.deepEqual(response.rawBody, {
                 errors: [
@@ -153,14 +153,63 @@ describe('Test Validator', () => {
         });
     });
     describe('test request against openapi validation', () => {
-        it('should be able to handle complex schema import', async () => {
-            const path = '/unit-test/v1/schema/:id';
-            const mock = mockData.getApiGateWayCustomRouteWithParams(path, 'get');
+        it('should have errors', async () => {
+            const route = '/unit-test/v1/schema';
+            const mock = mockData.getApiGateWayCustomRouteWithParams(route, 'get');
             const request = new Request(mock);
-            request.paramPath = path;
+            request.route = route;
             const response = new Response();
-            const result = await validator.validateWithOpenAPI(request, response);
-            console.log(result);
+            await validator.validateWithOpenAPI(request, response);
+            assert.deepEqual(response.rawBody, {
+                errors: [
+                    {
+                        key_path: 'query',
+                        message: "request.query must have required property 'unit_id'"
+                    },
+                    {
+                        key_path: 'query',
+                        message: "'name' property is not expected to be here"
+                    }
+                ]
+            });
+        });
+        it('should not have errors', async () => {
+            const route = '/unit-test/v1/schema/:test_id';
+            const mock = mockData.getApiGateWayCustomRouteWithParams(route, 'put');
+            const request = new Request(mock);
+            request.route = route;
+            const response = new Response();
+            await validator.validateWithOpenAPI(request, response);
+            assert.equal(response.hasErrors, false);
+        });
+        it('should throw error when cant find operation schema bad method', async () => {
+            const route = '/unit-test/v1/schema/:test_id';
+            const mock = mockData.getApiGateWayCustomRouteWithParams(route, 'get');
+            const request = new Request(mock);
+            request.route = route;
+            const response = new Response();
+            try {
+                await validator.validateWithOpenAPI(request, response);
+                assert.equal(true, false);
+            } catch (error) {
+                assert.equal(
+                    error.message,
+                    'problem with importing your schema for: get::/unit-test/v1/schema/{test_id}'
+                );
+            }
+        });
+        it('should throw error when cant find operation schema bad route', async () => {
+            const route = '/fail/v1/schema/:fail';
+            const mock = mockData.getApiGateWayCustomRouteWithParams(route, 'get');
+            const request = new Request(mock);
+            request.route = route;
+            const response = new Response();
+            try {
+                await validator.validateWithOpenAPI(request, response);
+                assert.equal(true, false);
+            } catch (error) {
+                assert.equal(error.message, 'problem with importing your schema for: get::/fail/v1/schema/{fail}');
+            }
         });
     });
 });

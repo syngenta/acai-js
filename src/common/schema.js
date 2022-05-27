@@ -11,8 +11,8 @@ class Schema {
         this.__openAPISchema = openAPISchema;
         this.__openApliValidator = new Reva();
         this.__inlineSchema = inlineSchema;
-        this.__additionalProperties = !params.strict;
-        this.__ajv = new Ajv({allErrors: true, validateFormats: params.strict});
+        this.__strict = params.strict || false;
+        this.__ajv = new Ajv({allErrors: true, validateFormats: this.__strict});
     }
 
     static fromFilePath(schemaPath, params = {}) {
@@ -47,7 +47,7 @@ class Schema {
     __combineSchemas(schemaComponentName, refSchema) {
         const schemaWithInlinedRefs = this.__getEntityRulesFromSchema(schemaComponentName, refSchema);
         const schemaWithMergedAllOf = mergeAll(schemaWithInlinedRefs, {ignoreAdditionalProperties: true});
-        schemaWithMergedAllOf.additionalProperties = this.__additionalProperties;
+        schemaWithMergedAllOf.additionalProperties = !this.__strict;
         return schemaWithMergedAllOf;
     }
 
@@ -60,9 +60,14 @@ class Schema {
         }
         throw new Error(`Schema with name ${schemaComponentName} is not found`);
     }
+
     __getOperationSchema(refSchema, path, method) {
         try {
-            return refSchema.paths[path][method];
+            const operation = refSchema.paths[path][method];
+            if (!operation) {
+                throw new Error();
+            }
+            return operation;
         } catch (error) {
             throw new Error(`problem with importing your schema for: ${method}::${path}`);
         }
