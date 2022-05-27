@@ -10,7 +10,7 @@ class PatternResolver {
     }
 
     resolve(request) {
-        const filePath = this.__getFilePath(request.route);
+        const filePath = this.__getFilePath(request.path);
         if (filePath && this.__importer.isFile(filePath)) {
             return this.__importer.importModuleFromPath(filePath);
         }

@@ -5,7 +5,7 @@ class Request {
         this.__event = event;
         this.__context = null;
         this.__pathParameters = {};
-        this.__paramPath = this.__event.path;
+        this.__route = this.__event.path;
     }
 
     get method() {
@@ -33,32 +33,32 @@ class Request {
     }
 
     get params() {
-        const query = this.query;
-        const path = this.path;
+        const query = this.queryParams;
+        const path = this.pathParams;
         return {query, path};
     }
 
-    get query() {
+    get queryParams() {
         return this.__event.queryStringParameters ? this.__event.queryStringParameters : {};
     }
 
-    get path() {
+    get pathParams() {
         return this.__pathParameters;
     }
 
-    set path({key, value}) {
+    set pathParams({key, value}) {
         this.__pathParameters[key] = value;
     }
 
-    get paramPath() {
-        return this.__paramPath;
-    }
-
-    set paramPath(paramPath) {
-        this.__paramPath = paramPath;
-    }
-
     get route() {
+        return this.__route;
+    }
+
+    set route(route) {
+        this.__route = route;
+    }
+
+    get path() {
         return this.__event.path;
     }
 
@@ -119,8 +119,8 @@ class Request {
             authorizer: this.authorizer,
             headers: this.headers,
             params: this.params,
-            query: this.query,
-            path: this.path,
+            queryParams: this.queryParams,
+            pathParams: this.pathParams,
             route: this.route,
             context: this.context,
             body: this.body

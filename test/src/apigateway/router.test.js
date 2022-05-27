@@ -148,7 +148,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                     'Access-Control-Allow-Headers': '*'
                 },
                 statusCode: 400,
-                body: '{"errors":[{"key_path":"query","message":"Please provide test for query"}]}'
+                body: '{"errors":[{"key_path":"queryParams","message":"Please provide test for queryParams"}]}'
             });
         });
         it('should pass available query string requirements', async () => {
@@ -185,7 +185,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                     'Access-Control-Allow-Headers': '*'
                 },
                 statusCode: 400,
-                body: '{"errors":[{"key_path":"query","message":"fail is not an available query"}]}'
+                body: '{"errors":[{"key_path":"queryParams","message":"fail is not an available queryParams"}]}'
             });
         });
         it('should pass with endpoint before', async () => {

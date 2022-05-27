@@ -31,12 +31,12 @@ describe('Test Request Client', () => {
             assert.deepEqual(request.params, {query: {name: 'me'}, path: {}});
         });
         it('should have query as an object', () => {
-            assert.deepEqual(request.query, {
+            assert.deepEqual(request.queryParams, {
                 name: 'me'
             });
         });
         it('should have path as an object', () => {
-            assert.deepEqual(request.path, {});
+            assert.deepEqual(request.pathParams, {});
         });
         it('should have body as an object', () => {
             assert.deepEqual(request.body, {body_key: 'body_value'});
@@ -53,8 +53,8 @@ describe('Test Request Client', () => {
                     integrationLatency: 572
                 },
                 headers: {'x-api-key': 'SOME-KEY', 'content-type': 'application/json'},
-                query: {name: 'me'},
-                path: {},
+                queryParams: {name: 'me'},
+                pathParams: {},
                 params: {query: {name: 'me'}, path: {}},
                 body: {body_key: 'body_value'},
                 context: null,
@@ -64,7 +64,7 @@ describe('Test Request Client', () => {
         it('should have query as an empty object with no params', () => {
             const mock = mockData.getDataNoParams();
             const request = new Request(mock);
-            assert.deepEqual(request.query, {});
+            assert.deepEqual(request.queryParams, {});
         });
         it('should body as a string when its JSON string', () => {
             const mock = mockData.getBadData();
@@ -110,15 +110,15 @@ describe('Test Request Client', () => {
         it('should have path as an empty object with no params', () => {
             const mock = mockData.getDataNoParams();
             const request = new Request(mock);
-            assert.deepEqual(request.path, {});
+            assert.deepEqual(request.pathParams, {});
         });
         it('should be able to set request path from key/value object', () => {
             const mock = mockData.getData();
             const request = new Request(mock);
             const key = 'key';
             const value = 'value';
-            request.path = {key, value};
-            assert.deepEqual(request.path, {key: 'value'});
+            request.pathParams = {key, value};
+            assert.deepEqual(request.pathParams, {key: 'value'});
         });
     });
     describe('test assignable context', () => {
@@ -154,13 +154,13 @@ describe('Test Request Client', () => {
         it('should have paramPath default as emptu string', () => {
             const mock = mockData.getData();
             const request = new Request(mock);
-            assert.equal(request.paramPath, mockData.getData().path);
+            assert.equal(request.route, mockData.getData().path);
         });
         it('should have paramPath as assignable', () => {
             const mock = mockData.getData();
             const request = new Request(mock);
-            request.paramPath = '/grower/:id';
-            assert.equal(request.paramPath, '/grower/:id');
+            request.route = '/grower/:id';
+            assert.equal(request.route, '/grower/:id');
         });
     });
 });

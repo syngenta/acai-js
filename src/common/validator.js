@@ -4,20 +4,20 @@ class Validator {
         this.__pairings = {
             requiredHeaders: {source: 'headers', method: '__validateRequiredFields', code: 400},
             availableHeaders: {source: 'headers', method: '__validateAvailableFields', code: 400},
-            requiredQuery: {source: 'query', method: '__validateRequiredFields', code: 400},
-            availableQuery: {source: 'query', method: '__validateAvailableFields', code: 400},
-            requiredPath: {source: 'path', method: '__validateRequiredpath', code: 400},
+            requiredQuery: {source: 'queryParams', method: '__validateRequiredFields', code: 400},
+            availableQuery: {source: 'queryParams', method: '__validateAvailableFields', code: 400},
+            requiredPath: {source: 'pathParams', method: '__validateRequiredpath', code: 400},
             requiredBody: {source: 'body', method: '__validateApigatewayBody', code: 400}
         };
     }
 
     async validateWithOpenAPI(request, response) {
         const method = request.method;
-        const path = this.__convertPathToOpenAPI(request.paramPath);
+        const path = this.__convertPathToOpenAPI(request.path);
         return path;
         const translatedRequest = {
             headers: request.headers,
-            queryParameters: request.query,
+            queryParameters: request.queryParams,
             pathParameters: request.path,
             body: request.body
         };

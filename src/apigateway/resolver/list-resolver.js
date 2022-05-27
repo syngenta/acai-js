@@ -16,7 +16,7 @@ class ListResolver {
 
     __getEndpointPath(request) {
         const handlersFiltered = this.__filterHandlerByMethod(request.method);
-        const requestFiltered = this.__filterRequestedPath(request.route);
+        const requestFiltered = this.__filterRequestedPath(request.path);
         const requestPath = this.__getPathFromRequest(requestFiltered, handlersFiltered, request);
         if (requestPath.files.length === 0) {
             throw new ImportError(404, 'url', 'endpoint not found');

@@ -18,7 +18,7 @@ class DirectoryResolver {
     __getFilePaths(request) {
         const basePath = this.__importManager.cleanPath(this.__basePath);
         const handlerFilePrefix = this.__importManager.cleanPath(this.__handlerPath);
-        const requestedRoutePath = this.__importManager.cleanPath(request.route);
+        const requestedRoutePath = this.__importManager.cleanPath(request.path);
         const requestedFilePath = this.__importManager.cleanPath(requestedRoutePath.replace(basePath, ''));
         return {basePath, handlerFilePrefix, requestedRoutePath, requestedFilePath};
     }

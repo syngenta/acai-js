@@ -125,8 +125,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
-            assert.equal(request.pathParam, '/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1'});
+            assert.equal(request.route, '/path-parameters/:id');
         });
         it('should not resolve endpoint with path parameter but wrong path requiredPath', () => {
             const basePath = 'unittest/v1';
@@ -161,8 +161,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
-            assert.equal(request.pathParam, '/nested-1/nested-2/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1'});
+            assert.equal(request.route, '/nested-1/nested-2/path-parameters/:id');
         });
         it('should find the nested file with middle and trailing path parameter', () => {
             const basePath = 'unittest/v1';
@@ -173,8 +173,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1', org: 'syngenta'});
-            assert.equal(request.pathParam, '/nested-1/:org/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
+            assert.equal(request.route, '/nested-1/:org/path-parameters/:id');
         });
     });
     describe('test suffix pattern resolver with path parameters', () => {
@@ -187,8 +187,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
-            assert.equal(request.pathParam, '/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1'});
+            assert.equal(request.route, '/path-parameters/:id');
         });
         it('should resolve endpoint with nested file and trailing path parameter and have path params', () => {
             const basePath = 'unittest/v1';
@@ -199,8 +199,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
-            assert.equal(request.pathParam, '/nested-1/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1'});
+            assert.equal(request.route, '/nested-1/path-parameters/:id');
         });
         it('should resolve endpoint with nested file, middle & trailing path parameters and have path params', () => {
             const basePath = 'unittest/v1';
@@ -211,8 +211,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1', org: 'syngenta'});
-            assert.equal(request.pathParam, '/nested-1/:org/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
+            assert.equal(request.route, '/nested-1/:org/path-parameters/:id');
         });
         it('should not resolve endpoint with nested file, with bad path params', () => {
             const basePath = 'unittest/v1';
@@ -237,8 +237,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
-            assert.equal(request.pathParam, '/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1'});
+            assert.equal(request.route, '/path-parameters/:id');
         });
         it('should resolve endpoint with nested file and trailing path parameter and have path params', () => {
             const basePath = 'unittest/v1';
@@ -249,8 +249,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
-            assert.equal(request.pathParam, '/nested-1/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1'});
+            assert.equal(request.route, '/nested-1/path-parameters/:id');
         });
         it('should resolve endpoint with nested file, middle & trailing path parameters and have path params', () => {
             const basePath = 'unittest/v1';
@@ -261,8 +261,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1', org: 'syngenta'});
-            assert.equal(request.pathParam, '/nested-1/:org/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
+            assert.equal(request.route, '/nested-1/:org/path-parameters/:id');
         });
         it('should not resolve endpoint with nested file, with bad path params', () => {
             const basePath = 'unittest/v1';
@@ -287,7 +287,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
+            assert.deepEqual(request.pathParams, {id: '1'});
         });
         it('should resolve endpoint with nested file and trailing path parameter and have path params', () => {
             const basePath = 'unittest/v1';
@@ -298,7 +298,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
+            assert.deepEqual(request.pathParams, {id: '1'});
         });
         it('should resolve endpoint with nested file, middle & trailing path parameters and have path params', () => {
             const basePath = 'unittest/v1';
@@ -309,8 +309,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1', org: 'syngenta'});
-            assert.equal(request.pathParam, '/nested-1/:org/path-parameters/:id');
+            assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
+            assert.equal(request.route, '/nested-1/:org/path-parameters/:id');
         });
         it('should not resolve endpoint with nested file, with bad path params and bad method', () => {
             const basePath = 'unittest/v1';
@@ -340,8 +340,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
-            assert.equal(request.pathParam, '/basic/:id');
+            assert.deepEqual(request.pathParams, {id: '1'});
+            assert.equal(request.route, '/basic/:id');
         });
         it('should find the nested file with trailing path parameter', () => {
             const basePath = 'unittest/v1';
@@ -351,8 +351,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1'});
-            assert.equal(request.pathParam, '/n1/n2/basic/:id');
+            assert.deepEqual(request.pathParams, {id: '1'});
+            assert.equal(request.route, '/n1/n2/basic/:id');
         });
         it('should find the nested file with middle and trailing path parameter', () => {
             const basePath = 'unittest/v1';
@@ -362,8 +362,8 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const request = new Request(mock);
             const response = new Response();
             resolver.getEndpoint(request, response);
-            assert.deepEqual(request.path, {id: '1', nested: 'syngenta'});
-            assert.equal(request.pathParam, '/n1/n2/:nested/basic/:id');
+            assert.deepEqual(request.pathParams, {id: '1', nested: 'syngenta'});
+            assert.equal(request.route, '/n1/n2/:nested/basic/:id');
         });
     });
 });

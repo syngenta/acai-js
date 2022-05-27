@@ -75,7 +75,7 @@ class RouteResolver {
 
     __splitRoutes(endpoint, request) {
         const requiredPath = endpoint.requirements[request.method].requiredPath;
-        const requestedRoute = request.route.replace(this.__params.basePath, '');
+        const requestedRoute = request.path.replace(this.__params.basePath, '');
         const requestSplit = this.__importManager.cleanPath(requestedRoute).split('/');
         const pathSplit = this.__importManager.cleanPath(requiredPath).split('/');
         return {requestSplit, pathSplit};
@@ -92,11 +92,11 @@ class RouteResolver {
             if (splits.pathSplit[index] && splits.pathSplit[index].startsWith(':')) {
                 const key = splits.pathSplit[index].split(':')[1];
                 const value = splits.requestSplit[index];
-                request.path = {key, value};
+                request.pathParams = {key, value};
                 continue;
             }
         }
-        request.pathParam = `/${this.__importManager.cleanPath(splits.pathSplit.join('/'))}`;
+        request.route = `/${this.__importManager.cleanPath(splits.pathSplit.join('/'))}`;
     }
 }
 
