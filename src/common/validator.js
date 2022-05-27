@@ -12,8 +12,17 @@ class Validator {
     }
 
     async validateWithOpenAPI(request, response) {
-        console.log('shit');
-        this.__schema.validateOpenApi();
+        const method = request.method;
+        const path = this.__convertPathToOpenAPI(request.paramPath);
+        return path;
+        const translatedRequest = {
+            headers: request.headers,
+            queryParameters: request.query,
+            pathParameters: request.path,
+            body: request.body
+        };
+        const errors = this.__schema.validateOpenApi(path, method, translatedRequest);
+        return errors;
     }
 
     async isValid(request, response, requirements) {
@@ -68,6 +77,14 @@ class Validator {
                 response.setError(dataPath, error.message);
             });
         }
+    }
+
+    __convertPathToOpenAPI(path) {
+        const matches = path.matchAll(':(.*?)($|/)', 'g');
+        Array.from(matches).forEach((match) => {
+            path = path.replace(`:${match[1]}`, `{${match[1]}}`);
+        });
+        return path;
     }
 }
 

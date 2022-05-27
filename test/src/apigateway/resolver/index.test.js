@@ -227,7 +227,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             assert.equal(response.hasErrors, true);
         });
     });
-    describe('test prefix pattern resolve.*r with path parameters', () => {
+    describe('test prefix pattern resolver with path parameters', () => {
         it('should resolve endpoint with trailing path parameter and have path params', () => {
             const basePath = 'unittest/v1';
             const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/prefix/**/controller.*.js';

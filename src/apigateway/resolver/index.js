@@ -22,10 +22,10 @@ class RouteResolver {
             this.__validateConfigs();
             const resolver = this.getResolver();
             const endpointModule = resolver.resolve(request);
-            if (!this.__hasRequiredPath(resolver, endpointModule, request)) {
-                throw new ImportError(404, 'url', 'endpoint not found');
+            if (resolver.hasPathParams) {
+                this.__configurePathParams(endpointModule, request);
             }
-            if (typeof endpointModule[request.method.toLowerCase()] !== 'function') {
+            if (typeof endpointModule[request.method] !== 'function') {
                 throw new ImportError(403, 'method', 'method not allowed');
             }
             return new Endpoint(endpointModule, request.method);
@@ -56,34 +56,47 @@ class RouteResolver {
         }
     }
 
-    __hasRequiredPath(resovler, endpoint, request) {
-        const method = request.method.toLowerCase();
-        if (!resovler.hasPathParams) {
-            return true;
+    __configurePathParams(endpoint, request) {
+        this.__checkRequiredPathRequirement(endpoint, request);
+        const splits = this.__splitRoutes(endpoint, request);
+        this.__checkPathsMatch(splits);
+        this.__setRequiredPathConfig(endpoint, request, splits);
+    }
+
+    __checkRequiredPathRequirement(endpoint, request) {
+        if (
+            !endpoint.requirements ||
+            (endpoint.requirements && !endpoint.requirements[request.method]) ||
+            !endpoint.requirements[request.method].requiredPath
+        ) {
+            throw new ImportError(404, 'url', 'endpoint not found');
         }
-        if (!endpoint.requirements || (endpoint.requirements && !endpoint.requirements[method])) {
-            return false;
-        }
-        if (resovler.hasPathParams && endpoint.requirements[method] && !endpoint.requirements[method].requiredPath) {
-            return false;
-        }
+    }
+
+    __splitRoutes(endpoint, request) {
+        const requiredPath = endpoint.requirements[request.method].requiredPath;
         const requestedRoute = request.route.replace(this.__params.basePath, '');
         const requestSplit = this.__importManager.cleanPath(requestedRoute).split('/');
-        const requiredPath = endpoint.requirements[method].requiredPath;
         const pathSplit = this.__importManager.cleanPath(requiredPath).split('/');
+        return {requestSplit, pathSplit};
+    }
+
+    __checkPathsMatch({requestSplit, pathSplit}) {
         if (pathSplit.length !== requestSplit.length) {
-            return false;
+            throw new ImportError(404, 'url', 'endpoint not found');
         }
-        for (const index in requestSplit) {
-            if (pathSplit[index] && pathSplit[index].startsWith(':')) {
-                const key = pathSplit[index].split(':')[1];
-                const value = requestSplit[index];
+    }
+
+    __setRequiredPathConfig(endpoint, request, splits) {
+        for (const index in splits.requestSplit) {
+            if (splits.pathSplit[index] && splits.pathSplit[index].startsWith(':')) {
+                const key = splits.pathSplit[index].split(':')[1];
+                const value = splits.requestSplit[index];
                 request.path = {key, value};
                 continue;
             }
         }
-        request.pathParam = `/${this.__importManager.cleanPath(requiredPath)}`;
-        return true;
+        request.pathParam = `/${this.__importManager.cleanPath(splits.pathSplit.join('/'))}`;
     }
 }
 

@@ -4,9 +4,10 @@ const mockData = require('../../mocks/apigateway/mock-data');
 
 describe('Test Request Client', () => {
     describe('test basic client', () => {
-        const request = new Request(mockData.getData());
+        const mock = mockData.getData();
+        const request = new Request(mock);
         it('should have a method of GET', () => {
-            assert.equal(request.method, 'GET');
+            assert.equal(request.method, 'get');
         });
         it('should be a resource of proxy', () => {
             assert.equal(request.resource, '/{proxy+}');
@@ -42,7 +43,7 @@ describe('Test Request Client', () => {
         });
         it('should body as an object from JSON', () => {
             assert.deepEqual(request.request, {
-                method: 'GET',
+                method: 'get',
                 resource: '/{proxy+}',
                 authorizer: {
                     apiKey: 'SOME KEY',
@@ -61,15 +62,18 @@ describe('Test Request Client', () => {
             });
         });
         it('should have query as an empty object with no params', () => {
-            const request = new Request(mockData.getDataNoParams());
+            const mock = mockData.getDataNoParams();
+            const request = new Request(mock);
             assert.deepEqual(request.query, {});
         });
         it('should body as a string when its JSON string', () => {
-            const request = new Request(mockData.getBadData());
+            const mock = mockData.getBadData();
+            const request = new Request(mock);
             assert.equal(request.body, '{body_key: "body_value"},#');
         });
         it('should be an object from XML', () => {
-            const request = new Request(mockData.getDataXml());
+            const mock = mockData.getDataXml();
+            const request = new Request(mock);
             assert.deepEqual(request.body, {
                 root: {
                     someobject: ['1', '2'],
@@ -78,33 +82,39 @@ describe('Test Request Client', () => {
             });
         });
         it('should be a string from bad XML', () => {
-            const request = new Request(mockData.getBadDataXml());
+            const mock = mockData.getBadDataXml();
+            const request = new Request(mock);
             assert.equal(request.body, '<root><test>test2</test></root');
         });
         it('should be exactly what was sent when body is raw data', () => {
-            const request = new Request(mockData.getDataRaw());
+            const mock = mockData.getDataRaw();
+            const request = new Request(mock);
             assert.equal(
                 request.body,
                 '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
             );
         });
         it('should have headers as an object form offline data', () => {
-            const request = new Request(mockData.getDataOffline());
+            const mock = mockData.getDataOffline();
+            const request = new Request(mock);
             assert.deepEqual(request.authorizer, {
                 'x-api-key': 'SOME-KEY',
                 'content-type': 'application/json'
             });
         });
         it('should default content-type to application json', () => {
-            const request = new Request(mockData.getDataNoHeaders());
+            const mock = mockData.getDataNoHeaders();
+            const request = new Request(mock);
             assert.deepEqual(request.headers, {'content-type': 'application/json'});
         });
         it('should have path as an empty object with no params', () => {
-            const request = new Request(mockData.getDataNoParams());
+            const mock = mockData.getDataNoParams();
+            const request = new Request(mock);
             assert.deepEqual(request.path, {});
         });
         it('should be able to set request path from key/value object', () => {
-            const request = new Request(mockData.getData());
+            const mock = mockData.getData();
+            const request = new Request(mock);
             const key = 'key';
             const value = 'value';
             request.path = {key, value};
@@ -113,23 +123,27 @@ describe('Test Request Client', () => {
     });
     describe('test assignable context', () => {
         it('should have context default as null', () => {
-            const request = new Request(mockData.getData());
+            const mock = mockData.getData();
+            const request = new Request(mock);
             assert.equal(request.context, null);
         });
         it('should have context as assignable', () => {
-            const request = new Request(mockData.getData());
+            const mock = mockData.getData();
+            const request = new Request(mock);
             request.context = {context: true};
             assert.deepEqual(request.context, {context: true});
         });
         it('should have context as nullable', () => {
-            const request = new Request(mockData.getData());
+            const mock = mockData.getData();
+            const request = new Request(mock);
             request.context = {nullable: true};
             assert.deepEqual(request.context, {nullable: true});
             request.context = null;
             assert.equal(request.context, null);
         });
         it('should have context as mutatable', () => {
-            const request = new Request(mockData.getData());
+            const mock = mockData.getData();
+            const request = new Request(mock);
             request.context = {key1: 'value1'};
             assert.deepEqual(request.context, {key1: 'value1'});
             request.context.key2 = 'value2';
@@ -138,11 +152,13 @@ describe('Test Request Client', () => {
     });
     describe('test assignable paramPath', () => {
         it('should have paramPath default as emptu string', () => {
-            const request = new Request(mockData.getData());
-            assert.equal(request.paramPath, '');
+            const mock = mockData.getData();
+            const request = new Request(mock);
+            assert.equal(request.paramPath, mockData.getData().path);
         });
         it('should have paramPath as assignable', () => {
-            const request = new Request(mockData.getData());
+            const mock = mockData.getData();
+            const request = new Request(mock);
             request.paramPath = '/grower/:id';
             assert.equal(request.paramPath, '/grower/:id');
         });

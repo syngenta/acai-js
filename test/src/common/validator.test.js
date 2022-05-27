@@ -90,7 +90,8 @@ describe('Test Validator', () => {
             });
         });
         it('should see request as invalid because request body has extra keys', async () => {
-            const request = new Request(mockData.getInvalidBodyData());
+            const mock = mockData.getInvalidBodyData();
+            const request = new Request(mock);
             const response = new Response();
             const requirements = {requiredBody: 'v1-test-fail-request'};
             await validator.isValid(request, response, requirements);
@@ -111,7 +112,8 @@ describe('Test Validator', () => {
     });
     describe('test improper json', () => {
         it('should return invalid as json is not proper with nullable field', async () => {
-            const request = new Request(mockData.getBodyDataWithNullableField());
+            const mock = mockData.getBodyDataWithNullableField();
+            const request = new Request(mock);
             const response = new Response();
             const requirements = {requiredBody: 'v1-test-nullable-field'};
             await validator.isValid(request, response, requirements);
@@ -126,14 +128,16 @@ describe('Test Validator', () => {
             });
         });
         it('should be able to handle complex schema import', async () => {
-            const request = new Request(mockData.getBodyDataWithComplexObject());
+            const mock = mockData.getBodyDataWithComplexObject();
+            const request = new Request(mock);
             const response = new Response();
             const requirements = {requiredBody: 'v1-response-test-all-of'};
             await validator.isValid(request, response, requirements);
             assert.isFalse(response.hasErrors);
         });
         it('should be able to handle complex schema import and provide an error', async () => {
-            const request = new Request(mockData.getBodyDataWithInvalidComplexObject());
+            const mock = mockData.getBodyDataWithInvalidComplexObject();
+            const request = new Request(mock);
             const response = new Response();
             const requirements = {requiredBody: 'v1-response-test-all-of'};
             await validator.isValid(request, response, requirements);
@@ -146,6 +150,17 @@ describe('Test Validator', () => {
                     }
                 ]
             });
+        });
+    });
+    describe('test request against openapi validation', () => {
+        it('should be able to handle complex schema import', async () => {
+            const path = '/unit-test/v1/schema/:id';
+            const mock = mockData.getApiGateWayCustomRouteWithParams(path, 'get');
+            const request = new Request(mock);
+            request.paramPath = path;
+            const response = new Response();
+            const result = await validator.validateWithOpenAPI(request, response);
+            console.log(result);
         });
     });
 });
