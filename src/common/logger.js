@@ -53,7 +53,7 @@ class Logger {
         }
     }
 
-    __getLog(level = 'INFO', logs) {
+    __getLog(level = 'INFO', logs = []) {
         return {
             level,
             time: new Date().toISOString(),
@@ -64,8 +64,7 @@ class Logger {
 
     __getStack() {
         const stack = new Error().stack;
-        const clean = stack.split('\n').filter((trace) => !trace.includes('Logger.'));
-        return clean;
+        return stack.split('\n').filter((trace) => !trace.includes('Logger.'));
     }
 
     __shouldLog(level) {

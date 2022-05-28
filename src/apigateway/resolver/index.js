@@ -93,7 +93,6 @@ class RouteResolver {
                 const key = splits.pathSplit[index].split(':')[1];
                 const value = splits.requestSplit[index];
                 request.pathParams = {key, value};
-                continue;
             }
         }
         request.route = `/${this.__params.basePath}/${this.__importManager.cleanPath(splits.pathSplit.join('/'))}`;

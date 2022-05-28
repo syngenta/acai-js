@@ -31,7 +31,7 @@ class Schema {
         return result.errors || [];
     }
 
-    async validate(entityName = '', data) {
+    async validate(entityName = '', data = {}) {
         let schema = {};
         if (this.__openAPISchema && entityName) {
             const refSchema = await this.__refParser.dereference(this.__openAPISchema);

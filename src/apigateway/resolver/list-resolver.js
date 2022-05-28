@@ -17,7 +17,7 @@ class ListResolver {
     __getEndpointPath(request) {
         const handlersFiltered = this.__filterHandlerByMethod(request.method);
         const requestFiltered = this.__filterRequestedPath(request.path);
-        const requestPath = this.__getPathFromRequest(requestFiltered, handlersFiltered, request);
+        const requestPath = this.__getPathFromRequest(requestFiltered, handlersFiltered);
         if (requestPath.files.length === 0) {
             throw new ImportError(404, 'url', 'endpoint not found');
         }
@@ -56,10 +56,10 @@ class ListResolver {
         return this.__importManager.cleanPath(requestedRoute);
     }
 
-    __getPathFromRequest(path, handlers, request) {
+    __getPathFromRequest(path, handlers) {
         const routes = {paths: [], files: []};
         for (const [route, file] of Object.entries(handlers)) {
-            if (this.__requestMatchesRoute(path, route, request)) {
+            if (this.__requestMatchesRoute(path, route)) {
                 routes.files.push(file);
                 routes.paths.push(route);
             }
@@ -67,7 +67,7 @@ class ListResolver {
         return routes;
     }
 
-    __requestMatchesRoute(path, route, request) {
+    __requestMatchesRoute(path, route) {
         const splitRoute = route.split('/');
         const splitRequest = path.split('/');
         if (splitRoute.length !== splitRequest.length) {
