@@ -5,7 +5,7 @@ const mockData = require('../../../mocks/apigateway/mock-data');
 
 describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
     describe('test basic list routing', () => {
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const handlerList = {
             'GET::basic/no-file': 'test/mocks/apigateway/mock-list-handlers/no-file.js',
             'POST::basic': 'test/mocks/apigateway/mock-list-handlers/basic.js',
@@ -51,7 +51,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
         });
     });
     describe('test list routing with params', () => {
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const handlerList = {
             'POST::basic/:id': 'test/mocks/apigateway/mock-list-handlers/basic.js',
             'GET::n1/n2/:org/basic': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
@@ -100,7 +100,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
         });
     });
     describe('test list routing with params with bad route config', () => {
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         it('should throw error for duplicate routes', () => {
             const handlerList = {
                 'POST::basic/:id': 'test/mocks/apigateway/mock-list-handlers/basic.js',

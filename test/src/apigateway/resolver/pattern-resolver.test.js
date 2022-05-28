@@ -6,7 +6,7 @@ const mockData = require('../../../mocks/apigateway/mock-data');
 describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolver', () => {
     describe('test suffix pattern routing', () => {
         const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js';
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvc structure', () => {
             const mock = mockData.getApiGateWayRoute();
@@ -59,7 +59,7 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
     });
     describe('test prefix pattern routing', () => {
         const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/prefix/**/controller.*.js';
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvc structure', () => {
             const mock = mockData.getApiGateWayRoute();
@@ -100,7 +100,7 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
     });
     describe('test exact pattern routing', () => {
         const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/exact/**/controller.js';
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvvm structure', () => {
             const mock = mockData.getApiGateWayRoute();
@@ -129,7 +129,7 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
     });
     describe('test suffix pattern routing with path parameters', () => {
         const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js';
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvc structure with trailing parameter', () => {
             const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
@@ -170,7 +170,7 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
     });
     describe('test prefix pattern routing with path parameters', () => {
         const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/prefix/**/controller.*.js';
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvc structure with trailing parameter', () => {
             const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
@@ -211,7 +211,7 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
     });
     describe('test exact pattern routing with path parameters', () => {
         const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/exact/**/controller.js';
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with mvvm structure with trailing parameter', () => {
             const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');

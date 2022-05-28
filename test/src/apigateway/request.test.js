@@ -58,7 +58,7 @@ describe('Test Request Client', () => {
                 params: {query: {name: 'me'}, path: {}},
                 body: {body_key: 'body_value'},
                 context: null,
-                route: `unittest/v1/basic`
+                route: `unit-test/v1/basic`
             });
         });
         it('should have query as an empty object with no params', () => {

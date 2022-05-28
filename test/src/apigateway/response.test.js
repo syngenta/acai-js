@@ -84,11 +84,11 @@ describe('Test Response: src/apigateway/response.js', () => {
             assert.equal(response.hasErrors, false);
         });
         it('should know it has errors when it has errors', () => {
-            response.setError('root', 'unittest has error');
+            response.setError('root', 'unit-test has error');
             assert.equal(response.hasErrors, true);
         });
         it('should have proper error signature', () => {
-            response.setError('root', 'unittest can set multiple errors');
+            response.setError('root', 'unit-test can set multiple errors');
             assert.deepEqual(response.response, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -96,7 +96,7 @@ describe('Test Response: src/apigateway/response.js', () => {
                 },
                 statusCode: 400,
                 body:
-                    '{"errors":[{"key_path":"root","message":"unittest has error"},{"key_path":"root","message":"unittest can set multiple errors"}]}'
+                    '{"errors":[{"key_path":"root","message":"unit-test has error"},{"key_path":"root","message":"unit-test can set multiple errors"}]}'
             });
         });
     });

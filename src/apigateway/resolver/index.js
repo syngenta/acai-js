@@ -96,7 +96,7 @@ class RouteResolver {
                 continue;
             }
         }
-        request.route = `/${this.__importManager.cleanPath(splits.pathSplit.join('/'))}`;
+        request.route = `/${this.__params.basePath}/${this.__importManager.cleanPath(splits.pathSplit.join('/'))}`;
     }
 }
 

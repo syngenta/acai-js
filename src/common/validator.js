@@ -21,6 +21,7 @@ class Validator {
         };
         const errors = await this.__schema.validateOpenApi(route, request.method, translatedRequest);
         this.__translateOpenAPIErrors(errors, response);
+        return response;
     }
 
     async validateWithRequirements(request, response, requirements) {
@@ -82,11 +83,11 @@ class Validator {
         Array.from(matches).forEach((match) => {
             path = path.replace(`:${match[1]}`, `{${match[1]}}`);
         });
-        return path;
+        return !path.startsWith('/') ? `/${path}` : path;
     }
 
     __translateOpenAPIErrors(errors, response) {
-        if (errors) {
+        if (errors.length) {
             response.code = 400;
             errors.forEach((error) => {
                 const key = error.path.split('.')[1];

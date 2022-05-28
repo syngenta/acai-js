@@ -5,7 +5,7 @@ const mockData = require('../../../mocks/apigateway/mock-data');
 
 describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js', () => {
     describe('test basic routing: no path parameters', () => {
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const handlerPath = 'test/mocks/apigateway/mock-directory-handlers/';
         const resolver = new DirectoryResolver({basePath, handlerPath});
         const response = new Response();
@@ -53,7 +53,7 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
         });
     });
     describe('test routing: with path parameters', () => {
-        const basePath = 'unittest/v1';
+        const basePath = 'unit-test/v1';
         const handlerPath = 'test/mocks/apigateway/mock-directory-handlers/';
         const resolver = new DirectoryResolver({basePath, handlerPath});
         const response = new Response();

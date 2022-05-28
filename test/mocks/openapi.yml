@@ -17,21 +17,16 @@ paths:
             parameters:
                 -   in: query
                     name: test_id
-                    description: The test_id to search for
                     required: false
                     schema:
                         type: string
-                        default: "{{test_id}}"
                 -   in: query
                     name: unit_id
-                    description: The unit_id to search for
                     required: true
                     schema:
                         type: string
-                        default: "{{unit_id}}"
             responses:
                 200:
-                    description: Company successfully retrieved
                     content:
                         application/json:
                             schema:
@@ -49,7 +44,6 @@ paths:
                             $ref: '#/components/schemas/v1-post-request-test'
             responses:
                 200:
-                    description: Company successfully retrieved
                     content:
                         application/json:
                             schema:
@@ -63,17 +57,13 @@ paths:
                 -   in: header
                     name: key
                     required: true
-                    description: an api key
                     schema:
                         type: string
-                        default: "{{key}}"
                 -   in: query
                     name: unit_id
-                    description: The unit_id to search for
                     required: true
                     schema:
                         type: string
-                        default: "{{unit_id}}"
             requestBody:
                 required: true
                 content:
@@ -82,7 +72,6 @@ paths:
                             $ref: '#/components/schemas/v1-patch-request-test'
             responses:
                 200:
-                    description: Company successfully retrieved
                     content:
                         application/json:
                             schema:
@@ -97,10 +86,8 @@ paths:
                 -   in: header
                     name: x-api-key
                     required: true
-                    description: an api key
                     schema:
                         type: string
-                        default: "{{x-api-key}}"
             requestBody:
                 required: true
                 content:
@@ -109,7 +96,93 @@ paths:
                             $ref: '#/components/schemas/v1-test-reference-model'
             responses:
                 200:
-                    description: Company successfully retrieved
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+    /unit-test/v1/auto:
+        post:
+            tags:
+                - unit-test
+            operationId: PostAuto
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-test-reference-model'
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+    /unit-test/v1/auto/{id}:
+        get:
+            tags:
+                - unit-test
+            operationId: GetAuto
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+        put:
+            tags:
+                - unit-test
+            operationId: PutAuto
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-test-reference-model'
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+        delete:
+            tags:
+                - unit-test
+            operationId: GetAuto
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: operation
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
                     content:
                         application/json:
                             schema:

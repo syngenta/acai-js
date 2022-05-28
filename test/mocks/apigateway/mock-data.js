@@ -17,7 +17,7 @@ exports.getData = (suffix = '') => {
         pathParameters: {
             proxy: 'hello'
         },
-        path: `unittest/v1/basic${suffix}`,
+        path: `unit-test/v1/basic${suffix}`,
         resource: '/{proxy+}',
         httpMethod: 'GET',
         queryStringParameters: {
@@ -26,7 +26,6 @@ exports.getData = (suffix = '') => {
         body: JSON.stringify({body_key: 'body_value'})
     };
 };
-
 exports.getBadImportData = () => {
     return {
         headers: {
@@ -46,7 +45,7 @@ exports.getBadImportData = () => {
         pathParameters: {
             proxy: 'hello'
         },
-        path: `unittest/v1/bad-import`,
+        path: `unit-test/v1/bad-import`,
         resource: '/{proxy+}',
         httpMethod: 'GET',
         queryStringParameters: {
@@ -55,7 +54,6 @@ exports.getBadImportData = () => {
         body: JSON.stringify({body_key: 'body_value'})
     };
 };
-
 exports.getDataOffline = () => {
     return {
         headers: {
@@ -74,7 +72,6 @@ exports.getDataOffline = () => {
         isOffline: true
     };
 };
-
 exports.getBadData = () => {
     return {
         headers: {
@@ -93,7 +90,6 @@ exports.getBadData = () => {
         isOffline: true
     };
 };
-
 exports.getDataNoHeaders = () => {
     return {
         requestContext: {
@@ -117,7 +113,6 @@ exports.getDataNoHeaders = () => {
         body: JSON.stringify({body_key: 'body_value'})
     };
 };
-
 exports.getDataNoParams = () => {
     return {
         headers: {
@@ -143,7 +138,6 @@ exports.getDataNoParams = () => {
         body: JSON.stringify({body_key: 'body_value'})
     };
 };
-
 exports.getDataXml = () => {
     return {
         headers: {
@@ -168,11 +162,10 @@ exports.getDataXml = () => {
         queryStringParameters: {
             name: 'me'
         },
-        path: `unittest/v1/mock-handler`,
+        path: `unit-test/v1/mock-handler`,
         body: '<root><test>test2</test><someobject>1</someobject><someobject>2</someobject></root>'
     };
 };
-
 exports.getBadDataXml = () => {
     return {
         headers: {
@@ -197,11 +190,10 @@ exports.getBadDataXml = () => {
         queryStringParameters: {
             name: 'me'
         },
-        path: `unittest/v1/mock-handler`,
+        path: `unit-test/v1/mock-handler`,
         body: '<root><test>test2</test></root'
     };
 };
-
 exports.getDataRaw = () => {
     return {
         headers: {
@@ -226,11 +218,10 @@ exports.getDataRaw = () => {
         queryStringParameters: {
             name: 'me'
         },
-        path: `unittest/v1/mock-handler`,
+        path: `unit-test/v1/mock-handler`,
         body: '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
     };
 };
-
 exports.getValidBodyData = () => {
     return {
         headers: {
@@ -270,7 +261,6 @@ exports.getValidBodyData = () => {
         })
     };
 };
-
 exports.getInvalidBodyData = () => {
     return {
         headers: {
@@ -311,10 +301,9 @@ exports.getInvalidBodyData = () => {
         })
     };
 };
-
 exports.getApiGateWayRoute = (suffix = '', method = 'POST') => {
     return {
-        path: `unittest/v1/basic${suffix}`,
+        path: `unit-test/v1/basic${suffix}`,
         httpMethod: method,
         headers: {
             'x-api-key': 'SOME-KEY',
@@ -352,10 +341,9 @@ exports.getApiGateWayRoute = (suffix = '', method = 'POST') => {
         })
     };
 };
-
 exports.getApiGateWayRouteBadImport = () => {
     return {
-        path: `unittest/v1/bad-import`,
+        path: `unit-test/v1/bad-import`,
         httpMethod: 'POST',
         headers: {
             'x-api-key': 'SOME-KEY',
@@ -393,10 +381,9 @@ exports.getApiGateWayRouteBadImport = () => {
         })
     };
 };
-
 exports.getApiGateWayRouteValidation = (method = 'POST') => {
     return {
-        path: `unittest/v1/with-requirements`,
+        path: `unit-test/v1/with-requirements`,
         httpMethod: method,
         headers: {
             'x-api-key': 'SOME-KEY',
@@ -435,10 +422,9 @@ exports.getApiGateWayRouteValidation = (method = 'POST') => {
         })
     };
 };
-
 exports.getApiGateWayCustomRoute = (route) => {
     return {
-        path: `unittest/v1/${route}`,
+        path: `unit-test/v1/${route}`,
         httpMethod: 'GET',
         headers: {
             'x-api-key': 'SOME-KEY',
@@ -455,7 +441,7 @@ exports.getApiGateWayCustomRoute = (route) => {
             }
         },
         pathParameters: {
-            proxy: 'hello'
+            proxy: route
         },
         resource: '/{proxy+}',
         queryStringParameters: {
@@ -476,10 +462,9 @@ exports.getApiGateWayCustomRoute = (route) => {
         })
     };
 };
-
 exports.getApiGateWayCustomRouteWithParams = (route, method) => {
     return {
-        path: `unittest/v1/${route}`,
+        path: `unit-test/v1/${route}`,
         httpMethod: method,
         headers: {
             'x-api-key': 'SOME-KEY',
@@ -496,7 +481,7 @@ exports.getApiGateWayCustomRouteWithParams = (route, method) => {
             }
         },
         pathParameters: {
-            proxy: 'hello'
+            proxy: route
         },
         resource: '/{proxy+}',
         queryStringParameters: {
@@ -517,10 +502,9 @@ exports.getApiGateWayCustomRouteWithParams = (route, method) => {
         })
     };
 };
-
 exports.getApiGateWayRouteNoRequirements = () => {
     return {
-        path: 'unittest/v1/no-requirements',
+        path: 'unit-test/v1/no-requirements',
         httpMethod: 'GET',
         headers: {
             'x-api-key': 'SOME-KEY',
@@ -558,10 +542,9 @@ exports.getApiGateWayRouteNoRequirements = () => {
         })
     };
 };
-
 exports.getIndexApiGateWayRoute = () => {
     return {
-        path: 'unittest/apigateway',
+        path: 'unit-test/apigateway',
         httpMethod: 'POST',
         headers: {
             'x-api-key': 'SOME-KEY',
@@ -599,7 +582,6 @@ exports.getIndexApiGateWayRoute = () => {
         })
     };
 };
-
 exports.getBodyDataWithNullableField = () => {
     return {
         headers: {
