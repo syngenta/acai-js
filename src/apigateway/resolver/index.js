@@ -60,7 +60,7 @@ class RouteResolver {
         this.__checkRequiredPathRequirement(endpoint, request);
         const splits = this.__splitRoutes(endpoint, request);
         this.__checkPathsMatch(splits);
-        this.__setRequiredPathConfig(endpoint, request, splits);
+        this.__setRequiredPathConfig(request, splits);
     }
 
     __checkRequiredPathRequirement(endpoint, request) {
@@ -87,7 +87,7 @@ class RouteResolver {
         }
     }
 
-    __setRequiredPathConfig(endpoint, request, splits) {
+    __setRequiredPathConfig(request, splits) {
         for (const index in splits.requestSplit) {
             if (splits.pathSplit[index] && splits.pathSplit[index].startsWith(':')) {
                 const key = splits.pathSplit[index].split(':')[1];
