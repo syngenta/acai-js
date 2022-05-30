@@ -175,5 +175,24 @@ describe('Test Router', () => {
             assert.deepEqual(spyFn.getCall(0).args[2], error);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
+
+        it('should return an error is the timeout is reached', async () => {
+            this.router = new Router({
+                event: await mockData.getApiGateWayRoute(),
+                basePath: 'unittest/v1',
+                handlerPath: 'test/apigateway/',
+                schemaPath: 'test/openapi.yml',
+                timeout: 1
+            });
+            const results = await this.router.route();
+            assert.deepEqual(results, {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': '*'
+                },
+                statusCode: 504,
+                body: '{"errors":[{"key_path":"server","message":"Timed out after 1 ms."}]}'
+            });
+        });
     });
 });

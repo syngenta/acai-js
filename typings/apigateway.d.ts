@@ -53,11 +53,16 @@ export declare type AlcRouterParams = {
      * @default false
      */
     globalLogger?: boolean
+        /**
+     * time to wait for the response
+     * @default 0
+     */
+    timeout?: number
 }
 
 declare type HttpOnErrorCallback = (
-    request: AlcHttpRequestClient<unknown>, 
-    response: AlcHttpResponseClient<unknown>, 
+    request: AlcHttpRequestClient<unknown>,
+    response: AlcHttpResponseClient<unknown>,
     error: unknown) => Promise<unknown>
 
 declare type HttpPathMethodRequirements = {
@@ -150,7 +155,7 @@ declare type AlcHttpRequestClient<T = unknown, TContext = unknown | null> = {
 
     }
     /*
-    * a mutatable context field you can use to pass additional context down to your endpoints, best used with beforeAll functions  
+    * a mutatable context field you can use to pass additional context down to your endpoints, best used with beforeAll functions
     */
     context: TContext
 }

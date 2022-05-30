@@ -20,6 +20,7 @@ class Router {
         this._logger = new Logger();
         this._schemaPath = params.schemaPath;
         this._setUpLogger(params.globalLogger);
+        this._timeout = params.timeout || 0;
     }
 
     _setUpLogger(globalLogger = false) {
@@ -37,7 +38,7 @@ class Router {
         }
         if (!process.env.unittest) {
             this._logger.error({
-                error_messsage: error.message,
+                error_message: error.message,
                 error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
                 event: this._event,
                 request: request.request,
@@ -159,11 +160,27 @@ class Router {
         return this._getEndpointPath(handlerPath, fileArray, 0);
     }
 
+    async _timeoutGuard(endpoint, response) {
+        if (this._timeout === 0) {
+            return endpoint;
+        }
+        let timeout;
+        const timeoutPromise = new Promise((resolve, _reject) => {
+            timeout = setTimeout(() => {
+                response.code = 504;
+                response.setError('server', `Timed out after ${this._timeout} ms.`);
+                resolve(response);
+            }, this._timeout);
+        });
+
+        return Promise.race([endpoint, timeoutPromise]).finally(() => clearTimeout(timeout));
+    }
+
     async route() {
         const request = new RequestClient(this._event);
         const response = new ResponseClient();
         try {
-            return (await this._runEndpoint(request, response)).response;
+            return (await this._timeoutGuard(this._runEndpoint(request, response), response)).response;
         } catch (error) {
             return (await this._handleError(request, response, error)).response;
         }

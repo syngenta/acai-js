@@ -16,7 +16,7 @@ The alc philosophy is to provide a self evident tool for use with the amazon lam
 
 The alc encourages you to use small, internally routed API lambdas in a normalized OOP way.
 
-In addition, it makes this like routing and validating API requests less cumbersome and time consuming.   
+In addition, it makes this like routing and validating API requests less cumbersome and time consuming.
 
 ## Installation
 
@@ -56,7 +56,7 @@ functions:
                 method: ANY
             - http:
                 path: /v1/{proxy+}
-                method: ANY    
+                method: ANY
 ```
 
 1. Initialize the Router
@@ -84,6 +84,7 @@ Option Name   | Required | Type   | Default | Description
 `afterAll`    | false    | Function | undefined    | after all middleware function to run after all routes
 `onError`     | false    | Function | undefined    | onError callback, called in case of errors while handle endpoint
 `globalLogger`| false    | boolean| false   | will apply the logger function to the global scope (`global.logger`)
+`timeout`     | false    | number | 0 (no timeout)   | time in milliseconds to wait for endpoint response
 
 2. Create endpoint file with matching methods and requirements
 
@@ -139,7 +140,7 @@ Option Name       | Type   | Description
 **Request Properties**
 
 Property Name       | Description
-:-----------        | :-------   
+:-----------        | :-------
 `method`            | method id of apigateway event
 `resource`          | resource handle of apigateway event
 `authorizer`        | authorizer of apigateway event (will default to use headers if using with [serverless offline](https://www.npmjs.com/package/serverless-offline))
@@ -155,7 +156,7 @@ Property Name       | Description
 **Response Properties**
 
 Property Name               | Description
-:-----------                | :-------   
+:-----------                | :-------
 `headers`                   | headers you want to send in response
 `code`                      | status code of response (will default to 204 if no content && will default 400 if errors found in response)
 `hasErrors`                 | function will tell you if errors in the response
@@ -193,7 +194,7 @@ exports.listen = async (event) => {
 **Event Client Properties**
 
 Property Name   | Description
-:-----------    | :-------   
+:-----------    | :-------
 `records`       | list of record objects
 `rawRecords`    | jus the raw record from the original request
 
@@ -201,7 +202,7 @@ Property Name   | Description
 **Record Properties**
 
 Property Name       | Description
-:-----------        | :-------   
+:-----------        | :-------
 `messageId`         | message id of sqs record
 `receiptHandle`     | receipt handle of sqs record
 `body`              | body of sqs record (will automatically decode JSON)
@@ -245,7 +246,7 @@ exports.stream = async (event) => {
 **Event Client Properties**
 
 Property Name   | Description
-:-----------    | :-------   
+:-----------    | :-------
 `records`       | list of record objects
 `rawRecords`    | jus the raw record from the original request
 
@@ -253,7 +254,7 @@ Property Name   | Description
 **Record Properties**
 
 Property Name                | Description
-:-----------                 | :-------   
+:-----------                 | :-------
 `eventID`                    | event id of dynamodb record
 `eventName`                  | event name of dynamodb record
 `eventSource`                | event source  of dynamodb record
@@ -299,14 +300,14 @@ exports.handle = async (event) => {
 **Event Client Properties**
 
 Property Name   | Description
-:-----------    | :-------   
+:-----------    | :-------
 `records`       | list of record objects
 `rawRecords`    | jus the raw record from the original request
 
 **Record Properties**
 
 Property Name                | Description
-:-----------                 | :-------   
+:-----------                 | :-------
 `eventTime`                  | event time of s3 record
 `eventName`                  | event name of s3 record
 `eventSource`                | event source  of s3 record
