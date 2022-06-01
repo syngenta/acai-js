@@ -22,7 +22,7 @@
         "@apideck/reva": "^0.1.5",
         "ajv": "8.10.0",
         "aws-lambda": "^1.0.7",
-        "aws-sdk": "2.1125.0",
+        "aws-sdk": "2.1146.0",
         "js-yaml": "4.1.0",
         "json-schema-merge-allof": "^0.8.1",
         "json-schema-ref-parser": "9.0.9",
