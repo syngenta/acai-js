@@ -53,11 +53,22 @@ export declare type AlcRouterParams = {
      * @default false
      */
     globalLogger?: boolean
+    /**
+     * onRunEndpoint callback, called when the endpoint runs
+     * @default undefined
+     */
+    onRunEndpoint?: HttpOnRunEndpointCallback
 }
 
+declare type HttpOnRunEndpointCallback = (
+    endpoint: Promise<AlcHttpRequestClient<unknown>>,
+    request: AlcHttpRequestClient<unknown>,
+    response: AlcHttpResponseClient<unknown>,
+) => Promise<AlcHttpResponseClient<unknown>>
+
 declare type HttpOnErrorCallback = (
-    request: AlcHttpRequestClient<unknown>, 
-    response: AlcHttpResponseClient<unknown>, 
+    request: AlcHttpRequestClient<unknown>,
+    response: AlcHttpResponseClient<unknown>,
     error: unknown) => Promise<unknown>
 
 declare type HttpPathMethodRequirements = {
@@ -150,7 +161,7 @@ declare type AlcHttpRequestClient<T = unknown, TContext = unknown | null> = {
 
     }
     /*
-    * a mutatable context field you can use to pass additional context down to your endpoints, best used with beforeAll functions  
+    * a mutatable context field you can use to pass additional context down to your endpoints, best used with beforeAll functions
     */
     context: TContext
 }

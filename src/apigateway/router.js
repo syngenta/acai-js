@@ -20,6 +20,7 @@ class Router {
         this._logger = new Logger();
         this._schemaPath = params.schemaPath;
         this._setUpLogger(params.globalLogger);
+        this._onRunEndpoint = params.onRunEndpoint;
     }
 
     _setUpLogger(globalLogger = false) {
@@ -37,7 +38,7 @@ class Router {
         }
         if (!process.env.unittest) {
             this._logger.error({
-                error_messsage: error.message,
+                error_message: error.message,
                 error_stack: error.stack instanceof String ? error.stack.split('\n') : error,
                 event: this._event,
                 request: request.request,
@@ -163,6 +164,9 @@ class Router {
         const request = new RequestClient(this._event);
         const response = new ResponseClient();
         try {
+            if (this._onRunEndpoint && typeof this._onRunEndpoint === 'function') {
+                return (await this._onRunEndpoint(this._runEndpoint(request, response), request, response)).response;
+            }
             return (await this._runEndpoint(request, response)).response;
         } catch (error) {
             return (await this._handleError(request, response, error)).response;

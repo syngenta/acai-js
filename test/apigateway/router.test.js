@@ -175,5 +175,28 @@ describe('Test Router', () => {
             assert.deepEqual(spyFn.getCall(0).args[2], error);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
+
+        it('should call onRunEndpoint callback if exist', async () => {
+            const testHook = (endpoint, request, response) => {
+                response.body = {hook: 'testCallback'};
+                return response;
+            };
+            this.router = new Router({
+                event: await mockData.getApiGateWayRoute(),
+                basePath: 'unittest/v1',
+                handlerPath: 'test/apigateway/',
+                schemaPath: 'test/openapi.yml',
+                onRunEndpoint: testHook
+            });
+            const results = await this.router.route();
+            assert.deepEqual(results, {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': '*'
+                },
+                statusCode: 200,
+                body: '{"hook":"testCallback"}'
+            });
+        });
     });
 });
