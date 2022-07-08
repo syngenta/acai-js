@@ -19,7 +19,7 @@ commands:
                     MOCHAWESOME_REPORTFILENAME: index.html
                     MOCHAWESOME_REPORTDIR: ./coverage/unit-test
             - store_test_results:
-                path: ./coverage/unit-test
+                path: ./coverage
             - store_artifacts:
                 path: ./coverage
     node-report:
