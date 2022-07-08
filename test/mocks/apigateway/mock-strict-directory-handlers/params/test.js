@@ -1,10 +1,10 @@
 exports.requirements = {
-    delete: {
-        requiredPath: 'strict/:id'
+    post: {
+        requiredPath: 'params/test'
     }
 };
 
-exports.delete = async (request, response) => {
+exports.post = async (request, response) => {
     response.body = {strict_id: true};
     return response;
 };

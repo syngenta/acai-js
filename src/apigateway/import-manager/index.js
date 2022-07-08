@@ -30,13 +30,9 @@ class ImportManager {
     }
 
     getPathParameterResource(dirPath) {
-        try {
-            const cleanPath = this.cleanPath(dirPath);
-            const resources = this.listPathParameterResources(cleanPath);
-            return resources;
-        } catch (error) {
-            return [];
-        }
+        const cleanPath = this.cleanPath(dirPath);
+        const resources = this.listPathParameterResources(cleanPath);
+        return resources;
     }
 
     listPathParameterResources(cleanPath) {

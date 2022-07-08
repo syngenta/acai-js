@@ -1,6 +1,6 @@
 exports.requirements = {
     put: {
-        requiredPath: ':id/nested/:sub-id'
+        requiredPath: 'params/:some-param/:id/nested/:sub-id'
     }
 };
 

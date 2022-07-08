@@ -82,23 +82,53 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
         const strictRouting = true;
         const resolver = new DirectoryResolver({basePath, handlerPath, strictRouting});
         const response = new Response();
-        it('should find the file', () => {
+        it('should find the file without param', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('params/test', 'post');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.post === 'function');
+        });
+        it('should find the file with param', () => {
             const mock = mockData.getApiGateWayCustomRouteWithParams('base/1', 'get');
             const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.get === 'function');
         });
         it('should find the nested file', () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('some-param/1', 'delete');
+            const mock = mockData.getApiGateWayCustomRouteWithParams('params/some-param/1', 'delete');
             const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.delete === 'function');
         });
         it('should find the double nested file', () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('some-param/nested/2', 'put');
+            const mock = mockData.getApiGateWayCustomRouteWithParams('params/some-param/nested/2', 'put');
             const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.put === 'function');
+        });
+        it('should not find the file', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('not/found/1', 'get');
+            const request = new Request(mock);
+            try {
+                const result = resolver.resolve(request);
+                assert.isFalse(true);
+            } catch (error) {
+                assert.equal(error.code, 404);
+                assert.equal(error.key, 'url');
+                assert.equal(error.message, 'endpoint not found');
+            }
+        });
+        it('should throw error for multiple params in same directory', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('multiple-params/1', 'get');
+            const request = new Request(mock);
+            try {
+                const result = resolver.resolve(request);
+                assert.isFalse(true);
+            } catch (error) {
+                assert.equal(error.code, 500);
+                assert.equal(error.key, 'router-config');
+                assert.equal(error.message, 'cant have path parameter file & directory in the same directory');
+            }
         });
     });
 });

@@ -27,7 +27,7 @@ describe('Test Import Manager: src/apigateway/import-manager/index.js', () => {
         assert.equal(result, false);
     });
     it('should find path paramater directory', () => {
-        const path = 'test/mocks/apigateway/mock-strict-directory-handlers';
+        const path = 'test/mocks/apigateway/mock-strict-directory-handlers/params';
         const manager = new ImportManager();
         const results = manager.getPathParameterResource(path);
         assert.equal(results[0], '{some-param}');
