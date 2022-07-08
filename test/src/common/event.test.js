@@ -18,6 +18,20 @@ describe('Test Generic Event with Basic Settings: src/common/event.js', () => {
         it('should return all raw records', () => {
             assert.deepEqual(ddbEvent.rawRecords, mockDDBData.getData().Records);
         });
+        it('should throw error when calling operations not as an array', async () => {
+            const ddbEvent = new DDBEvent(mockDDBData.getData(), {
+                globalLogger: true,
+                operations: 'create'
+            });
+            try {
+                const records = await ddbEvent.records;
+            } catch (error) {
+                assert.equal(
+                    error.message,
+                    'operations must be an array, exclusively containing create, update, delete'
+                );
+            }
+        });
     });
     describe('Test SQS Event with Basic Settings', () => {
         const sqsEvent = new SQSEvent(mockSQSData.getData());

@@ -101,6 +101,9 @@ class Event {
         if (this.__before || this.__requiredBody || this.__getObject) {
             throw new Error('Must use Event.getRecords() with these params & await the records');
         }
+        if (!Array.isArray(this.__operations)) {
+            throw new Error('operations must be an array, exclusively containing create, update, delete');
+        }
     }
 
     __validateAdvanceParams() {
@@ -109,9 +112,6 @@ class Event {
         }
         if (this.__jsonObject && !this.__getObject) {
             throw new Error('Must enable getObject if using expecting JSON from S3 object');
-        }
-        if (!Array.isArray(this.__operations)) {
-            throw new Error('operations must be an array');
         }
     }
 

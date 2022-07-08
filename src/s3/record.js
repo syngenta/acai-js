@@ -19,7 +19,7 @@ class RecordClient {
         if (this.eventName.includes('ObjectRemoved')) {
             return 'delete';
         }
-        return 'unkown';
+        return 'unknown';
     }
 
     get eventName() {

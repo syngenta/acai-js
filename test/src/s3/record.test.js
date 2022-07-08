@@ -78,4 +78,21 @@ describe('Test S3 Record Client', async () => {
             assert.equal(record.isValid, true);
         });
     });
+    describe('test operation', () => {
+        it('should have operation as create', () => {
+            assert.equal(record.operation, 'create');
+        });
+        it('should have operation as unknown', () => {
+            const rawRecord = mockData.getData().Records[0];
+            rawRecord.eventName = 's3:ObjectRemoved:Delete';
+            const record = new RecordClient(rawRecord);
+            assert.equal(record.operation, 'delete');
+        });
+        it('should have operation as unknown', () => {
+            const rawRecord = mockData.getData().Records[0];
+            rawRecord.eventName = 'ERROR';
+            const record = new RecordClient(rawRecord);
+            assert.equal(record.operation, 'unknown');
+        });
+    });
 });

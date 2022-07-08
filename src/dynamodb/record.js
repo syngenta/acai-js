@@ -49,7 +49,7 @@ class RecordClient {
         if (!Object.keys(this.newImage).length && Object.keys(this.oldImage).length) {
             return 'delete';
         }
-        return 'unkown';
+        return 'unknown';
     }
 
     get eventSourceARN() {

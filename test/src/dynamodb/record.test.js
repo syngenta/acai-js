@@ -68,6 +68,16 @@ describe('Test DynamoDB Record Client: src/dynamodb/record.js', () => {
         it('should have property for ttl as false', () => {
             assert.equal(record.timeToLiveExpired, false);
         });
+        it('should have operation as create', () => {
+            assert.equal(record.operation, 'create');
+        });
+        it('should have operation as unknown', () => {
+            const rawRecord = mockData.getData().Records[0];
+            delete rawRecord.dynamodb.OldImage;
+            delete rawRecord.dynamodb.NewImage;
+            const record = new RecordClient(rawRecord);
+            assert.equal(record.operation, 'unknown');
+        });
     });
     describe('test dynamoDB ttl stream', () => {
         const record = new RecordClient(mockData.getTTLData().Records[0]);

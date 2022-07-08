@@ -39,6 +39,13 @@ describe('Test SQS Record Client', async () => {
         it('should have default property of true for is valid', () => {
             assert.equal(record.isValid, true);
         });
+        it('should be able to mutate property', () => {
+            record.isValid = false;
+            assert.equal(record.isValid, false);
+        });
+        it('should have operation as create', () => {
+            assert.equal(record.operation, 'create');
+        });
     });
     describe('basic negative tests', async () => {
         const record = new RecordClient(mockData.getNonJsonData().Records[0]);
