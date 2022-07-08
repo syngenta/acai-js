@@ -27,14 +27,17 @@ describe('Test SQS Record Client', async () => {
         it('should have property of md5', () => {
             assert.equal(record.md5OfBody, mockData.getData().Records[0].md5OfBody);
         });
-        it('should have property of source', () => {
-            assert.equal(record.source, mockData.getData().Records[0].eventSource);
+        it('should have property of eventSource', () => {
+            assert.equal(record.eventSource, mockData.getData().Records[0].eventSource);
         });
         it('should have property of sourceARN', () => {
             assert.equal(record.sourceARN, mockData.getData().Records[0].eventSourceARN);
         });
         it('should have property of region', () => {
             assert.equal(record.region, mockData.getData().Records[0].awsRegion);
+        });
+        it('should have default property of true for is valid', () => {
+            assert.equal(record.isValid, true);
         });
     });
     describe('basic negative tests', async () => {

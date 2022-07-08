@@ -3,7 +3,7 @@
     "author": "Paul Cruse, Engineering Lead, Syngenta Digital, USCO",
     "main": "src/index.js",
     "types": "typings/index.d.ts",
-    "version": "1.0.9",
+    "version": "2.0.0",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
@@ -13,7 +13,7 @@
         "url": "https://github.com/syngenta-digital/package-node-alc/issues"
     },
     "scripts": {
-        "ts": "MIN_LOG_LEVEL=OFF mocha test/src/apigateway/resolver/pattern-resolver.test.js",
+        "ts": "MIN_LOG_LEVEL=OFF mocha test/src/common/event.test.js",
         "test": "MIN_LOG_LEVEL=OFF nyc mocha test/**/**.test.js",
         "report": "MIN_LOG_LEVEL=OFF nyc report --reporter=lcov",
         "lint": "eslint src/**"

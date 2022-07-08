@@ -73,4 +73,9 @@ describe('Test S3 Record Client', async () => {
             assert.equal(record.s3SchemaVersion, '1.0');
         });
     });
+    describe('test isvalid', () => {
+        it('should have default property of true for is valid', () => {
+            assert.equal(record.isValid, true);
+        });
+    });
 });

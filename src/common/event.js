@@ -15,6 +15,9 @@ class Event {
         this.__dataClass = params.dataClass;
         this.__getObject = params.getObject;
         this.__jsonObject = params.jsonObject;
+        this.__operations = params.operations || ['create', 'update', 'delete'];
+        this.__validationError = params.validationError || true;
+        this.__operationError = params.operationError || true;
         this.__event = event;
         this.__clients = {
             'aws:s3': S3Record,
@@ -27,6 +30,7 @@ class Event {
     get records() {
         this.__validateBasicParams();
         let records = this.__getRecords();
+        records = this.__filterOperationRecords(records);
         records = this.__assignDataClass(records);
         return records;
     }
@@ -41,6 +45,8 @@ class Event {
         records = await this.__getObjectFromS3(records);
         await this.__validateRecords(records);
         await this.__runBefore(records);
+        records = this.__filterValidRecords(records);
+        records = this.__filterOperationRecords(records);
         records = this.__assignDataClass(records);
         return records;
     }
@@ -67,6 +73,26 @@ class Event {
         return records;
     }
 
+    __filterValidRecords(records) {
+        const validRecords = [];
+        for (const record of records) {
+            if (record.isValid) {
+                validRecords.push(record);
+            }
+        }
+        return validRecords;
+    }
+
+    __filterOperationRecords(records) {
+        const operationRecords = [];
+        for (const record of records) {
+            if (this.__operations.includes(record.operation)) {
+                operationRecords.push(record);
+            }
+        }
+        return operationRecords;
+    }
+
     __validateBasicParams() {
         if (this.__before || this.__requiredBody || this.__getObject) {
             throw new Error('Must use Event.getRecords() with these params & await the records');
@@ -79,6 +105,9 @@ class Event {
         }
         if (this.__jsonObject && !this.__getObject) {
             throw new Error('Must enable getObject if using expecting JSON from S3 object');
+        }
+        if (!Array.isArray(this.__operations)) {
+            throw new Error('operations must be an array');
         }
     }
 
@@ -103,9 +132,9 @@ class Event {
             ? Schema.fromFilePath(this.__schemaPath, this.__params)
             : Schema.fromInlineSchema(this.__requiredBody, this.__params);
         const entityName = typeof this.__requiredBody === 'string' ? this.__requiredBody : null;
-        const validator = new Validator(schema);
+        const validator = new Validator(schema, this.__validationError);
         for (const record of records) {
-            await validator.validateWithRequirementsRecord(entityName, record);
+            record.isValid = await validator.validateWithRequirementsRecord(entityName, record);
         }
     }
 

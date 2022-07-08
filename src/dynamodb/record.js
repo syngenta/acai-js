@@ -4,6 +4,7 @@ class RecordClient {
     constructor(record) {
         this._record = record;
         this._converter = AWS.DynamoDB.Converter.unmarshall;
+        this.__isValid = true;
     }
 
     get awsRegion() {
@@ -38,6 +39,19 @@ class RecordClient {
         return this.newImage;
     }
 
+    get operation() {
+        if (this.newImage && !this.oldImage) {
+            return 'create';
+        }
+        if (this.newImage && this.oldImage) {
+            return 'update';
+        }
+        if (!this.newImage && this.oldImage) {
+            return 'delete';
+        }
+        return 'unkown';
+    }
+
     get eventSourceARN() {
         return this._record.eventSourceARN;
     }
@@ -66,6 +80,14 @@ class RecordClient {
         return Boolean(
             this._record.userIdentity && this._record.userIdentity.type && this._record.userIdentity.principalId
         );
+    }
+
+    get isValid() {
+        return this.__isValid;
+    }
+
+    set isValid(isValid) {
+        this.__isValid = isValid;
     }
 }
 

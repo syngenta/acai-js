@@ -1,6 +1,7 @@
 class Validator {
-    constructor(schema) {
+    constructor(schema, validationError = true) {
         this.__schema = schema;
+        this.__validationError = validationError;
         this.__pairings = {
             requiredHeaders: {source: 'headers', method: '__validateRequiredFields', code: 400},
             availableHeaders: {source: 'headers', method: '__validateAvailableFields', code: 400},
@@ -45,8 +46,12 @@ class Validator {
                 const path = error.instancePath ? error.instancePath : 'root';
                 throwables.push({path, message: error.message});
             });
-            throw new Error(JSON.stringify(throwables));
+            if (this.__validationError) {
+                throw new Error(JSON.stringify(throwables));
+            }
+            return false;
         }
+        return true;
     }
 
     __validateAvailableFields(response, available, sent, source, code) {

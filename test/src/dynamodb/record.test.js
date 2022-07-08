@@ -20,6 +20,9 @@ describe('Test DynamoDB Record Client: src/dynamodb/record.js', () => {
         it('should have property for old image', () => {
             assert.deepEqual(record.oldImage, {});
         });
+        it('should have default property of true for is valid', () => {
+            assert.equal(record.isValid, true);
+        });
         it('should have property for new image', () => {
             assert.deepEqual(record.newImage, {
                 example_id: '123456789',

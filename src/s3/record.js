@@ -1,6 +1,25 @@
 class RecordClient {
     constructor(record) {
         this._record = record;
+        this.__isValid = true;
+    }
+
+    get isValid() {
+        return this.__isValid;
+    }
+
+    set isValid(isValid) {
+        this.__isValid = isValid;
+    }
+
+    get operation() {
+        if (this.eventName.includes('ObjectCreated')) {
+            return 'create';
+        }
+        if (this.eventName.includes('ObjectRemoved')) {
+            return 'delete';
+        }
+        return 'unkown';
     }
 
     get eventName() {

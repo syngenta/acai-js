@@ -1,6 +1,7 @@
 class RecordClient {
     constructor(record) {
         this._record = record;
+        this.__isValid = true;
     }
 
     get messageId() {
@@ -27,6 +28,10 @@ class RecordClient {
         return this._record.attributes;
     }
 
+    get operation() {
+        return 'create';
+    }
+
     get messageAttributes() {
         const attributes = {};
         for (const attribute in this._record.messageAttributes) {
@@ -39,7 +44,7 @@ class RecordClient {
         return this._record.md5OfBody;
     }
 
-    get source() {
+    get eventSource() {
         return this._record.eventSource;
     }
 
@@ -49,6 +54,14 @@ class RecordClient {
 
     get region() {
         return this._record.awsRegion;
+    }
+
+    get isValid() {
+        return this.__isValid;
+    }
+
+    set isValid(isValid) {
+        this.__isValid = isValid;
     }
 }
 
