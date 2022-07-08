@@ -1,13 +1,12 @@
 const Endpoint = require('../endpoint');
 const ImportManager = require('../import-manager');
-const ImportError = require('../import-manager/import-error');
 const DirectoryResolver = require('./directory-resolver');
 const ListResolver = require('./list-resolver');
 const PatternResolver = require('./pattern-resolver');
 
 class RouteResolver {
     constructor(params) {
-        this.__importManager = new ImportManager();
+        this.__importer = new ImportManager();
         this.__params = params;
         this.__params.routingMode = params.routingMode || 'directory';
         this.__resolvers = {
@@ -26,7 +25,7 @@ class RouteResolver {
                 this.__configurePathParams(endpointModule, request);
             }
             if (typeof endpointModule[request.method] !== 'function') {
-                throw new ImportError(403, 'method', 'method not allowed');
+                this.__importer.raise403();
             }
             return new Endpoint(endpointModule, request.method);
         } catch (error) {
@@ -43,16 +42,16 @@ class RouteResolver {
     __validateConfigs() {
         const {routingMode, handlerPath, handlerPattern, handlerList} = this.__params;
         if (routingMode !== 'pattern' && routingMode !== 'directory' && routingMode !== 'list') {
-            throw new ImportError(500, 'router-config', 'routingMode must be either directory, pattern or list');
+            this.__importer.raiseRouterConfigError('routingMode must be either directory, pattern or list');
         }
         if (routingMode === 'directory' && !handlerPath) {
-            throw new ImportError(500, 'router-config', 'handlerPath config is requied when routingMode is directory');
+            this.__importer.raiseRouterConfigError('handlerPath config is requied when routingMode is directory');
         }
         if (routingMode === 'pattern' && !handlerPattern) {
-            throw new ImportError(500, 'router-config', 'handlerPattern config is requied when routingMode is pattern');
+            this.__importer.raiseRouterConfigError('handlerPattern config is requied when routingMode is pattern');
         }
         if (routingMode === 'list' && !handlerList) {
-            throw new ImportError(500, 'router-config', 'handlerList config is requied when routingMode is list');
+            this.__importer.raiseRouterConfigError('handlerList config is requied when routingMode is list');
         }
     }
 
@@ -69,21 +68,21 @@ class RouteResolver {
             (endpoint.requirements && !endpoint.requirements[request.method]) ||
             !endpoint.requirements[request.method].requiredPath
         ) {
-            throw new ImportError(404, 'url', 'endpoint not found');
+            this.__importer.raise404();
         }
     }
 
     __splitRoutes(endpoint, request) {
         const requiredPath = endpoint.requirements[request.method].requiredPath;
         const requestedRoute = request.path.replace(this.__params.basePath, '');
-        const requestSplit = this.__importManager.cleanPath(requestedRoute).split('/');
-        const pathSplit = this.__importManager.cleanPath(requiredPath).split('/');
+        const requestSplit = this.__importer.cleanPath(requestedRoute).split('/');
+        const pathSplit = this.__importer.cleanPath(requiredPath).split('/');
         return {requestSplit, pathSplit};
     }
 
     __checkPathsMatch({requestSplit, pathSplit}) {
         if (pathSplit.length !== requestSplit.length) {
-            throw new ImportError(404, 'url', 'endpoint not found');
+            this.__importer.raise404();
         }
     }
 
@@ -95,7 +94,7 @@ class RouteResolver {
                 request.pathParams = {key, value};
             }
         }
-        request.route = `/${this.__params.basePath}/${this.__importManager.cleanPath(splits.pathSplit.join('/'))}`;
+        request.route = `/${this.__params.basePath}/${this.__importer.cleanPath(splits.pathSplit.join('/'))}`;
     }
 }
 

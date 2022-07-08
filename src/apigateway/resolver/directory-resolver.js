@@ -1,5 +1,4 @@
 const ImportManager = require('../import-manager');
-const ImportError = require('../import-manager/import-error');
 
 class DirectoryResolver {
     constructor(params) {
@@ -36,7 +35,7 @@ class DirectoryResolver {
         if (this.__importer.isDirectory(endpointPath) && this.__importer.isFile(endpointIndexFile)) {
             return endpointIndexFile;
         }
-        throw new ImportError(404, 'url', 'endpoint not found');
+        this.__importer.raise404();
     }
 
     __getPathFromRequest(handlerFilePrefix, requestedFilePath) {

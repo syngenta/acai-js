@@ -66,8 +66,20 @@ class ImportManager {
         try {
             return require(path.join(process.cwd(), resolved));
         } catch (error) {
-            throw new ImportError(500, 'router-config', `Import Error ${resolved}: ${error.message}`);
+            this.raiseRouterConfigError(`Import Error ${resolved}: ${error.message}`);
         }
+    }
+
+    raise403() {
+        throw new ImportError(403, 'method', 'method not allowed');
+    }
+
+    raise404() {
+        throw new ImportError(404, 'url', 'endpoint not found');
+    }
+
+    raiseRouterConfigError(message) {
+        throw new ImportError(500, 'router-config', message);
     }
 }
 

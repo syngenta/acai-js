@@ -1,5 +1,4 @@
 const ImportManager = require('../import-manager');
-const ImportError = require('../import-manager/import-error');
 
 class PatternResolver {
     constructor(params) {
@@ -15,7 +14,7 @@ class PatternResolver {
         if (filePath && this.__importer.isFile(filePath)) {
             return this.__importer.importModuleFromPath(filePath);
         }
-        throw new ImportError(404, 'url', 'endpoint not found');
+        this.__importer.raise404();
     }
 
     __getFilePath(route) {

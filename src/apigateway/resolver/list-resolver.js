@@ -1,9 +1,8 @@
 const ImportManager = require('../import-manager');
-const ImportError = require('../import-manager/import-error');
 
 class ListResolver {
     constructor(params) {
-        this.__importManager = new ImportManager();
+        this.__importer = new ImportManager();
         this.__basePath = params.basePath;
         this.__list = params.handlerList;
         this.hasPathParams = false;
@@ -11,7 +10,7 @@ class ListResolver {
 
     resolve(request) {
         const endpointPath = this.__getEndpointPath(request);
-        return this.__importManager.importModuleFromPath(endpointPath);
+        return this.__importer.importModuleFromPath(endpointPath);
     }
 
     __getEndpointPath(request) {
@@ -19,13 +18,13 @@ class ListResolver {
         const requestFiltered = this.__filterRequestedPath(request.path);
         const requestPath = this.__getPathFromRequest(requestFiltered, handlersFiltered);
         if (requestPath.files.length === 0) {
-            throw new ImportError(404, 'url', 'endpoint not found');
+            this.__importer.raise404();
         }
         if (requestPath.files.length > 1) {
-            throw new ImportError(500, 'router-config', `found two conflicting routes: ${requestPath.paths.join(',')}`);
+            this.__importer.raiseRouterConfigError(`found two conflicting routes: ${requestPath.paths.join(',')}`);
         }
-        if (!this.__importManager.isFile(requestPath.files[0])) {
-            throw new ImportError(500, 'router-config', `file not found: ${requestPath.files[0]}`);
+        if (!this.__importer.isFile(requestPath.files[0])) {
+            this.__importer.raiseRouterConfigError(`file not found: ${requestPath.files[0]}`);
         }
         return requestPath.files[0];
     }
@@ -34,11 +33,7 @@ class ListResolver {
         const filteredHandlers = {};
         for (const handlerRoute in this.__list) {
             if (!handlerRoute.includes('::')) {
-                throw new ImportError(
-                    500,
-                    'router-config',
-                    `route does not follow pattern <METHOD>::route ${handlerRoute}`
-                );
+                this.__importer.raiseRouterConfigError(`route does not follow pattern <METHOD>::route ${handlerRoute}`);
             }
             const methodKey = `${method.toLowerCase()}::`;
             if (handlerRoute.toLowerCase().includes(methodKey)) {
@@ -50,10 +45,10 @@ class ListResolver {
     }
 
     __filterRequestedPath(route) {
-        const basePath = this.__importManager.cleanPath(this.__basePath);
-        const cleanRoute = this.__importManager.cleanPath(route);
+        const basePath = this.__importer.cleanPath(this.__basePath);
+        const cleanRoute = this.__importer.cleanPath(route);
         const requestedRoute = cleanRoute.replace(basePath, '');
-        return this.__importManager.cleanPath(requestedRoute);
+        return this.__importer.cleanPath(requestedRoute);
     }
 
     __getPathFromRequest(path, handlers) {
