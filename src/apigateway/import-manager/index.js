@@ -29,6 +29,43 @@ class ImportManager {
         }
     }
 
+    getPathParameterResource(dirPath) {
+        try {
+            const cleanPath = this.cleanPath(dirPath);
+            const resources = this.listPathParameterResources(cleanPath);
+            return resources;
+        } catch (error) {
+            return [];
+        }
+    }
+
+    listPathParameterResources(cleanPath) {
+        const resources = [];
+        const files = fs.readdirSync(cleanPath);
+        for (const file of files) {
+            if (file.startsWith('{')) {
+                resources.push(file);
+            }
+        }
+        return resources;
+    }
+
+    validateFolderStructure(directory, file) {
+        if (this.isDirectory(directory) && this.isFile(file)) {
+            throw new ImportError(500, 'router-config', 'file & directory cant share name in the same directory');
+        }
+    }
+
+    validatePathParameterResource(resources) {
+        if (resources.length > 1) {
+            throw new ImportError(
+                500,
+                'router-config',
+                'cant have path parameter file & directory in the same directory'
+            );
+        }
+    }
+
     importModuleFromPath(resolved) {
         try {
             return require(path.join(process.cwd(), resolved));

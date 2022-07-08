@@ -6,6 +6,7 @@ class PatternResolver {
         this.__importer = new ImportManager();
         this.__basePath = params.basePath;
         this.__pattern = params.handlerPattern;
+        this.__strictRouting = params.strictRouting;
         this.hasPathParams = false;
     }
 
@@ -44,9 +45,8 @@ class PatternResolver {
             const mvc = `${patternBase}${currentPath}${file}`;
             const mvvm = `${patternBase}${currentPath}${requestPart}/${file}`;
             const directory = `${patternBase}${currentPath}${requestPart}`;
-            if (this.__importer.isDirectory(directory) && this.__importer.isFile(mvc)) {
-                throw new ImportError(500, 'router-config', 'file & directory cant share name in the same directory');
-            } else if (this.__importer.isFile(mvc)) {
+            this.__importer.validateFolderStructure(directory, mvc);
+            if (this.__importer.isFile(mvc)) {
                 pathParts.push(file);
             } else if (this.__importer.isFile(mvvm)) {
                 pathParts.push(requestPart);

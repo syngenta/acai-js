@@ -76,4 +76,29 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
             assert.isTrue(typeof result.delete === 'function');
         });
     });
+    describe('test routing: with path parameters and strict mode', () => {
+        const basePath = 'unit-test/v1';
+        const handlerPath = 'test/mocks/apigateway/mock-strict-directory-handlers/';
+        const strictRouting = true;
+        const resolver = new DirectoryResolver({basePath, handlerPath, strictRouting});
+        const response = new Response();
+        it('should find the file', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('base/1', 'get');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.get === 'function');
+        });
+        it('should find the nested file', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('some-param/1', 'delete');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.delete === 'function');
+        });
+        it('should find the double nested file', () => {
+            const mock = mockData.getApiGateWayCustomRouteWithParams('some-param/nested/2', 'put');
+            const request = new Request(mock);
+            const result = resolver.resolve(request);
+            assert.isTrue(typeof result.put === 'function');
+        });
+    });
 });
