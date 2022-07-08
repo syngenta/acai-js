@@ -49,10 +49,10 @@ class DirectoryResolver {
             if (this.__importer.isFile(requestFile) || this.__importer.isDirectory(requestDirectory)) {
                 pathParts.push(requestPart);
             } else if (this.__strictRouting) {
-                this.hasPathParams = true;
                 const resources = this.__importer.getPathParameterResource(currentDirectory);
                 this.__importer.validatePathParameterResource(resources);
                 resources.length ? pathParts.push(resources[0]) : null;
+                this.hasPathParams = true;
             } else {
                 this.hasPathParams = true;
             }

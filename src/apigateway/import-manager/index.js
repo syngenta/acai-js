@@ -37,12 +37,14 @@ class ImportManager {
 
     listPathParameterResources(cleanPath) {
         const resources = [];
-        const files = fs.readdirSync(cleanPath);
-        for (const file of files) {
-            if (file.startsWith('{')) {
-                resources.push(file);
+        try {
+            const files = fs.readdirSync(cleanPath);
+            for (const file of files) {
+                if (file.includes('{') && file.includes('}')) {
+                    resources.push(file);
+                }
             }
-        }
+        } catch (error) {}
         return resources;
     }
 

@@ -38,9 +38,10 @@ class PatternResolver {
         const splitRequest = requestedFilePath.split('/');
         const splitPattern = this.__pattern.split('/');
         const filePattern = splitPattern[splitPattern.length - 1];
-        for (const requestPart of splitRequest) {
-            const currentPath = pathParts.length ? `/${pathParts.join('/')}/` : '/';
+        for (const [index, requestPart] of splitRequest.entries()) {
             const file = filePattern.replace('*', requestPart);
+            const currentPath = pathParts.length ? `/${pathParts.join('/')}/` : '/';
+            const currentDirectory = `${patternBase}${currentPath}`;
             const mvc = `${patternBase}${currentPath}${file}`;
             const mvvm = `${patternBase}${currentPath}${requestPart}/${file}`;
             const directory = `${patternBase}${currentPath}${requestPart}`;
@@ -52,6 +53,25 @@ class PatternResolver {
                 pathParts.push(file);
             } else if (this.__importer.isDirectory(directory)) {
                 pathParts.push(requestPart);
+            } else if (this.__strictRouting) {
+                this.hasPathParams = true;
+                const resources = this.__importer.getPathParameterResource(currentDirectory);
+                this.__importer.validatePathParameterResource(resources);
+                if (resources.length) {
+                    pathParts.push(resources[0]);
+                    const indexPattern = filePattern.replace('*', 'index');
+                    const cleanDirectory = this.__importer.cleanPath(currentDirectory);
+                    const mvvmDirectory = `${cleanDirectory}/${resources[0]}`;
+                    const mvcIndex = `${cleanDirectory}/${resources[0]}/${indexPattern}`;
+                    const nextPath = `${patternBase}/${pathParts.join('/')}/${splitRequest[index + 1]}`;
+                    if (this.__importer.isFile(mvcIndex) && !this.__importer.isDirectory(nextPath)) {
+                        pathParts.push(indexPattern);
+                    }
+                    if (this.__importer.isDirectory(mvvmDirectory) && !this.__importer.isDirectory(nextPath)) {
+                        const dirResources = this.__importer.getPathParameterResource(mvvmDirectory);
+                        dirResources.length ? pathParts.push(dirResources[0]) : null;
+                    }
+                }
             } else {
                 this.hasPathParams = true;
             }
