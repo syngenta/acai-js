@@ -86,7 +86,7 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
                 globalLogger: true,
                 requiredBody: 'v1-ddb-record-fail',
                 schemaPath: 'test/mocks/openapi.yml',
-                strict: true
+                strictValidation: true
             });
             try {
                 const records = await ddbEvent.getRecords();

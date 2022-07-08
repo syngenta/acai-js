@@ -88,8 +88,13 @@ class RouteResolver {
 
     __setRequiredPathConfig(request, splits) {
         for (const index in splits.requestSplit) {
-            if (splits.pathSplit[index] && splits.pathSplit[index].startsWith(':')) {
-                const key = splits.pathSplit[index].split(':')[1];
+            if (
+                splits.pathSplit[index] &&
+                splits.pathSplit[index].startsWith('{') &&
+                splits.pathSplit[index].endsWith('}')
+            ) {
+                const keyBracket = splits.pathSplit[index].split('{')[1];
+                const key = keyBracket.split('}')[0];
                 const value = splits.requestSplit[index];
                 request.pathParams = {key, value};
             }

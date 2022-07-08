@@ -1,12 +1,12 @@
 exports.requirements = {
     get: {
-        requiredPath: 'n1/n2/:nested/basic'
+        requiredPath: 'n1/n2/{nested}/basic'
     },
     put: {
-        requiredPath: 'n1/n2/basic/:id'
+        requiredPath: 'n1/n2/basic/{id}'
     },
     patch: {
-        requiredPath: 'n1/n2/:nested/basic/:id',
+        requiredPath: 'n1/n2/{nested}/basic/{id}',
         requiredBody: 'v1-test-request'
     }
 };

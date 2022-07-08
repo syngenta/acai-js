@@ -1,9 +1,9 @@
 exports.requirements = {
     post: {
-        requiredPath: 'nested-1/path-parameters/:id'
+        requiredPath: 'nested-1/path-parameters/{id}'
     },
     delete: {
-        requiredPath: 'nested-1/:org/path-parameters/:id'
+        requiredPath: 'nested-1/{org}/path-parameters/{id}'
     }
 };
 

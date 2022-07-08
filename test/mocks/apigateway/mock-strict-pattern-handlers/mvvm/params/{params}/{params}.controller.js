@@ -1,6 +1,6 @@
 exports.requirements = {
     delete: {
-        requiredPath: 'params/:some-param/:id'
+        requiredPath: 'params/{some-param}/{id}'
     }
 };
 

@@ -5,13 +5,13 @@ exports.requirements = {
     },
     put: {
         requiredBody: 'v1-test-reference-model',
-        requiredPath: '/auto/:id'
+        requiredPath: '/auto/{id}'
     },
     get: {
-        requiredPath: '/auto/:id'
+        requiredPath: '/auto/{id}'
     },
     delete: {
-        requiredPath: '/auto/:id'
+        requiredPath: '/auto/{id}'
     }
 };
 

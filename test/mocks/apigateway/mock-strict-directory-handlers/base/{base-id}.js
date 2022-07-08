@@ -1,6 +1,6 @@
 exports.requirements = {
     get: {
-        requiredPath: 'base/:base-id'
+        requiredPath: 'base/{base-id}'
     }
 };
 

@@ -322,7 +322,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
-                strict: true
+                strictValidation: true
             });
             const response = await router.route();
             assert.deepEqual(response, {
@@ -342,7 +342,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
-                strict: true
+                strictValidation: true
             });
             const response = await router.route();
             assert.equal(response.statusCode, 404);
@@ -355,7 +355,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
-                strict: true
+                strictValidation: true
             });
             const response = await router.route();
             assert.equal(response.statusCode, 403);
@@ -368,7 +368,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
-                strict: true
+                strictValidation: true
             });
             const response = await router.route();
             assert.deepEqual(response, {
@@ -388,7 +388,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
-                strict: true
+                strictValidation: true
             });
             const response = await router.route();
             assert.equal(response.statusCode, 404);
@@ -401,7 +401,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
-                strict: true
+                strictValidation: true
             });
             const response = await router.route();
             assert.equal(response.statusCode, 400);

@@ -1,6 +1,6 @@
 exports.requirements = {
     delete: {
-        requiredPath: 'nested-1/:org/path-parameters/:id'
+        requiredPath: 'nested-1/{org}/path-parameters/{id}'
     }
 };
 

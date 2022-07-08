@@ -126,7 +126,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1'});
-            assert.equal(request.route, '/unit-test/v1/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/path-parameters/{id}');
         });
         it('should not resolve endpoint with path parameter but wrong path requiredPath', () => {
             const basePath = 'unit-test/v1';
@@ -162,7 +162,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1'});
-            assert.equal(request.route, '/unit-test/v1/nested-1/nested-2/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/nested-1/nested-2/path-parameters/{id}');
         });
         it('should find the nested file with middle and trailing path parameter', () => {
             const basePath = 'unit-test/v1';
@@ -174,7 +174,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
-            assert.equal(request.route, '/unit-test/v1/nested-1/:org/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
     });
     describe('test suffix pattern resolver with path parameters', () => {
@@ -188,7 +188,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1'});
-            assert.equal(request.route, '/unit-test/v1/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/path-parameters/{id}');
         });
         it('should resolve endpoint with nested file and trailing path parameter and have path params', () => {
             const basePath = 'unit-test/v1';
@@ -200,7 +200,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1'});
-            assert.equal(request.route, '/unit-test/v1/nested-1/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/nested-1/path-parameters/{id}');
         });
         it('should resolve endpoint with nested file, middle & trailing path parameters and have path params', () => {
             const basePath = 'unit-test/v1';
@@ -212,7 +212,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
-            assert.equal(request.route, '/unit-test/v1/nested-1/:org/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
         it('should not resolve endpoint with nested file, with bad path params', () => {
             const basePath = 'unit-test/v1';
@@ -238,7 +238,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1'});
-            assert.equal(request.route, '/unit-test/v1/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/path-parameters/{id}');
         });
         it('should resolve endpoint with nested file and trailing path parameter and have path params', () => {
             const basePath = 'unit-test/v1';
@@ -250,7 +250,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1'});
-            assert.equal(request.route, '/unit-test/v1/nested-1/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/nested-1/path-parameters/{id}');
         });
         it('should resolve endpoint with nested file, middle & trailing path parameters and have path params', () => {
             const basePath = 'unit-test/v1';
@@ -262,7 +262,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
-            assert.equal(request.route, '/unit-test/v1/nested-1/:org/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
         it('should not resolve endpoint with nested file, with bad path params', () => {
             const basePath = 'unit-test/v1';
@@ -310,7 +310,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
-            assert.equal(request.route, '/unit-test/v1/nested-1/:org/path-parameters/:id');
+            assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
         it('should not resolve endpoint with nested file, with bad path params and bad method', () => {
             const basePath = 'unit-test/v1';
@@ -328,9 +328,9 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
     describe('test list resolver with path parameters', () => {
         const basePath = 'unit-test/v1';
         const handlerList = {
-            'POST::basic/:id': 'test/mocks/apigateway/mock-list-handlers/basic.js',
-            'PUT::n1/n2/basic/:id': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
-            'PATCH::n1/n2/:nested/basic/:id': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js'
+            'POST::basic/{id}': 'test/mocks/apigateway/mock-list-handlers/basic.js',
+            'PUT::n1/n2/basic/{id}': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
+            'PATCH::n1/n2/{nested}/basic/{id}': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js'
         };
         it('should resolve endpoint with trailing path parameter', () => {
             const basePath = 'unit-test/v1';
@@ -341,7 +341,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1'});
-            assert.equal(request.route, '/unit-test/v1/basic/:id');
+            assert.equal(request.route, '/unit-test/v1/basic/{id}');
         });
         it('should find the nested file with trailing path parameter', () => {
             const basePath = 'unit-test/v1';
@@ -352,7 +352,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1'});
-            assert.equal(request.route, '/unit-test/v1/n1/n2/basic/:id');
+            assert.equal(request.route, '/unit-test/v1/n1/n2/basic/{id}');
         });
         it('should find the nested file with middle and trailing path parameter', () => {
             const basePath = 'unit-test/v1';
@@ -363,7 +363,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const response = new Response();
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1', nested: 'syngenta'});
-            assert.equal(request.route, '/unit-test/v1/n1/n2/:nested/basic/:id');
+            assert.equal(request.route, '/unit-test/v1/n1/n2/{nested}/basic/{id}');
         });
     });
 });

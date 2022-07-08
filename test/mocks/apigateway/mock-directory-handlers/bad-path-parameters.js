@@ -1,6 +1,6 @@
 exports.requirements = {
     post: {
-        requiredPath: 'path-parameters/wrong/:id'
+        requiredPath: 'path-parameters/wrong/{id}'
     },
     delete: {}
 };

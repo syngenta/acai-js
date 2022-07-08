@@ -1,6 +1,6 @@
 exports.requirements = {
     post: {
-        requiredPath: 'basic/:id',
+        requiredPath: 'basic/{id}',
         requiredBody: 'v1-test-request'
     }
 };

@@ -1,6 +1,6 @@
 exports.requirements = {
     patch: {
-        requiredPath: 'nested-1/nested-2/path-parameters/:id'
+        requiredPath: 'nested-1/nested-2/path-parameters/{id}'
     }
 };
 

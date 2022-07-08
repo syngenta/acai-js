@@ -159,8 +159,8 @@ describe('Test Request Client', () => {
         it('should have paramPath as assignable', () => {
             const mock = mockData.getData();
             const request = new Request(mock);
-            request.route = '/grower/:id';
-            assert.equal(request.route, '/grower/:id');
+            request.route = '/grower/{id}';
+            assert.equal(request.route, '/grower/{id}');
         });
     });
 });

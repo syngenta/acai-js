@@ -13,13 +13,13 @@ class Validator {
     }
 
     async validateWithOpenAPI(request, response) {
-        const route = this.__convertRouteToOpenAPI(request.route);
         const translatedRequest = {
             headers: request.headers,
             queryParameters: request.queryParams,
             pathParameters: request.path,
             body: request.body
         };
+        const route = !request.route.startsWith('/') ? `/${request.route}` : request.route;
         const errors = await this.__schema.validateOpenApi(route, request.method, translatedRequest);
         this.__translateOpenAPIErrors(errors, response);
         return response;
@@ -81,14 +81,6 @@ class Validator {
                 response.setError(key, error.message);
             });
         }
-    }
-
-    __convertRouteToOpenAPI(path) {
-        const matches = path.matchAll(':(.*?)($|/)', 'g');
-        Array.from(matches).forEach((match) => {
-            path = path.replace(`:${match[1]}`, `{${match[1]}}`);
-        });
-        return !path.startsWith('/') ? `/${path}` : path;
     }
 
     __translateOpenAPIErrors(errors, response) {

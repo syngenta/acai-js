@@ -53,10 +53,10 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
     describe('test list routing with params', () => {
         const basePath = 'unit-test/v1';
         const handlerList = {
-            'POST::basic/:id': 'test/mocks/apigateway/mock-list-handlers/basic.js',
-            'GET::n1/n2/:org/basic': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
-            'PATCH::n1/n2/:org/basic/:id': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
-            'POST::basic/:id/fake': 'test/mocks/apigateway/mock-list-handlers/fake.js'
+            'POST::basic/{id}': 'test/mocks/apigateway/mock-list-handlers/basic.js',
+            'GET::n1/n2/{org}/basic': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
+            'PATCH::n1/n2/{org}/basic/{id}': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
+            'POST::basic/{id}/fake': 'test/mocks/apigateway/mock-list-handlers/fake.js'
         };
         const resolver = new ListResolver({basePath, handlerList});
         const response = new Response();
@@ -103,9 +103,9 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
         const basePath = 'unit-test/v1';
         it('should throw error for duplicate routes', () => {
             const handlerList = {
-                'POST::basic/:id': 'test/mocks/apigateway/mock-list-handlers/basic.js',
-                'POST::basic/:org': 'test/mocks/apigateway/mock-list-handlers/fake.js',
-                'DELETE::basic/:org': 'test/mocks/apigateway/mock-list-handlers/fake.js'
+                'POST::basic/{id}': 'test/mocks/apigateway/mock-list-handlers/basic.js',
+                'POST::basic/{org}': 'test/mocks/apigateway/mock-list-handlers/fake.js',
+                'DELETE::basic/{org}': 'test/mocks/apigateway/mock-list-handlers/fake.js'
             };
             const resolver = new ListResolver({basePath, handlerList});
             const response = new Response();
@@ -124,7 +124,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
         });
         it('should throw error for route with bad pattern', () => {
             const handlerList = {
-                'DELETE:basic/:bad': 'test/mocks/apigateway/mock-list-handlers/bad.js'
+                'DELETE:basic/{bad}': 'test/mocks/apigateway/mock-list-handlers/bad.js'
             };
             const resolver = new ListResolver({basePath, handlerList});
             const response = new Response();

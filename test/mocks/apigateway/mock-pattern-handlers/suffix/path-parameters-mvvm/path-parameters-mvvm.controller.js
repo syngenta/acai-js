@@ -1,6 +1,6 @@
 exports.requirements = {
     put: {
-        requiredPath: 'path-parameters-mvvm/:id'
+        requiredPath: 'path-parameters-mvvm/{id}'
     }
 };
 

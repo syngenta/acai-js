@@ -10,7 +10,7 @@ use(chaiAsPromised);
 describe('Test Validator', () => {
     const mock = mockData.getValidBodyData();
     const request = new Request(mock);
-    const schema = Schema.fromFilePath('test/mocks/openapi.yml', {strict: true});
+    const schema = Schema.fromFilePath('test/mocks/openapi.yml', {strictValidation: true});
     const validator = new Validator(schema);
     describe('test request', () => {
         it('should validate valid request', async () => {
@@ -174,7 +174,7 @@ describe('Test Validator', () => {
             });
         });
         it('should not have errors', async () => {
-            const route = '/unit-test/v1/schema/:test_id';
+            const route = '/unit-test/v1/schema/{test_id}';
             const mock = mockData.getApiGateWayCustomRouteWithParams(route, 'put');
             const request = new Request(mock);
             request.route = route;
@@ -183,7 +183,7 @@ describe('Test Validator', () => {
             assert.equal(response.hasErrors, false);
         });
         it('should throw error when cant find operation schema bad method', async () => {
-            const route = '/unit-test/v1/schema/:test_id';
+            const route = '/unit-test/v1/schema/{test_id}';
             const mock = mockData.getApiGateWayCustomRouteWithParams(route, 'get');
             const request = new Request(mock);
             request.route = route;
@@ -194,12 +194,12 @@ describe('Test Validator', () => {
             } catch (error) {
                 assert.equal(
                     error.message,
-                    'problem with importing your schema for: get::/unit-test/v1/schema/{test_id}'
+                    'problem with importing your schema for get::/unit-test/v1/schema/{test_id}: Error'
                 );
             }
         });
         it('should throw error when cant find operation schema bad route', async () => {
-            const route = '/fail/v1/schema/:fail';
+            const route = '/fail/v1/schema/{fail}';
             const mock = mockData.getApiGateWayCustomRouteWithParams(route, 'get');
             const request = new Request(mock);
             request.route = route;
@@ -208,7 +208,10 @@ describe('Test Validator', () => {
                 await validator.validateWithOpenAPI(request, response);
                 assert.equal(true, false);
             } catch (error) {
-                assert.equal(error.message, 'problem with importing your schema for: get::/fail/v1/schema/{fail}');
+                assert.equal(
+                    error.message,
+                    "problem with importing your schema for get::/fail/v1/schema/{fail}: TypeError: Cannot read property 'get' of undefined"
+                );
             }
         });
     });
