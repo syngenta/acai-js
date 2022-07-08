@@ -40,13 +40,13 @@ class RecordClient {
     }
 
     get operation() {
-        if (this.newImage && !this.oldImage) {
+        if (Object.keys(this.newImage).length && !Object.keys(this.oldImage).length) {
             return 'create';
         }
-        if (this.newImage && this.oldImage) {
+        if (Object.keys(this.newImage).length && Object.keys(this.oldImage).length) {
             return 'update';
         }
-        if (!this.newImage && this.oldImage) {
+        if (!Object.keys(this.newImage).length && Object.keys(this.oldImage).length) {
             return 'delete';
         }
         return 'unkown';

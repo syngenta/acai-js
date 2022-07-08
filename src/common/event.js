@@ -16,8 +16,8 @@ class Event {
         this.__getObject = params.getObject;
         this.__jsonObject = params.jsonObject;
         this.__operations = params.operations || ['create', 'update', 'delete'];
-        this.__validationError = params.validationError || true;
-        this.__operationError = params.operationError || true;
+        this.__validationError = params.validationError === undefined ? true : params.validationError;
+        this.__operationError = params.operationError === undefined ? false : params.operationError;
         this.__event = event;
         this.__clients = {
             'aws:s3': S3Record,
@@ -88,6 +88,10 @@ class Event {
         for (const record of records) {
             if (this.__operations.includes(record.operation)) {
                 operationRecords.push(record);
+            } else if (this.__operationError) {
+                throw new Error(
+                    `record is operation: ${record.operation}; only allowed ${this.__operations.join(',')}`
+                );
             }
         }
         return operationRecords;

@@ -248,5 +248,99 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
                 assert.equal(error.message, '[{"path":"/id","message":"must be number"}]');
             }
         });
+        it('should ignore error with validationError as false', async () => {
+            const requiredBody = {
+                type: 'object',
+                required: ['example_id', 'note', 'active', 'personal', 'transportation'],
+                additionalProperties: false,
+                properties: {
+                    example_id: {
+                        type: 'string'
+                    },
+                    note: {
+                        type: 'string'
+                    },
+                    active: {
+                        type: 'number'
+                    },
+                    transportation: {
+                        type: 'array'
+                    }
+                }
+            };
+            const ddbEvent = new DDBEvent(mockDDBData.getData(), {
+                globalLogger: true,
+                validationError: false,
+                requiredBody
+            });
+            const records = await ddbEvent.getRecords();
+            assert.equal(records.length, 0);
+        });
+        it('should return records since only looking for DDB create', async () => {
+            const ddbEvent = new DDBEvent(mockDDBData.getData(), {
+                globalLogger: true,
+                operations: ['create'],
+                operationError: false
+            });
+            const records = await ddbEvent.getRecords();
+            assert.equal(records.length, 1);
+        });
+        it('should return records since only looking for DDB update', async () => {
+            const ddbEvent = new DDBEvent(mockDDBData.getUpdateData(), {
+                globalLogger: true,
+                operations: ['update'],
+                operationError: false
+            });
+            const records = await ddbEvent.getRecords();
+            assert.equal(records.length, 1);
+        });
+        it('should return records since only looking for DDB delete', async () => {
+            const ddbEvent = new DDBEvent(mockDDBData.getDeletedData(), {
+                globalLogger: true,
+                operations: ['delete'],
+                operationError: false
+            });
+            const records = await ddbEvent.getRecords();
+            assert.equal(records.length, 1);
+        });
+        it('should return no records since only looking for DDB deletes', async () => {
+            const ddbEvent = new DDBEvent(mockDDBData.getData(), {
+                globalLogger: true,
+                operations: ['delete'],
+                operationError: false
+            });
+            const records = await ddbEvent.getRecords();
+            assert.equal(records.length, 0);
+        });
+        it('should return no records since only looking for DDB updates', async () => {
+            const ddbEvent = new DDBEvent(mockDDBData.getUpdateData(), {
+                globalLogger: true,
+                operations: ['create'],
+                operationError: false
+            });
+            const records = await ddbEvent.getRecords();
+            assert.equal(records.length, 0);
+        });
+        it('should return no records since only looking for DDB delete', async () => {
+            const ddbEvent = new DDBEvent(mockDDBData.getDeletedData(), {
+                globalLogger: true,
+                operations: ['update'],
+                operationError: false
+            });
+            const records = await ddbEvent.getRecords();
+            assert.equal(records.length, 0);
+        });
+        it('should return throw exception since only looking for DDB deletes', async () => {
+            const ddbEvent = new DDBEvent(mockDDBData.getData(), {
+                globalLogger: true,
+                operations: ['delete'],
+                operationError: true
+            });
+            try {
+                await ddbEvent.getRecords();
+            } catch (error) {
+                assert.equal(error.message, 'record is operation: create; only allowed delete');
+            }
+        });
     });
 });
