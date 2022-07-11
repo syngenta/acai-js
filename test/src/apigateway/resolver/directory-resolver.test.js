@@ -78,7 +78,7 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
     });
     describe('test routing: with path parameters and strict mode', () => {
         const basePath = 'unit-test/v1';
-        const handlerPath = 'test/mocks/apigateway/mock-strict-directory-handlers/';
+        const handlerPath = 'test/mocks/apigateway/mock-directory-handlers/';
         const strictRouting = true;
         const resolver = new DirectoryResolver({basePath, handlerPath, strictRouting});
         const response = new Response();

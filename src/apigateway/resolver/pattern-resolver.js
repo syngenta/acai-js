@@ -5,7 +5,6 @@ class PatternResolver {
         this.__importer = new ImportManager();
         this.__basePath = params.basePath;
         this.__pattern = params.handlerPattern;
-        this.__strictRouting = params.strictRouting;
         this.hasPathParams = false;
     }
 
@@ -53,7 +52,7 @@ class PatternResolver {
                 pathParts.push(file);
             } else if (this.__importer.isDirectory(directory)) {
                 pathParts.push(requestPart);
-            } else if (this.__strictRouting) {
+            } else {
                 this.hasPathParams = true;
                 const resources = this.__importer.getPathParameterResource(currentDirectory);
                 this.__importer.validatePathParameterResource(resources);
@@ -72,8 +71,6 @@ class PatternResolver {
                         dirResources.length ? pathParts.push(dirResources[0]) : null;
                     }
                 }
-            } else {
-                this.hasPathParams = true;
             }
         }
         pathParts.unshift(patternBase);

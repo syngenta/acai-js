@@ -1,9 +1,9 @@
 exports.requirements = {
     patch: {
-        requiredPath: 'path-parameters-mvvm/{id}'
+        requiredPath: 'nested-1/path-parameters-mvvm/{id}'
     },
     put: {
-        requiredPath: 'path-parameters-mvvm/{id}'
+        requiredPath: 'nested-1/path-parameters-mvvm/{id}'
     }
 };
 

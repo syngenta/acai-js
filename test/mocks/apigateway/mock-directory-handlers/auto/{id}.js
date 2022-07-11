@@ -1,8 +1,4 @@
 exports.requirements = {
-    post: {
-        requiredBody: 'v1-test-reference-model',
-        requiredPath: '/auto'
-    },
     put: {
         requiredBody: 'v1-test-reference-model',
         requiredPath: '/auto/{id}'
@@ -13,11 +9,6 @@ exports.requirements = {
     delete: {
         requiredPath: '/auto/{id}'
     }
-};
-
-exports.post = async (request, response) => {
-    response.body = {post: true};
-    return response;
 };
 
 exports.put = async (request, response) => {

@@ -196,12 +196,6 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.patch === 'function');
         });
-        it('should find the nested file with mvc structure with trailing and middle parameter', () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'delete');
-            const request = new Request(mock);
-            const result = resolver.resolve(request);
-            assert.isTrue(typeof result.delete === 'function');
-        });
         it('should find the nested file with mvvm structure with trailing and middle parameter', () => {
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters-mvvm/1', 'put');
             const request = new Request(mock);
@@ -233,10 +227,9 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
         });
     });
     describe('test strict routing with mvc structure', () => {
-        const handlerPattern = 'test/mocks/apigateway/mock-strict-pattern-handlers/mvc/**/*.controller.js';
+        const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/mvc/**/*.controller.js';
         const basePath = 'unit-test/v1';
-        const strictRouting = true;
-        const resolver = new PatternResolver({handlerPattern, basePath, strictRouting});
+        const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with path parameter', () => {
             const mock = mockData.getApiGateWayCustomRouteWithParams('base/1', 'get');
             const request = new Request(mock);
@@ -287,10 +280,9 @@ describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolve
         });
     });
     describe('test strict routing with mvvm structure', () => {
-        const handlerPattern = 'test/mocks/apigateway/mock-strict-pattern-handlers/mvvm/**/*.controller.js';
+        const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/mvvm/**/*.controller.js';
         const basePath = 'unit-test/v1';
-        const strictRouting = true;
-        const resolver = new PatternResolver({handlerPattern, basePath, strictRouting});
+        const resolver = new PatternResolver({handlerPattern, basePath});
         it('should find the file with path parameter', () => {
             const mock = mockData.getApiGateWayCustomRouteWithParams('base/1', 'get');
             const request = new Request(mock);
