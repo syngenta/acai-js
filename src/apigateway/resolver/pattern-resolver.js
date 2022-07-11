@@ -53,28 +53,32 @@ class PatternResolver {
             } else if (this.__importer.isDirectory(directory)) {
                 pathParts.push(requestPart);
             } else {
-                this.hasPathParams = true;
-                const resources = this.__importer.getPathParameterResource(currentDirectory);
-                this.__importer.validatePathParameterResource(resources);
-                if (resources.length) {
-                    pathParts.push(resources[0]);
-                    const indexPattern = filePattern.replace('*', 'index');
-                    const cleanDirectory = this.__importer.cleanPath(currentDirectory);
-                    const mvvmDirectory = `${cleanDirectory}/${resources[0]}`;
-                    const mvcIndex = `${cleanDirectory}/${resources[0]}/${indexPattern}`;
-                    const nextPath = `${patternBase}/${pathParts.join('/')}/${splitRequest[index + 1]}`;
-                    if (this.__importer.isFile(mvcIndex) && !this.__importer.isDirectory(nextPath)) {
-                        pathParts.push(indexPattern);
-                    }
-                    if (this.__importer.isDirectory(mvvmDirectory) && !this.__importer.isDirectory(nextPath)) {
-                        const dirResources = this.__importer.getPathParameterResource(mvvmDirectory);
-                        dirResources.length ? pathParts.push(dirResources[0]) : null;
-                    }
-                }
+                this.__addParamFiles(currentDirectory, filePattern, patternBase, pathParts, splitRequest, index);
             }
         }
         pathParts.unshift(patternBase);
         return pathParts.join('/');
+    }
+
+    __addParamFiles(currentDirectory, filePattern, patternBase, pathParts, splitRequest, index) {
+        this.hasPathParams = true;
+        const resources = this.__importer.getPathParameterResource(currentDirectory);
+        this.__importer.validatePathParameterResource(resources);
+        if (resources.length) {
+            pathParts.push(resources[0]);
+            const indexPattern = filePattern.replace('*', 'index');
+            const cleanDirectory = this.__importer.cleanPath(currentDirectory);
+            const mvvmDirectory = `${cleanDirectory}/${resources[0]}`;
+            const mvcIndex = `${cleanDirectory}/${resources[0]}/${indexPattern}`;
+            const nextPath = `${patternBase}/${pathParts.join('/')}/${splitRequest[index + 1]}`;
+            if (this.__importer.isFile(mvcIndex) && !this.__importer.isDirectory(nextPath)) {
+                pathParts.push(indexPattern);
+            }
+            if (this.__importer.isDirectory(mvvmDirectory) && !this.__importer.isDirectory(nextPath)) {
+                const dirResources = this.__importer.getPathParameterResource(mvvmDirectory);
+                dirResources.length ? pathParts.push(dirResources[0]) : null;
+            }
+        }
     }
 }
 

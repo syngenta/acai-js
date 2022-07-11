@@ -31,8 +31,7 @@ class ImportManager {
 
     getPathParameterResource(dirPath) {
         const cleanPath = this.cleanPath(dirPath);
-        const resources = this.listPathParameterResources(cleanPath);
-        return resources;
+        return this.listPathParameterResources(cleanPath);
     }
 
     listPathParameterResources(cleanPath) {
