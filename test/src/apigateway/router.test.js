@@ -96,6 +96,29 @@ describe('Test Router: src/apigateway/router.js', () => {
                 body: '{"errors":[{"key_path":"server","message":"internal server error"}]}'
             });
         });
+        it('should add logger to global scope', async () => {
+            delete global.logger;
+            const router = new Router({
+                event: mockData.getApiGateWayRoute(),
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
+                schemaPath: 'test/mocks/openapi.yml',
+                globalLogger: true
+            });
+            assert.equal('logger' in global, true);
+            delete global.logger;
+        });
+        it('should not add logger to global scope', async () => {
+            delete global.logger;
+            const router = new Router({
+                event: mockData.getApiGateWayRoute(),
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
+                schemaPath: 'test/mocks/openapi.yml',
+                globalLogger: false
+            });
+            assert.equal('logger' in global, false);
+        });
     });
     describe('test route basic validation', () => {
         it('should run route without the need of requirements export', async () => {
