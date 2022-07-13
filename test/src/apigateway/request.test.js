@@ -94,6 +94,16 @@ describe('Test Request Client', () => {
                 '----------------------------430661979790652055785011 Content-Disposition: form-data; name="test"'
             );
         });
+        it('should handle graphql request', () => {
+            const mock = mockData.getGraphQLData();
+            const request = new Request(mock);
+            assert.deepEqual(request.graphql, mock.body);
+        });
+        it('should handle full event', () => {
+            const mock = mockData.getGraphQLData();
+            const request = new Request(mock);
+            assert.deepEqual(request.event, mock);
+        });
         it('should have headers as an object form offline data', () => {
             const mock = mockData.getDataOffline();
             const request = new Request(mock);

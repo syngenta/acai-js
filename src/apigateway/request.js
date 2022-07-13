@@ -66,6 +66,10 @@ class Request {
         return JSON.parse(this.__event.body);
     }
 
+    get graphql() {
+        return this.raw;
+    }
+
     get xml() {
         try {
             let result;
@@ -103,13 +107,8 @@ class Request {
         return this.__event.body;
     }
 
-    get __bodyParsers() {
-        return {
-            'application/json': 'json',
-            'application/xml': 'xml',
-            'text/xml': 'xml',
-            raw: 'raw'
-        };
+    get event() {
+        return this.__event;
     }
 
     get request() {
@@ -124,6 +123,15 @@ class Request {
             route: this.route,
             context: this.context,
             body: this.body
+        };
+    }
+
+    get __bodyParsers() {
+        return {
+            'application/json': 'json',
+            'application/xml': 'xml',
+            'text/xml': 'xml',
+            raw: 'raw'
         };
     }
 }
