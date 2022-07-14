@@ -5,6 +5,9 @@ const mockData = require('../../mocks/dynamodb/mock-data');
 describe('Test DynamoDB Record Client: src/dynamodb/record.js', () => {
     describe('test dynamoDB non-ttl stream', () => {
         const record = new RecordClient(mockData.getData().Records[0]);
+        it('should have property for record', () => {
+            assert.deepEqual(record.record, mockData.getData().Records[0]);
+        });
         it('should have property for id', () => {
             assert.equal(record.id, '9a37c0d03eb60f7cf70cabc823de9907');
         });

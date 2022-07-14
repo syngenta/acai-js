@@ -3,8 +3,11 @@ const RecordClient = require('../../../src').sqs.Record;
 const mockData = require('../../mocks/sqs/mock-data');
 
 describe('Test SQS Record Client', async () => {
-    describe('basic positive tests', async () => {
+    describe('basic positive property tests', async () => {
         const record = new RecordClient(mockData.getData().Records[0]);
+        it('should have property for record', () => {
+            assert.deepEqual(record.record, mockData.getData().Records[0]);
+        });
         it('should have property of id', () => {
             assert.equal(record.id, '19dd0b57-b21e-4ac1-bd88-01bbb068cb78');
         });
