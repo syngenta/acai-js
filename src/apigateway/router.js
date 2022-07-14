@@ -8,7 +8,6 @@ const Validator = require('../common/validator');
 
 class Router {
     constructor(params) {
-        this.__event = params.event;
         this.__beforeAll = params.beforeAll;
         this.__afterAll = params.afterAll;
         this.__withAuth = params.withAuth;
@@ -23,14 +22,14 @@ class Router {
         }
     }
 
-    async route() {
-        const request = new Request(this.__event);
+    async route(event) {
+        const request = new Request(event);
         const response = new Response();
         try {
             const routeResult = await this.__runRoute(request, response);
             return routeResult.response;
         } catch (error) {
-            const errorResult = await this.__handleError(request, response, error);
+            const errorResult = await this.__handleError(event, request, response, error);
             return errorResult.response;
         }
     }
@@ -64,23 +63,23 @@ class Router {
         return response;
     }
 
-    async __handleError(request, response, error) {
+    async __handleError(event, request, response, error) {
         if (typeof this.__onError === 'function') {
             this.__onError(request, response, error);
             return response;
         }
-        this.__logError(request, response, error);
+        this.__logError(event, request, response, error);
         response.code = 500;
         response.setError('server', 'internal server error');
         return response;
     }
 
-    __logError(request, response, error) {
+    __logError(event, request, response, error) {
         this.__logger.log({
             level: 'ERROR',
             log: {
                 message: error.message,
-                event: this.__event,
+                event: event,
                 request: request.request,
                 response: response.response
             }

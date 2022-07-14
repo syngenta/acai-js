@@ -7,13 +7,13 @@ const mockBeforeAll = require('../../mocks/apigateway/mock-before-all');
 describe('Test Router: src/apigateway/router.js', () => {
     describe('test routing', () => {
         it('should find route', async () => {
+            const event = mockData.getApiGateWayRoute();
             const router = new Router({
-                event: mockData.getApiGateWayRoute(),
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -24,13 +24,13 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
         });
         it('should find route wiht no trailing /', async () => {
+            const event = mockData.getApiGateWayRoute();
             const router = new Router({
-                event: mockData.getApiGateWayRoute(),
                 basePath: 'unit-test/v1',
                 handlerPath: '/test/mocks/apigateway/mock-directory-handlers',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -41,13 +41,13 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
         });
         it('should not find route', async () => {
+            const event = mockData.getApiGateWayRoute('-fail');
             const router = new Router({
-                event: mockData.getApiGateWayRoute('-fail'),
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -58,13 +58,13 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
         });
         it('should not allow method', async () => {
+            const event = mockData.getApiGateWayRoute('', 'GET');
             const router = new Router({
-                event: mockData.getApiGateWayRoute('', 'GET'),
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -86,7 +86,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                     throw error;
                 }
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -98,8 +98,8 @@ describe('Test Router: src/apigateway/router.js', () => {
         });
         it('should add logger to global scope', async () => {
             delete global.logger;
+            const event = mockData.getApiGateWayRoute();
             const router = new Router({
-                event: mockData.getApiGateWayRoute(),
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
@@ -110,8 +110,8 @@ describe('Test Router: src/apigateway/router.js', () => {
         });
         it('should not add logger to global scope', async () => {
             delete global.logger;
+            const event = mockData.getApiGateWayRoute();
             const router = new Router({
-                event: mockData.getApiGateWayRoute(),
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
@@ -122,13 +122,13 @@ describe('Test Router: src/apigateway/router.js', () => {
     });
     describe('test route basic validation', () => {
         it('should run route without the need of requirements export', async () => {
+            const event = mockData.getApiGateWayRouteNoRequirements();
             const router = new Router({
-                event: mockData.getApiGateWayRouteNoRequirements(),
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -139,13 +139,13 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
         });
         it('should pass required query string requirements', async () => {
+            const event = mockData.getApiGateWayRouteValidation('DELETE');
             const router = new Router({
-                event: mockData.getApiGateWayRouteValidation('DELETE'),
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -164,7 +164,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -182,7 +182,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -201,7 +201,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -219,7 +219,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -238,7 +238,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml'
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -251,14 +251,14 @@ describe('Test Router: src/apigateway/router.js', () => {
     });
     describe('test route custom validation', () => {
         it('should return errors when beforeAll fails', async () => {
+            const event = mockData.getApiGateWayRouteValidation('PATCH');
             const router = new Router({
-                event: mockData.getApiGateWayRouteValidation('PATCH'),
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: mockBeforeAll.checkPermissions
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -278,7 +278,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 schemaPath: 'test/mocks/openapi.yml',
                 beforeAll: mockBeforeAll.checkPermissions
             });
-            const results = await router.route();
+            const results = await router.route(event);
             assert.deepEqual(results, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -298,7 +298,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 schemaPath: 'test/mocks/openapi.yml',
                 afterAll: spyFn
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.deepEqual(spyFn.callCount, 1);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
@@ -312,7 +312,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 schemaPath: 'test/mocks/openapi.yml',
                 withAuth: spyFn
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.deepEqual(spyFn.callCount, 1);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
         });
@@ -330,7 +330,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 },
                 onError: spyFn
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.deepEqual(spyFn.callCount, 1);
             assert.deepEqual(spyFn.getCall(0).args[2], error);
             assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
@@ -338,16 +338,15 @@ describe('Test Router: src/apigateway/router.js', () => {
     });
     describe('test auto validate', () => {
         it('should auto validate and pass validation', async () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('auto', 'post');
+            const event = mockData.getApiGateWayCustomRouteWithParams('auto', 'post');
             const router = new Router({
-                event: mock,
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
                 strictValidation: true
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.deepEqual(response, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -358,42 +357,39 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
         });
         it('should not find endpoint', async () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('auto-not-found', 'patch');
+            const event = mockData.getApiGateWayCustomRouteWithParams('auto-not-found', 'patch');
             const router = new Router({
-                event: mock,
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
                 strictValidation: true
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.equal(response.statusCode, 404);
         });
         it('should not allow method', async () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('auto', 'patch');
+            const event = mockData.getApiGateWayCustomRouteWithParams('auto', 'patch');
             const router = new Router({
-                event: mock,
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
                 strictValidation: true
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.equal(response.statusCode, 403);
         });
         it('should auto validate and pass validation with path param', async () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('auto/1', 'put');
+            const event = mockData.getApiGateWayCustomRouteWithParams('auto/1', 'put');
             const router = new Router({
-                event: mock,
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
                 strictValidation: true
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.deepEqual(response, {
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -404,29 +400,27 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
         });
         it('should not find endpoint with path param', async () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('auto/1', 'patch');
+            const event = mockData.getApiGateWayCustomRouteWithParams('auto/1', 'patch');
             const router = new Router({
-                event: mock,
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
                 strictValidation: true
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.equal(response.statusCode, 404);
         });
         it('should find route but error on validation', async () => {
-            const mock = mockData.getApiGateWayCustomRouteWithParams('auto/1', 'delete');
+            const event = mockData.getApiGateWayCustomRouteWithParams('auto/1', 'delete');
             const router = new Router({
-                event: mock,
                 basePath: 'unit-test/v1',
                 handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
                 schemaPath: 'test/mocks/openapi.yml',
                 autoValidate: true,
                 strictValidation: true
             });
-            const response = await router.route();
+            const response = await router.route(event);
             assert.equal(response.statusCode, 400);
         });
     });
