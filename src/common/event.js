@@ -14,7 +14,7 @@ class Event {
         this.__schemaPath = params.schemaPath;
         this.__dataClass = params.dataClass;
         this.__getObject = params.getObject;
-        this.__jsonObject = params.jsonObject;
+        this.__isJSON = params.isJSON;
         this.__operations = params.operations || ['create', 'update', 'delete'];
         this.__validationError = params.validationError === undefined ? true : params.validationError;
         this.__operationError = params.operationError === undefined ? false : params.operationError;
@@ -110,7 +110,7 @@ class Event {
         if (typeof this.__requiredBody === 'string' && !this.__schemaPath) {
             throw new Error('Must provide schemaPath if using requireBody as a reference');
         }
-        if (this.__jsonObject && !this.__getObject) {
+        if (this.__isJSON && !this.__getObject) {
             throw new Error('Must enable getObject if using expecting JSON from S3 object');
         }
     }
@@ -122,7 +122,7 @@ class Event {
             for (const record of records) {
                 if (record.eventSource === 'aws:s3') {
                     const s3Object = await s3.getObject({Bucket: record.bucket.name, Key: record.key}).promise();
-                    record.body = this.__jsonObject ? JSON.parse(s3Object.Body.toString('utf-8')) : s3Object;
+                    record.body = this.__isJSON ? JSON.parse(s3Object.Body.toString('utf-8')) : s3Object;
                     s3Records.push(record);
                 }
             }

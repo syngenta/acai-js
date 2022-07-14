@@ -214,8 +214,8 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
             assert.equal(spyFn.callCount, 1);
             assert.isTrue(records[0] instanceof DataClass);
         });
-        it('should throw error when jsonObject is activated by getObject is not', async () => {
-            const s3Event = new S3Event(mockS3Data.getData(), {jsonObject: true});
+        it('should throw error when isJSON is activated by getObject is not', async () => {
+            const s3Event = new S3Event(mockS3Data.getData(), {isJSON: true});
             try {
                 const records = await s3Event.getRecords();
             } catch (error) {
@@ -230,18 +230,18 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
             const records = await s3Event.getRecords();
             assert.isTrue(records[0].body.Body instanceof Buffer);
         });
-        it('should get object and parse JSON when getObject and jsonObject is activated', async () => {
+        it('should get object and parse JSON when getObject and isJSON is activated', async () => {
             AWS.mock('S3', 'getObject', {
                 Body: Buffer.from(require('fs').readFileSync('./test/mocks/s3/mock-object.json'))
             });
-            const s3Event = new S3Event(mockS3Data.getJsonData(), {getObject: true, jsonObject: true});
+            const s3Event = new S3Event(mockS3Data.getJsonData(), {getObject: true, isJSON: true});
             const records = await s3Event.getRecords();
             assert.deepEqual(records[0].body, {id: 'true'});
         });
         it('should run s3 event when combined with all advance settings', async () => {
             const s3Event = new S3Event(mockS3Data.getJsonData(), {
                 getObject: true,
-                jsonObject: true,
+                isJSON: true,
                 requiredBody: 'v1-response-result',
                 schemaPath: 'test/mocks/openapi.yml',
                 dataClass: DataClass
@@ -252,7 +252,7 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
         it('should throw error with s3 event when combined with all advance settings and invalid s3 body', async () => {
             const s3Event = new S3Event(mockS3Data.getJsonData(), {
                 getObject: true,
-                jsonObject: true,
+                isJSON: true,
                 requiredBody: 'v1-response-fail',
                 schemaPath: 'test/mocks/openapi.yml'
             });
