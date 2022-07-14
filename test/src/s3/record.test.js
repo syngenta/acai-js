@@ -4,42 +4,42 @@ const mockData = require('../../mocks/s3/mock-data');
 
 describe('Test S3 Record Client', async () => {
     const record = new RecordClient(mockData.getData().Records[0]);
-    describe('test eventName', () => {
-        it('should have property of eventName', () => {
-            assert.equal(record.eventName, 'ObjectCreated:Put');
+    describe('test name', () => {
+        it('should have property of name', () => {
+            assert.equal(record.name, 'ObjectCreated:Put');
         });
     });
-    describe('test eventSource', () => {
-        it('should have property of eventSource', () => {
-            assert.deepEqual(record.eventSource, 'aws:s3');
+    describe('test source', () => {
+        it('should have property of source', () => {
+            assert.deepEqual(record.source, 'aws:s3');
         });
     });
-    describe('test eventTime', () => {
-        it('should have property of eventTime', () => {
-            assert.deepEqual(record.eventTime, '2018-09-20T21:10:13.821Z');
+    describe('test time', () => {
+        it('should have property of time', () => {
+            assert.deepEqual(record.time, '2018-09-20T21:10:13.821Z');
         });
     });
-    describe('test awsRegion', () => {
-        it('should have property of awsRegion', () => {
-            assert.deepEqual(record.awsRegion, 'us-east-1');
+    describe('test region', () => {
+        it('should have property of region', () => {
+            assert.deepEqual(record.region, 'us-east-1');
         });
     });
-    describe('test requestParameters', () => {
-        it('should have property of requestParameters', () => {
-            assert.deepEqual(record.requestParameters, {sourceIPAddress: '172.20.133.36'});
+    describe('test request', () => {
+        it('should have property of request', () => {
+            assert.deepEqual(record.request, {sourceIPAddress: '172.20.133.36'});
         });
     });
-    describe('test responseElements', () => {
-        it('should have property of responseElements', () => {
-            assert.deepEqual(record.responseElements, {
+    describe('test response', () => {
+        it('should have property of response', () => {
+            assert.deepEqual(record.response, {
                 'x-amz-request-id': '6B859DD0CE613FAE',
                 'x-amz-id-2': 'EXLMfc9aiXZFzNwLKXpw35iaVvl/DkEA6GtbuxjfmuLN3kLPL/aGoa7NMSwpl3m7ICAtNbjJX4w='
             });
         });
     });
-    describe('test configurationId', () => {
-        it('should have property of configurationId', () => {
-            assert.equal(record.configurationId, 'exS3-v2--7cde234c7ff76c53c44990396aeddc6d');
+    describe('test id', () => {
+        it('should have property of id', () => {
+            assert.equal(record.id, 'exS3-v2--7cde234c7ff76c53c44990396aeddc6d');
         });
     });
     describe('test object', () => {
@@ -68,9 +68,9 @@ describe('Test S3 Record Client', async () => {
             });
         });
     });
-    describe('test s3SchemaVersion', () => {
-        it('should have property of s3SchemaVersion', () => {
-            assert.equal(record.s3SchemaVersion, '1.0');
+    describe('test version', () => {
+        it('should have property of version', () => {
+            assert.equal(record.version, '1.0');
         });
     });
     describe('test isvalid', () => {

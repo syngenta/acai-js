@@ -2,41 +2,55 @@ const AWS = require('aws-sdk');
 
 class RecordClient {
     constructor(record) {
-        this._record = record;
-        this._converter = AWS.DynamoDB.Converter.unmarshall;
+        this.__record = record;
+        this.__converter = AWS.DynamoDB.Converter.unmarshall;
         this.__isValid = true;
-    }
-
-    get awsRegion() {
-        return this._record.awsRegion;
-    }
-
-    get eventID() {
-        return this._record.eventID;
-    }
-
-    get eventName() {
-        return this._record.eventName;
-    }
-
-    get eventSource() {
-        return this._record.eventSource;
-    }
-
-    get keys() {
-        return this._converter(this._record.dynamodb.Keys);
-    }
-
-    get oldImage() {
-        return this._converter(this._record.dynamodb.OldImage);
-    }
-
-    get newImage() {
-        return this._converter(this._record.dynamodb.NewImage);
     }
 
     get body() {
         return this.newImage;
+    }
+
+    get created() {
+        return this.__record.dynamodb.ApproximateCreationDateTime;
+    }
+
+    get expired() {
+        return Boolean(
+            this.__record.userIdentity && this.__record.userIdentity.type && this.__record.userIdentity.principalId
+        );
+    }
+
+    get id() {
+        return this.__record.eventID;
+    }
+
+    get identity() {
+        return this.__record.userIdentity;
+    }
+
+    get isValid() {
+        return this.__isValid;
+    }
+
+    set isValid(isValid) {
+        this.__isValid = isValid;
+    }
+
+    get keys() {
+        return this.__converter(this.__record.dynamodb.Keys);
+    }
+
+    get name() {
+        return this.__record.eventName;
+    }
+
+    get newImage() {
+        return this.__converter(this.__record.dynamodb.NewImage);
+    }
+
+    get oldImage() {
+        return this.__converter(this.__record.dynamodb.OldImage);
     }
 
     get operation() {
@@ -52,42 +66,32 @@ class RecordClient {
         return 'unknown';
     }
 
-    get eventSourceARN() {
-        return this._record.eventSourceARN;
+    get record() {
+        return this.__record;
     }
 
-    get eventVersion() {
-        return this._record.eventVersion;
+    get region() {
+        return this.__record.awsRegion;
     }
 
-    get streamViewType() {
-        return this._record.dynamodb.StreamViewType;
+    get size() {
+        return this.__record.dynamodb.SizeBytes;
     }
 
-    get sizeBytes() {
-        return this._record.dynamodb.SizeBytes;
+    get source() {
+        return this.__record.eventSource;
     }
 
-    get approximateCreationDateTime() {
-        return this._record.dynamodb.ApproximateCreationDateTime;
+    get sourceARN() {
+        return this.__record.eventSourceARN;
     }
 
-    get userIdentity() {
-        return this._record.userIdentity;
+    get streamType() {
+        return this.__record.dynamodb.StreamViewType;
     }
 
-    get timeToLiveExpired() {
-        return Boolean(
-            this._record.userIdentity && this._record.userIdentity.type && this._record.userIdentity.principalId
-        );
-    }
-
-    get isValid() {
-        return this.__isValid;
-    }
-
-    set isValid(isValid) {
-        this.__isValid = isValid;
+    get version() {
+        return this.__record.eventVersion;
     }
 }
 

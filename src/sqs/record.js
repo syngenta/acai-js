@@ -1,59 +1,23 @@
 class RecordClient {
     constructor(record) {
-        this._record = record;
+        this.__record = record;
         this.__isValid = true;
     }
 
-    get messageId() {
-        return this._record.messageId;
-    }
-
-    get receiptHandle() {
-        return this._record.receiptHandle;
+    get attributes() {
+        return this.__record.attributes;
     }
 
     get body() {
         try {
-            return JSON.parse(this._record.body);
+            return JSON.parse(this.__record.body);
         } catch (error) {
-            return this.rawBody;
+            return this.raw;
         }
     }
 
-    get rawBody() {
-        return this._record.body;
-    }
-
-    get attributes() {
-        return this._record.attributes;
-    }
-
-    get operation() {
-        return 'create';
-    }
-
-    get messageAttributes() {
-        const attributes = {};
-        for (const attribute in this._record.messageAttributes) {
-            attributes[attribute] = this._record.messageAttributes[attribute].stringValue;
-        }
-        return attributes;
-    }
-
-    get md5OfBody() {
-        return this._record.md5OfBody;
-    }
-
-    get eventSource() {
-        return this._record.eventSource;
-    }
-
-    get sourceARN() {
-        return this._record.eventSourceARN;
-    }
-
-    get region() {
-        return this._record.awsRegion;
+    get id() {
+        return this.__record.messageId;
     }
 
     get isValid() {
@@ -62,6 +26,46 @@ class RecordClient {
 
     set isValid(isValid) {
         this.__isValid = isValid;
+    }
+
+    get md5() {
+        return this.__record.md5OfBody;
+    }
+
+    get messageAttributes() {
+        const attributes = {};
+        for (const attribute in this.__record.messageAttributes) {
+            attributes[attribute] = this.__record.messageAttributes[attribute].stringValue;
+        }
+        return attributes;
+    }
+
+    get operation() {
+        return 'create';
+    }
+
+    get receiptHandle() {
+        return this.__record.receiptHandle;
+    }
+
+    get raw() {
+        return this.__record.body;
+    }
+
+    get record() {
+        return this.__record;
+    }
+
+    get region() {
+        return this.__record.awsRegion;
+    }
+
+    get source() {
+        return this.__record.eventSource;
+    }
+
+    get sourceARN() {
+        return this.__record.eventSourceARN;
     }
 }
 

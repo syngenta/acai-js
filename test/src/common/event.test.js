@@ -13,7 +13,7 @@ describe('Test Generic Event with Basic Settings: src/common/event.js', () => {
         const ddbEvent = new DDBEvent(mockDDBData.getData(), {globalLogger: true});
         it('should return ddb object with region', () => {
             const {records} = ddbEvent;
-            assert.equal(records[0].awsRegion, 'us-east-1');
+            assert.equal(records[0].region, 'us-east-1');
         });
         it('should return all raw records', () => {
             assert.deepEqual(ddbEvent.rawRecords, mockDDBData.getData().Records);
@@ -47,7 +47,7 @@ describe('Test Generic Event with Basic Settings: src/common/event.js', () => {
         const s3Event = new S3Event(mockS3Data.getData(), {globalLogger: true});
         it('should return s3 record with region', () => {
             const {records} = s3Event;
-            assert.equal(records[0].awsRegion, 'us-east-1');
+            assert.equal(records[0].region, 'us-east-1');
         });
         it('should return all raw records', () => {
             assert.deepEqual(s3Event.rawRecords, mockS3Data.getData().Records);

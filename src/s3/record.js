@@ -1,7 +1,19 @@
 class RecordClient {
     constructor(record) {
-        this._record = record;
+        this.__record = record;
         this.__isValid = true;
+    }
+
+    get bucket() {
+        return this.__record.s3.bucket;
+    }
+
+    set body(body) {
+        this.__record.body = body;
+    }
+
+    get body() {
+        return this.__record.body;
     }
 
     get isValid() {
@@ -12,66 +24,58 @@ class RecordClient {
         this.__isValid = isValid;
     }
 
+    get id() {
+        return this.__record.s3.configurationId;
+    }
+
+    get key() {
+        return this.__record.s3.object.key;
+    }
+
+    get name() {
+        return this.__record.eventName;
+    }
+
+    get object() {
+        return this.__record.s3.object;
+    }
+
     get operation() {
-        if (this.eventName.includes('ObjectCreated')) {
+        if (this.name.includes('ObjectCreated')) {
             return 'create';
         }
-        if (this.eventName.includes('ObjectRemoved')) {
+        if (this.name.includes('ObjectRemoved')) {
             return 'delete';
         }
         return 'unknown';
     }
 
-    get eventName() {
-        return this._record.eventName;
+    get record() {
+        return this.__record;
     }
 
-    get eventSource() {
-        return this._record.eventSource;
+    get region() {
+        return this.__record.awsRegion;
     }
 
-    get eventTime() {
-        return this._record.eventTime;
+    get request() {
+        return this.__record.requestParameters;
     }
 
-    get awsRegion() {
-        return this._record.awsRegion;
+    get response() {
+        return this.__record.responseElements;
     }
 
-    get requestParameters() {
-        return this._record.requestParameters;
+    get source() {
+        return this.__record.eventSource;
     }
 
-    get responseElements() {
-        return this._record.responseElements;
+    get time() {
+        return this.__record.eventTime;
     }
 
-    get configurationId() {
-        return this._record.s3.configurationId;
-    }
-
-    get object() {
-        return this._record.s3.object;
-    }
-
-    get bucket() {
-        return this._record.s3.bucket;
-    }
-
-    get key() {
-        return this._record.s3.object.key;
-    }
-
-    get s3SchemaVersion() {
-        return this._record.s3.s3SchemaVersion;
-    }
-
-    set body(body) {
-        this._record.body = body;
-    }
-
-    get body() {
-        return this._record.body;
+    get version() {
+        return this.__record.s3.s3SchemaVersion;
     }
 }
 

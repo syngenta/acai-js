@@ -120,7 +120,7 @@ class Event {
             const s3 = new AWS.S3();
             const s3Records = [];
             for (const record of records) {
-                if (record.eventSource === 'aws:s3') {
+                if (record.source === 'aws:s3') {
                     const s3Object = await s3.getObject({Bucket: record.bucket.name, Key: record.key}).promise();
                     record.body = this.__isJSON ? JSON.parse(s3Object.Body.toString('utf-8')) : s3Object;
                     s3Records.push(record);
