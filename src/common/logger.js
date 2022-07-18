@@ -21,36 +21,26 @@ class Logger {
         global.logger = this;
     }
 
-    log(...logs) {
-        const normalized = this.__normalizeLogs(logs);
-        const log = this.__getLog(normalized.level, normalized.log);
-        this.__invokeConsoleMethod(log);
-        this.__invokeCallback(log);
+    log(log) {
+        const complete = this.__getLog(log.level, log.log);
+        this.__invokeConsoleMethod(complete);
+        this.__invokeCallback(complete);
     }
 
-    info(...logs) {
-        this.log({level: 'INFO', log: logs});
+    info(log) {
+        this.log({level: 'INFO', log: log});
     }
 
-    debug(...logs) {
-        this.log({level: 'DEBUG', log: logs});
+    debug(log) {
+        this.log({level: 'DEBUG', log: log});
     }
 
-    warn(...logs) {
-        this.log({level: 'WARN', log: logs});
+    warn(log) {
+        this.log({level: 'WARN', log: log});
     }
 
-    error(...logs) {
-        this.log({level: 'ERROR', log: logs});
-    }
-
-    __normalizeLogs(logs) {
-        if (logs && logs[0] && logs[0].level && logs[0].log) {
-            return logs[0];
-        }
-        if (!logs || !logs[0] || !logs[0].level || !logs[0].log) {
-            return {level: 'INFO', log: logs};
-        }
+    error(log) {
+        this.log({level: 'ERROR', log: log});
     }
 
     __getLog(level = 'INFO', logs = []) {
@@ -58,7 +48,7 @@ class Logger {
             level,
             time: new Date().toISOString(),
             stack: this.__getStack(),
-            log: logs.length > 1 ? logs : logs[0]
+            log: logs
         };
     }
 
