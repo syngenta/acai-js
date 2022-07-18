@@ -13,7 +13,7 @@ class Router {
         this.__withAuth = params.withAuth;
         this.__onError = params.onError;
         this.__autoValidate = params.autoValidate;
-        this.__schema = Schema.fromFilePath(params.schemaPath, params);
+        this.__schema = params.schemaPath ? Schema.fromFilePath(params.schemaPath, params) : {};
         this.__resolver = new RouteResolver(params);
         this.__validator = new Validator(this.__schema);
         this.__logger = new Logger({callback: params.loggerCallback});
