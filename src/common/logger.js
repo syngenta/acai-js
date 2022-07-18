@@ -43,18 +43,12 @@ class Logger {
         this.log({level: 'ERROR', log: log});
     }
 
-    __getLog(level = 'INFO', logs = []) {
+    __getLog(level = 'INFO', log = {}) {
         return {
             level,
             time: new Date().toISOString(),
-            stack: this.__getStack(),
-            log: logs
+            log
         };
-    }
-
-    __getStack() {
-        const stack = new Error().stack;
-        return stack.split('\n').filter((trace) => !trace.includes('Logger.'));
     }
 
     __shouldLog(level) {

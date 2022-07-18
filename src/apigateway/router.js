@@ -78,10 +78,10 @@ class Router {
         this.__logger.log({
             level: 'ERROR',
             log: {
-                message: error.message,
-                event: event,
+                event,
                 request: request.request,
-                response: response.response
+                response: response.response,
+                error: error && error.stack ? error.stack.split('\n').map((trace) => trace.replace('    ', '')) : error
             }
         });
     }
