@@ -1,8 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const ImportError = require('../import-manager/import-error');
+const Logger = require('../../common/logger.js');
 
 class ImportManager {
+    constructor() {
+        this.__logger = new Logger();
+    }
+
     cleanPath(dirtyPath) {
         if (dirtyPath.startsWith('/')) {
             dirtyPath = dirtyPath.substr(1);
@@ -67,6 +72,7 @@ class ImportManager {
         try {
             return require(path.join(process.cwd(), resolved));
         } catch (error) {
+            this.__logger.log({level: 'ERROR', log: error.stack.split('\n').map((trace) => trace.replace('    ', ''))});
             this.raiseRouterConfigError(`Import Error ${resolved}: ${error.message}`);
         }
     }

@@ -1,5 +1,4 @@
 const Logger = require('../common/logger');
-const LoggerSetup = require('../common/logger.js');
 const Request = require('./request');
 const RouteResolver = require('./resolver');
 const Response = require('./response');
