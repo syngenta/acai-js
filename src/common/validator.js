@@ -71,8 +71,8 @@ class Validator {
         });
     }
 
-    async __validateApigatewayBody(response, schema, body, code) {
-        const errors = await this.__schema.validate(schema, body);
+    async __validateApigatewayBody(response, requirement, sent, source, code) {
+        const errors = await this.__schema.validate(requirement, sent);
         if (errors) {
             response.code = code;
             errors.forEach((error) => {
