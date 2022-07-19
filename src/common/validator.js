@@ -7,7 +7,6 @@ class Validator {
             availableHeaders: {source: 'headers', method: '__validateAvailableFields', code: 400},
             requiredQuery: {source: 'queryParams', method: '__validateRequiredFields', code: 400},
             availableQuery: {source: 'queryParams', method: '__validateAvailableFields', code: 400},
-            requiredPath: {source: 'pathParams', method: '__validateRequiredpath', code: 400},
             requiredBody: {source: 'body', method: '__validateApigatewayBody', code: 400}
         };
     }
