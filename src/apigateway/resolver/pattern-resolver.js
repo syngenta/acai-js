@@ -45,9 +45,9 @@ class PatternResolver {
             const mvvm = `${patternBase}${currentPath}${requestPart}/${file}`;
             const directory = `${patternBase}${currentPath}${requestPart}`;
             this.__importer.validateFolderStructure(directory, mvc);
-            if (this.__importer.isFile(mvc)) {
+            if (this.__importer.isFile(mvc) && !splitRequest[index + 1]) {
                 pathParts.push(file);
-            } else if (this.__importer.isFile(mvvm)) {
+            } else if (this.__importer.isFile(mvvm) && !splitRequest[index + 1]) {
                 pathParts.push(requestPart);
                 pathParts.push(file);
             } else if (this.__importer.isDirectory(directory)) {

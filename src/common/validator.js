@@ -15,7 +15,7 @@ class Validator {
         const translatedRequest = {
             headers: request.headers,
             queryParameters: request.queryParams,
-            pathParameters: request.path,
+            pathParameters: request.pathParams,
             body: request.body
         };
         const route = !request.route.startsWith('/') ? `/${request.route}` : request.route;
