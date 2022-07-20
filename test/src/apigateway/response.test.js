@@ -116,7 +116,7 @@ describe('Test Response: src/apigateway/response.js', () => {
             const response = new Response();
             response.body = {'test': true};
             response.compress = true;
-            assert.equal(response.body, 'H4sIAAAAAAAAE6tWKkktLlGyKikqTa0FAENU4WoNAAAA');
+            assert.equal(response.body instanceof String, true);
         });
     });
 });
