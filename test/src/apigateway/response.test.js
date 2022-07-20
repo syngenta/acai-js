@@ -102,7 +102,7 @@ describe('Test Response: src/apigateway/response.js', () => {
             });
         });
     });
-    describe('test hasErrors', () => {
+    describe('test compress', () => {
         it('should start compress as false', () => {
             const response = new Response();
             assert.equal(response.compress, false);
@@ -112,11 +112,11 @@ describe('Test Response: src/apigateway/response.js', () => {
             response.compress = true;
             assert.equal(response.compress, true);
         });
-        it('should compress bodyKey', () => {
+        it('should compress body', () => {
             const response = new Response();
             response.body = {'test': true};
             response.compress = true;
-            assert.equal(response.body instanceof String, true);
+            assert.equal(typeof response.body == 'string', true);
         });
     });
 });
