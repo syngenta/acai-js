@@ -2,6 +2,7 @@ class Response {
     constructor() {
         this.__body = null;
         this.__code = 200;
+        this.__base64Encoded = false;
         this.__headers = {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': '*'
@@ -48,6 +49,7 @@ class Response {
 
     get response() {
         return {
+            isBase64Encoded: this.__base64Encoded,
             headers: this.headers,
             statusCode: this.code,
             body: this.body

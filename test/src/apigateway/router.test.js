@@ -15,6 +15,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -32,6 +33,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -49,6 +51,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -66,6 +69,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -88,6 +92,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -130,6 +135,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -147,6 +153,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -166,6 +173,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -184,6 +192,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -203,6 +212,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -221,6 +231,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -240,6 +251,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -260,6 +272,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -280,6 +293,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const results = await router.route(event);
             assert.deepEqual(results, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -348,6 +362,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const response = await router.route(event);
             assert.deepEqual(response, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -391,6 +406,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const response = await router.route(event);
             assert.deepEqual(response, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'

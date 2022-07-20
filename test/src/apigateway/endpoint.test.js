@@ -69,6 +69,7 @@ describe('Test Endpoint', () => {
         it('should have run correctly', async () => {
             await endpoint.run(request, response);
             assert.deepEqual(response.response, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'

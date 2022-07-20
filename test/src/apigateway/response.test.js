@@ -69,6 +69,7 @@ describe('Test Response: src/apigateway/response.js', () => {
             response.body = {bodyKey: 'body'};
             response.code = 200;
             assert.deepEqual(response.response, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
@@ -90,6 +91,7 @@ describe('Test Response: src/apigateway/response.js', () => {
         it('should have proper error signature', () => {
             response.setError('root', 'unit-test can set multiple errors');
             assert.deepEqual(response.response, {
+                isBase64Encoded: false,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Headers': '*'
