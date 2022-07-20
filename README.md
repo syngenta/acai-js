@@ -36,6 +36,12 @@ Installation is done using the
 $ npm install @syngenta-digital/alc
 ```
 
+## Documentation & Examples
+
+* [Full Docs](https://alc.syngenta-digital.com)
+* [Tutorial](https://alc.syngenta-digital.com)
+* [Examples](https://github.com/syngenta-digital/docs-markdown-alc/tree/main/examples/node)
+
 ## Testing
 
 ```bash
