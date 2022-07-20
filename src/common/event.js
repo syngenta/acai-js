@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const CSV = require('csv-parse/sync');
 const Logger = require('./logger.js');
 const DynamoDBRecord = require('../dynamodb/record');
 const Schema = require('./schema.js');
@@ -15,6 +16,8 @@ class Event {
         this.__dataClass = params.dataClass;
         this.__getObject = params.getObject;
         this.__isJSON = params.isJSON;
+        this.__isCSV = params.isCSV;
+        this.__csvParser = CSV.parse;
         this.__operations = params.operations || ['create', 'update', 'delete'];
         this.__validationError = params.validationError === undefined ? true : params.validationError;
         this.__operationError = params.operationError === undefined ? false : params.operationError;
@@ -122,7 +125,13 @@ class Event {
             for (const record of records) {
                 if (record.source === 'aws:s3') {
                     const s3Object = await s3.getObject({Bucket: record.bucket.name, Key: record.key}).promise();
-                    record.body = this.__isJSON ? JSON.parse(s3Object.Body.toString('utf-8')) : s3Object;
+                    if (this.__isJSON) {
+                        record.body = JSON.parse(s3Object.Body.toString('utf-8'));
+                    } else if (this.__isCSV) {
+                        record.body = this.__csvParser(s3Object.Body.toString('utf-8'), {columns: true, relax_quotes: true});
+                    } else {
+                        record.body = s3Object;
+                    }
                     s3Records.push(record);
                 }
             }

@@ -1,3 +1,5 @@
+const zlib = require('zlib');
+
 class Response {
     constructor() {
         this.__body = null;
@@ -15,6 +17,14 @@ class Response {
 
     set headers(headerObj) {
         this.__headers[headerObj.key] = headerObj.value;
+    }
+
+    get compress() {
+        return this.__base64Encoded;
+    }
+
+    set compress(base64Encoded) {
+        this.__base64Encoded = base64Encoded;
     }
 
     get code() {
@@ -37,6 +47,9 @@ class Response {
 
     get body() {
         try {
+            if (this.compress){
+                return this.__compressBody();
+            }
             return JSON.stringify(this.__body);
         } catch (error) {
             return this.__body;
@@ -70,6 +83,13 @@ class Response {
         } else {
             this.__body = {errors: [error]};
         }
+    }
+
+    __compressBody(){
+         const zipped = zlib.gzipSync(JSON.stringify(this.rawBody));
+         this.headers = {key: 'Content-Encoding', value: 'gzip'};
+         this.__base64Encoded = true;
+         return zipped.toString('base64');
     }
 }
 

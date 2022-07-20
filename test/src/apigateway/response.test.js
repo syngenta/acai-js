@@ -102,4 +102,21 @@ describe('Test Response: src/apigateway/response.js', () => {
             });
         });
     });
+    describe('test hasErrors', () => {
+        it('should start compress as false', () => {
+            const response = new Response();
+            assert.equal(response.compress, false);
+        });
+        it('should be mutable to change compress to true', () => {
+            const response = new Response();
+            response.compress = true;
+            assert.equal(response.compress, true);
+        });
+        it('should compress bodyKey', () => {
+            const response = new Response();
+            response.body = {'test': true};
+            response.compress = true;
+            assert.equal(response.body, 'H4sIAAAAAAAAE6tWKkktLlGyKikqTa0FAENU4WoNAAAA');
+        });
+    });
 });

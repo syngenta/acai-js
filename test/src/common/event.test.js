@@ -229,6 +229,7 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
             const s3Event = new S3Event(mockS3Data.getJsonData(), {getObject: true});
             const records = await s3Event.getRecords();
             assert.isTrue(records[0].body.Body instanceof Buffer);
+            AWS.restore('S3');
         });
         it('should get object and parse JSON when getObject and isJSON is activated', async () => {
             AWS.mock('S3', 'getObject', {
@@ -237,8 +238,21 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
             const s3Event = new S3Event(mockS3Data.getJsonData(), {getObject: true, isJSON: true});
             const records = await s3Event.getRecords();
             assert.deepEqual(records[0].body, {id: 'true'});
+            AWS.restore('S3');
+        });
+        it('should get object and parse CSV when getObject and isCSV is activated', async () => {
+            AWS.mock('S3', 'getObject', {
+                Body: Buffer.from(require('fs').readFileSync('./test/mocks/s3/mock-object.csv'))
+            });
+            const s3Event = new S3Event(mockS3Data.getCsvData(), {getObject: true, isCSV: true});
+            const records = await s3Event.getRecords();
+            assert.deepEqual(records[0].body, [{Key: '1', Value: 'Value 1'}]);
+            AWS.restore('S3');
         });
         it('should run s3 event when combined with all advance settings', async () => {
+            AWS.mock('S3', 'getObject', {
+                Body: Buffer.from(require('fs').readFileSync('./test/mocks/s3/mock-object.json'))
+            });
             const s3Event = new S3Event(mockS3Data.getJsonData(), {
                 getObject: true,
                 isJSON: true,
@@ -248,8 +262,12 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
             });
             const records = await s3Event.getRecords();
             assert.isTrue(records[0] instanceof DataClass);
+            AWS.restore('S3');
         });
         it('should throw error with s3 event when combined with all advance settings and invalid s3 body', async () => {
+            AWS.mock('S3', 'getObject', {
+                Body: Buffer.from(require('fs').readFileSync('./test/mocks/s3/mock-object.json'))
+            });
             const s3Event = new S3Event(mockS3Data.getJsonData(), {
                 getObject: true,
                 isJSON: true,
@@ -261,6 +279,7 @@ describe('Test Generic Event with Advance Settings: src/common/event.js', () => 
             } catch (error) {
                 assert.equal(error.message, '[{"path":"/id","message":"must be number"}]');
             }
+            AWS.restore('S3');
         });
         it('should ignore error with validationError as false', async () => {
             const requiredBody = {
