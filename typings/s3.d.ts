@@ -21,14 +21,7 @@ export namespace s3 {
 
     export class Event {
         constructor(event: S3Event, params?: {globalLogger: boolean})
-
-        /**
-         * just the raw record from the original request
-         */
         rawRecords: S3Event['Records'];
-        /**
-         * list of record objects
-         */
         records: Record[];
     }
 }

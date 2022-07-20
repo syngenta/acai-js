@@ -1,0 +1,350 @@
+openapi: 3.1.0
+info:
+    title: index
+    version: '1.0'
+servers:
+    - url: 'http://localhost:3000'
+tags:
+    -
+        name: unit-test
+paths:
+    /unit-test/v1/schema:
+        get:
+            tags:
+                - unit-test
+            operationId: GetSchema
+            deprecated: false
+            parameters:
+                -   in: query
+                    name: test_id
+                    required: false
+                    schema:
+                        type: string
+                -   in: query
+                    name: unit_id
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+        post:
+            tags:
+                - unit-test
+            operationId: PostSchema
+            deprecated: false
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-post-request-test'
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+        patch:
+            tags:
+                - unit-test
+            operationId: PostSchema
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: key
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: unit_id
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-patch-request-test'
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+    /unit-test/v1/schema/{test_id}:
+        put:
+            tags:
+                - unit-test
+            operationId: PutSchemaWithId
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-test-reference-model'
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+    /unit-test/v1/auto:
+        post:
+            tags:
+                - unit-test
+            operationId: PostAuto
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-test-reference-model'
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+    /unit-test/v1/auto/{id}:
+        get:
+            tags:
+                - unit-test
+            operationId: GetAuto
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+        put:
+            tags:
+                - unit-test
+            operationId: PutAuto
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-test-reference-model'
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+        delete:
+            tags:
+                - unit-test
+            operationId: GetAuto
+            deprecated: false
+            parameters:
+                -   in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: operation
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-required-response'
+components:
+    schemas:
+        v1-test-reference-model:
+            type: object
+            properties:
+                test_id:
+                    type: string
+                object_key:
+                    type: object
+                    properties:
+                        string_key:
+                            type: string
+                array_number:
+                    type: array
+                    items:
+                        type: number
+                array_objects:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            array_string_key:
+                                type: string
+                            array_number_key:
+                                type: number
+                fail_id:
+                    type: string
+        v1-test-request:
+            allOf:
+                - $ref: '#/components/schemas/v1-test-reference-model'
+                - required:
+                    - test_id
+                    - object_key
+                    - array_number
+                    - array_objects
+        v1-test-fail-request:
+            allOf:
+                - $ref: '#/components/schemas/v1-test-reference-model'
+                - required:
+                    - test_id
+                    - object_key
+                    - array_number
+                    - array_objects
+                    - fail_id
+        v1-test-nullable-field:
+            type: object
+            required:
+                - nullable_field
+                - non_nullable_field
+            properties:
+                nullable_field:
+                    type: string
+                    nullable: true
+                non_nullable_field:
+                    type: string
+        v1-required-response:
+            $ref: '#/components/schemas/v1-response-test-all-of'
+        v1-response-test-all-of:
+            allOf:
+                - $ref: '#/components/schemas/v1-response-page'
+                -
+                    type: object
+                    required:
+                        - data
+                    properties:
+                        data:
+                            $ref: '#/components/schemas/v1-response-result'
+        v1-post-request-test:
+            type: object
+            required:
+                - name
+                - email
+                - phone
+                - active
+            properties:
+                name:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: number
+                active:
+                    type: boolean
+        v1-patch-request-test:
+            type: object
+            required:
+                - test_id
+            properties:
+                test_id:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
+                phone:
+                    type: number
+                active:
+                    type: boolean
+        v1-response-page:
+            type: object
+            properties:
+                page_number:
+                    type: number
+            required:
+                - page_number
+        v1-response-result:
+            type: object
+            required:
+                - id
+            properties:
+                id:
+                    type: string
+        v1-response-fail:
+            type: object
+            required:
+                - id
+            properties:
+                id:
+                    type: number
+        v1-ddb-record:
+            type: object
+            required:
+                - example_id
+                - note
+                - active
+                - personal
+                - transportation
+            properties:
+                example_id:
+                    type: string
+                note:
+                    type: string
+                active:
+                    type: boolean
+                personal:
+                    type: object
+                    properties:
+                        gender:
+                            type: string
+                        last_name:
+                            type: string
+                        first_name:
+                            type: string
+                transportation:
+                    type: array
+        v1-ddb-record-fail:
+            type: object
+            required:
+                - example_id
+                - note
+                - active
+                - transportation
+            properties:
+                example_id:
+                    type: string
+                note:
+                    type: string
+                active:
+                    type: number
+                transportation:
+                    type: array

@@ -1,154 +1,89 @@
 class Logger {
-    constructor() {
-        this._startTime = new Date();
-        this.minLevel = process.env.MIN_LOG_LEVEL || 'INFO';
-        this._methodMap = {
-            INFO: console.info,
-            WARN: console.warn,
-            ERROR: console.error
-        };
-        this._logLevelMap = {
+    constructor(params = {}) {
+        this.__callback = params.callback;
+        this.__minLevel = process.env.MIN_LOG_LEVEL || 'INFO';
+        this.__logLevels = {
             INFO: 1,
+            DEBUG: 1,
             WARN: 2,
-            ERROR: 3
+            ERROR: 3,
+            OFF: 4
         };
     }
 
-    _calcTime() {
-        const endTime = new Date();
-        return endTime - this._startTime;
+    static setUpGlobal(setup = true, params = {}) {
+        if (!global.logger && setup) {
+            new Logger(params).setUp();
+        }
     }
 
-    _getStackSafely(stack) {
-        const errorStack = [];
-        for (const errorString of stack.split('\n')) {
-            if (errorString !== 'Error') {
-                errorStack.push(errorString.replace('at', '').trim());
+    setUp() {
+        global.logger = this;
+    }
+
+    log(log) {
+        const complete = this.__getLog(log.level, log.log);
+        this.__invokeConsoleMethod(complete);
+        this.__invokeCallback(complete);
+    }
+
+    info(log) {
+        this.log({level: 'INFO', log: log});
+    }
+
+    debug(log) {
+        this.log({level: 'DEBUG', log: log});
+    }
+
+    warn(log) {
+        this.log({level: 'WARN', log: log});
+    }
+
+    error(log) {
+        this.log({level: 'ERROR', log: log});
+    }
+
+    __getLog(level = 'INFO', log = {}) {
+        return {
+            level,
+            time: new Date().toISOString(),
+            log
+        };
+    }
+
+    __shouldLog(level) {
+        try {
+            if (!(level in this.__logLevels)) {
+                throw new Error(`log level must be one of 4: INFO, DEBUG, WARN, ERROR | provided: ${level}`);
+            }
+            if (!(this.__minLevel in this.__logLevels)) {
+                throw new Error(
+                    `MIN_LOG_LEVEL must be one of 4: INFO, DEBUG, WARN, ERROR, OFF | provided: ${this.__minLevel};`
+                );
+            }
+            const logLevel = isNaN(level) ? this.__logLevels[level] : level;
+            const systemLevel = isNaN(this.__minLevel) ? this.__logLevels[this.__minLevel] : this.__minLevel;
+            return logLevel >= parseInt(systemLevel, 10);
+        } catch (error) {
+            console.log(error.message);
+            return true;
+        }
+    }
+
+    __invokeConsoleMethod(log) {
+        if (this.__shouldLog(log.level)) {
+            console.log(JSON.stringify(log, null, 4));
+        }
+    }
+
+    __invokeCallback(log) {
+        if (this.__callback && typeof this.__callback === 'function') {
+            try {
+                this.__callback(log);
+            } catch (error) {
+                console.log(`error with call back: ${error.message}`);
             }
         }
-        return errorStack;
-    }
-
-    _shouldLog(level) {
-        if (process.env.UNIT_TEST) {
-            return false;
-        }
-        level = isNaN(level) ? this._logLevelMap[level] : level;
-        this.minLevel = isNaN(this.minLevel) ? this._logLevelMap[this.minLevel] : this.minLevel;
-        return level >= parseInt(this.minLevel, 10);
-    }
-
-    _logToConsole(level, stack, args = []) {
-        if (this._shouldLog(level)) {
-            this._methodMap[level](
-                JSON.stringify(
-                    {
-                        level,
-                        time: this._calcTime(),
-                        stack: this._getStackSafely(stack),
-                        log: args
-                    },
-                    null,
-                    4
-                )
-            );
-        }
-    }
-
-    info(...args) {
-        const {stack} = new Error();
-        this._logToConsole('INFO', stack.toString(), args);
-    }
-
-    log(...args) {
-        const {stack} = new Error();
-        this._logToConsole('INFO', stack.toString(), args);
-    }
-
-    warn(...args) {
-        const {stack} = new Error();
-        this._logToConsole('WARN', stack.toString(), args);
-    }
-
-    error(...args) {
-        const {stack} = new Error();
-        this._logToConsole('ERROR', stack.toString(), args);
-    }
-
-    dir(...args) {
-        console.dir(args);
-    }
-
-    time(...args) {
-        console.time(args);
-    }
-
-    timeEnd(...args) {
-        console.timeEnd(args);
-    }
-
-    timeLog(...args) {
-        console.timeLog(args);
-    }
-
-    trace(...args) {
-        console.trace(args);
-    }
-
-    clear(...args) {
-        console.clear(args);
-    }
-
-    count(...args) {
-        console.count(args);
-    }
-
-    countReset(...args) {
-        console.countReset(args);
-    }
-
-    group(...args) {
-        console.group(args);
-    }
-
-    groupEnd(...args) {
-        console.groupEnd(args);
-    }
-
-    table(...args) {
-        console.table(args);
-    }
-
-    debug(...args) {
-        console.debug(args);
-    }
-
-    dirxml(...args) {
-        console.dirxml(args);
-    }
-
-    groupCollapsed(...args) {
-        console.groupCollapsed(args);
-    }
-
-    Console(...args) {
-        console.Console(args);
-    }
-
-    profile(...args) {
-        console.profile(args);
-    }
-
-    profileEnd(...args) {
-        console.profileEnd(args);
-    }
-
-    timeStamp(...args) {
-        console.timeStamp(args);
-    }
-
-    context(...args) {
-        console.context(args);
     }
 }
 
