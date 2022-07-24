@@ -81,6 +81,7 @@ class Request {
             });
             return result;
         } catch (error) {
+            console.error(error);
             return this.__event.body;
         }
     }
@@ -91,6 +92,7 @@ class Request {
             const parser = this.__bodyParsers[type] ? this.__bodyParsers[type] : 'raw';
             return this[parser];
         } catch (error) {
+            console.error(error);
             return this.__event.body;
         }
     }

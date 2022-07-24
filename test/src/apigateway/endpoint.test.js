@@ -21,7 +21,6 @@ describe('Test Endpoint', () => {
         });
         it('sholud not have a data class', async () => {
             assert.equal(endpoint.hasDataClass, false);
-            assert.deepEqual(endpoint.dataClass(), {});
         });
     });
     describe('test advance endpoint properties', () => {

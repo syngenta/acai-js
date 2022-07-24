@@ -52,6 +52,7 @@ class Response {
             }
             return JSON.stringify(this.__body);
         } catch (error) {
+            console.error(error);
             return this.__body;
         }
     }

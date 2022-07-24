@@ -17,7 +17,7 @@ class Router {
         this.__validator = new Validator(this.__schema);
         this.__logger = new Logger({callback: params.loggerCallback});
         if (params.globalLogger) {
-            this.__logger.setUp();
+            this.__logger.setUp({callback: params.loggerCallback});
         }
     }
 
@@ -63,11 +63,11 @@ class Router {
     }
 
     async __handleError(event, request, response, error) {
+        this.__logError(event, request, response, error);
         if (typeof this.__onError === 'function') {
             this.__onError(request, response, error);
             return response;
         }
-        this.__logError(event, request, response, error);
         response.code = 500;
         response.setError('server', 'internal server error');
         return response;

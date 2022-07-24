@@ -48,10 +48,7 @@ class Endpoint {
     }
 
     dataClass(request) {
-        if (this.hasDataClass) {
-            return new this.requirements.dataClass(request);
-        }
-        return {};
+        return new this.requirements.dataClass(request);
     }
 
     async run(request, response) {

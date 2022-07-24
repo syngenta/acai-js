@@ -127,7 +127,7 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
             } catch (error) {
                 assert.equal(error.code, 500);
                 assert.equal(error.key, 'router-config');
-                assert.equal(error.message, 'cant have path parameter file & directory in the same directory');
+                assert.equal(error.message, 'can not have path parameter file & directory in the same directory');
             }
         });
     });

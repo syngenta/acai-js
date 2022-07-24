@@ -55,11 +55,7 @@ class ImportManager {
 
     validatePathParameterResource(resources) {
         if (resources.length > 1) {
-            throw new ImportError(
-                500,
-                'router-config',
-                'cant have path parameter file & directory in the same directory'
-            );
+            throw new ImportError(500, 'router-config', 'can not have path parameter file & directory in the same directory');
         }
     }
 
