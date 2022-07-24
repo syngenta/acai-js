@@ -57,9 +57,7 @@ class Logger {
                 throw new Error(`log level must be one of 4: INFO, DEBUG, WARN, ERROR | provided: ${level}`);
             }
             if (!(this.__minLevel in this.__logLevels)) {
-                throw new Error(
-                    `MIN_LOG_LEVEL must be one of 4: INFO, DEBUG, WARN, ERROR, OFF | provided: ${this.__minLevel};`
-                );
+                throw new Error(`MIN_LOG_LEVEL must be one of 4: INFO, DEBUG, WARN, ERROR, OFF | provided: ${this.__minLevel};`);
             }
             const logLevel = isNaN(level) ? this.__logLevels[level] : level;
             const systemLevel = isNaN(this.__minLevel) ? this.__logLevels[this.__minLevel] : this.__minLevel;

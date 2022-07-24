@@ -92,9 +92,7 @@ class Event {
             if (this.__operations.includes(record.operation)) {
                 operationRecords.push(record);
             } else if (this.__operationError) {
-                throw new Error(
-                    `record is operation: ${record.operation}; only allowed ${this.__operations.join(',')}`
-                );
+                throw new Error(`record is operation: ${record.operation}; only allowed ${this.__operations.join(',')}`);
             }
         }
         return operationRecords;

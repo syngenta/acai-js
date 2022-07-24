@@ -16,9 +16,7 @@ class RecordClient {
     }
 
     get expired() {
-        return Boolean(
-            this.__record.userIdentity && this.__record.userIdentity.type && this.__record.userIdentity.principalId
-        );
+        return Boolean(this.__record.userIdentity && this.__record.userIdentity.type && this.__record.userIdentity.principalId);
     }
 
     get id() {
