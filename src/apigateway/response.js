@@ -47,7 +47,7 @@ class Response {
 
     get body() {
         try {
-            if (this.compress){
+            if (this.compress) {
                 return this.__compressBody();
             }
             return JSON.stringify(this.__body);
@@ -86,11 +86,11 @@ class Response {
         }
     }
 
-    __compressBody(){
-         const zipped = zlib.gzipSync(JSON.stringify(this.rawBody));
-         this.headers = {key: 'Content-Encoding', value: 'gzip'};
-         this.__base64Encoded = true;
-         return zipped.toString('base64');
+    __compressBody() {
+        const zipped = zlib.gzipSync(JSON.stringify(this.rawBody));
+        this.headers = {key: 'Content-Encoding', value: 'gzip'};
+        this.__base64Encoded = true;
+        return zipped.toString('base64');
     }
 }
 

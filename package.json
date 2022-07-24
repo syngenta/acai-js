@@ -72,7 +72,7 @@
                 "warn",
                 {
                     "trailingComma": "none",
-                    "printWidth": 120,
+                    "printWidth": 140,
                     "tabWidth": 4,
                     "singleQuote": true,
                     "bracketSpacing": false,
