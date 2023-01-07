@@ -21,7 +21,7 @@
     },
     "dependencies": {
         "@apideck/reva": "^0.2.0",
-        "ajv": "8.11.2",
+        "ajv": "8.12.0",
         "aws-lambda": "^1.0.7",
         "aws-sdk": "2.1265.0",
         "csv-parse": "^5.3.3",
