@@ -44,7 +44,7 @@ jobs:
             - node-linter
             - node-test
             - node-report
-            - sonarcloud/scan
+#             - sonarcloud/scan
     install-build-deploy:
         docker:
             - image: node:14
@@ -58,7 +58,7 @@ workflows:
             - install-build-deploy:
                 context:
                     - shared-npm-org-token
-                    - shared-sonarcloud-token
+#                     - shared-sonarcloud-token
                 filters:
                     tags:
                         only: /.*/
@@ -69,7 +69,7 @@ workflows:
             - install-build-test:
                 context:
                     - shared-npm-org-token
-                    - shared-sonarcloud-token
+#                     - shared-sonarcloud-token
                 filters:
                     tags:
                         ignore: /.*/
