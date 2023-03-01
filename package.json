@@ -20,7 +20,7 @@
         "lint": "eslint src/**"
     },
     "dependencies": {
-        "@apideck/reva": "^0.2.0",
+        "@apideck/reva": "^0.2.1",
         "ajv": "8.12.0",
         "aws-lambda": "^1.0.7",
         "aws-sdk": "2.1315.0",
