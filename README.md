@@ -38,9 +38,10 @@ $ npm install @syngenta-digital/alc
 
 ## Documentation & Examples
 
-* [Full Docs](https://alc.syngenta-digital.com)
-* [Tutorial](https://alc.syngenta-digital.com)
-* [Examples](https://github.com/syngenta-digital/docs-markdown-alc/tree/main/examples/node)
+
+* [Full Docs](https://syngenta.github.io/acai-js-docs/)
+* [Tutorial](https://syngenta.github.io/acai-js-docs/)
+* [Examples](https://github.com/syngenta/acai-js-docs/blob/main/examples/node)
 
 ## Testing
 
