@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-    sonarcloud: sonarsource/sonarcloud@1.0.2
 commands:
     node-install:
         steps:
@@ -44,7 +42,6 @@ jobs:
             - node-linter
             - node-test
             - node-report
-#             - sonarcloud/scan
     install-build-deploy:
         docker:
             - image: node:14
@@ -53,23 +50,17 @@ jobs:
             - node-install
             - npm-deploy
 workflows:
-    install-build-deploy:
+    install-build-deploy-workflow:
         jobs:
             - install-build-deploy:
-                context:
-                    - shared-npm-org-token
-#                     - shared-sonarcloud-token
                 filters:
                     tags:
                         only: /.*/
                     branches:
                         ignore: /.*/
-    install-build-test:
+    install-build-test-workflow:
         jobs:
             - install-build-test:
-                context:
-                    - shared-npm-org-token
-#                     - shared-sonarcloud-token
                 filters:
                     tags:
                         ignore: /.*/
