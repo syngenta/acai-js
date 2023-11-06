@@ -210,7 +210,7 @@ describe('Test Validator', () => {
             } catch (error) {
                 assert.equal(
                     error.message,
-                    "problem with importing your schema for get::/fail/v1/schema/{fail}: TypeError: Cannot read property 'get' of undefined"
+                    "problem with importing your schema for get::/fail/v1/schema/{fail}: TypeError: Cannot read properties of undefined (reading 'get')"
                 );
             }
         });
