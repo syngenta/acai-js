@@ -192,10 +192,7 @@ describe('Test Validator', () => {
                 await validator.validateWithOpenAPI(request, response);
                 assert.equal(true, false);
             } catch (error) {
-                assert.equal(
-                    error.message,
-                    'problem with importing your schema for get::/unit-test/v1/schema/{test_id}: Error'
-                );
+                assert.equal(error.message, 'problem with importing your schema for get::/unit-test/v1/schema/{test_id}: Error');
             }
         });
         it('should throw error when cant find operation schema bad route', async () => {
