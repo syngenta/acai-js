@@ -1,17 +1,17 @@
 {
-    "name": "@syngenta-digital/alc",
-    "author": "Paul Cruse, Engineering Lead, Syngenta Digital, USCO",
+    "name": "acai",
+    "author": "Paul Cruse III",
     "main": "src/index.js",
     "types": "typings/index.d.ts",
-    "version": "2.0.0-beta.2.3",
+    "version": "2.0.0",
     "license": "Apache-2.0",
-    "homepage": "https://alc.syngenta-digital.com/node/install/",
+    "homepage": "https://syngenta.github.io/acai-js-docs/",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/syngenta-digital/package-node-alc.git"
+        "url": "git+https://github.com/syngenta/acai-js.git"
     },
     "bugs": {
-        "url": "https://github.com/syngenta-digital/package-node-alc/issues"
+        "url": "https://github.com/syngenta/acai-js/issues"
     },
     "scripts": {
         "ts": "MIN_LOG_LEVEL=OFF mocha test/src/common/event.test.js",
@@ -23,12 +23,12 @@
         "@apideck/reva": "^0.2.0",
         "ajv": "8.12.0",
         "aws-lambda": "^1.0.7",
-        "aws-sdk": "2.1315.0",
+        "aws-sdk": "^2.1489.0",
         "csv-parse": "^5.3.4",
         "js-yaml": "4.1.0",
         "json-schema-merge-allof": "^0.8.1",
         "json-schema-ref-parser": "9.0.9",
-        "xml2js": "0.4.23"
+        "xml2js": "^0.6.2"
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.93",

@@ -1,4 +1,4 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=syngenta-digital_alc-node&metric=alert_status)](https://sonarcloud.io/dashboard?id=syngenta-digital_alc-node) [![CircleCI](https://circleci.com/gh/syngenta/acai-js.svg?style=shield)](https://circleci.com/gh/syngenta/acai-js)
+[![CircleCI](https://circleci.com/gh/syngenta/acai-js.svg?style=shield)](https://circleci.com/gh/syngenta/acai-js)
 
 # Acai
 DRY, configurable, declarative node library for working with Amazon Web Service Lambdas.
