@@ -1,4 +1,4 @@
-# AWS Lambda Client (alc)
+# Acai (acai)
 Auto-loading, self-validating, minimalist node framework for Amazon Web Service Lambdas
 
 ## Features
@@ -10,9 +10,9 @@ Auto-loading, self-validating, minimalist node framework for Amazon Web Service 
 
 ## Philosophy
 
-The alc philosophy is to provide a self evident tool for use with the amazon lambdas.
+The acai philosophy is to provide a self evident tool for use with the amazon lambdas.
 
-The alc encourages you to use small, internally routed API lambdas in a normalized OOP way.
+The acai encourages you to use small, internally routed API lambdas in a normalized OOP way.
 
 In addition, it makes this like routing and validating API requests less cumbersome and time consuming.   
 
@@ -31,12 +31,12 @@ Installation is done using the
 [`npm install`](https://docs.npmjs.com/getting-started/installing-npm-packages-locally) command:
 
 ```bash
-$ npm install @syngenta-digital/alc
+$ npm install @syngenta-digital/acai
 ```
 
 ## Basic Usage
 
-Use alc to normalize your interactions with common events passed to AWS Lambdas and work with the events in a more OO way.
+Use acai to normalize your interactions with common events passed to AWS Lambdas and work with the events in a more OO way.
 
 ### API Gateway Events
 
@@ -60,11 +60,11 @@ functions:
 1. Initialize the Router
 
 ```javascript
-const {Router} = require('@syngenta-digital/alc').apigateway;
+const {Router} = require('@syngenta-digital/acai').apigateway;
 exports.route = async (event) => {
     const router = new Router({
         event: event,
-        basePath: 'alc-example/v1',
+        basePath: 'acai-example/v1',
         handlerPath: 'application/v1/handler/apigateway',
         schemaPath: 'application/openapi.yml'
     });
@@ -190,7 +190,7 @@ functions:
 1. Initialize the Event and Iterate over the Records
 
 ```javascript
-const EventClient = require('@syngenta-digital/alc').sqs.Event;
+const EventClient = require('@syngenta-digital/acai').sqs.Event;
 
 exports.listen = async (event) => {
     const eventClient = new EventClient(event);
@@ -241,7 +241,7 @@ functions:
 1. Initialize the Event and Iterate over the Records
 
 ```javascript
-const EventClient = require('@syngenta-digital/alc').dynamodb.Event;
+const EventClient = require('@syngenta-digital/acai').dynamodb.Event;
 
 exports.stream = async (event) => {
     const eventClient = new EventClient(event);
@@ -292,7 +292,7 @@ functions:
 1. Initialize the Event and Iterate over the Records
 
 ```javascript
-const EventClient = require('@syngenta-digital/alc').s3.Event;
+const EventClient = require('@syngenta-digital/acai').s3.Event;
 
 exports.handle = async (event) => {
     const eventClient = new EventClient(event);
