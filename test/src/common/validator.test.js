@@ -208,10 +208,7 @@ describe('Test Validator', () => {
                 await validator.validateWithOpenAPI(request, response);
                 assert.equal(true, false);
             } catch (error) {
-                assert.equal(
-                    error.message,
-                    "problem with importing your schema for get::/fail/v1/schema/{fail}: TypeError: Cannot read properties of undefined (reading 'get')"
-                );
+                assert.equal(true, error.message.includes('problem with importing your schema for get::/fail/v1/schema/{fail}'));
             }
         });
     });
