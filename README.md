@@ -33,7 +33,7 @@ Installation is done using the
 [`npm install`](https://docs.npmjs.com/getting-started/installing-npm-packages-locally) command:
 
 ```bash
-$ npm install acai-js
+$ npm install acai
 ```
 
 ## Documentation & Examples
