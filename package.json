@@ -1,19 +1,18 @@
 {
-    "name": "@syngenta-digital/alc",
-    "author": "Paul Cruse, Engineering Lead, Syngenta Digital, USCO",
+    "name": "acai",
+    "author": "Paul Cruse III",
     "main": "src/index.js",
     "types": "typings/index.d.ts",
-    "version": "2.0.0-beta.2.3",
+    "version": "2.0.0",
     "license": "Apache-2.0",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/syngenta-digital/package-node-alc.git"
+        "url": "git+https://github.com/syngenta/acai-js.git"
     },
     "bugs": {
-        "url": "https://github.com/syngenta-digital/package-node-alc/issues"
+        "url": "https://github.com/syngenta/acai-js/issues"
     },
     "scripts": {
-        "ts": "MIN_LOG_LEVEL=OFF mocha test/src/common/event.test.js",
         "test": "MIN_LOG_LEVEL=OFF nyc mocha test/**/**.test.js",
         "report": "MIN_LOG_LEVEL=OFF nyc report --reporter=lcov",
         "lint": "eslint src/**"
