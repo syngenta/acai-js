@@ -14,12 +14,14 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
             const mock = mockData.getApiGateWayRoute();
             const request = new Request(mock);
             const result = resolver.resolve(request);
+            resolver.reset();
             assert.isTrue(typeof result.post === 'function');
         });
         it('should find the file with nested structure', () => {
             const mock = mockData.getApiGateWayCustomRoute('nested-1/nested-2/basic');
             const request = new Request(mock);
             const result = resolver.resolve(request);
+            resolver.reset();
             assert.isTrue(typeof result.post === 'function');
         });
         it('should not find the file', () => {
@@ -29,6 +31,7 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
                 resolver.resolve(request);
                 assert.isFalse(true);
             } catch (error) {
+                resolver.reset();
                 assert.equal(error.code, 404);
                 assert.equal(error.key, 'url');
                 assert.equal(error.message, 'endpoint not found');
@@ -38,6 +41,7 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
             const mock = mockData.getApiGateWayCustomRoute('directory');
             const request = new Request(mock);
             const result = resolver.resolve(request);
+            resolver.reset();
             assert.isTrue(typeof result.get === 'function');
         });
     });
@@ -53,6 +57,7 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
                 resolver.resolve(request);
                 assert.isTrue(false);
             } catch (error) {
+                resolver.reset();
                 assert.isTrue(error.message.includes('Cannot have two dynamic files or directories in the same directory.'));
             }
         });
@@ -67,6 +72,7 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
                 resolver.resolve(request);
                 assert.isTrue(false);
             } catch (error) {
+                resolver.reset();
                 assert.isTrue(error.message.includes('Cannot have file and directory share same name.'));
             }
         });

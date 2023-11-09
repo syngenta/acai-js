@@ -15,9 +15,8 @@ class DirectoryResolver {
         const cleanedPaths = this.__getFilePaths(request);
         const fileTree = this.__importer.getFileTree();
         const endpointPath = this.__getEndpointPath(fileTree, cleanedPaths);
-        const module = this.__importer.importModuleFromPath(endpointPath);
-        this.reset();
-        return module;
+        const resolvedPath = this.__importer.importModuleFromPath(endpointPath);
+        return resolvedPath;
     }
 
     reset() {
