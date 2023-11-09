@@ -26,7 +26,6 @@ class RouteResolver {
             if (typeof endpointModule[request.method] !== 'function') {
                 this.__importer.raise403();
             }
-            resolver.reset();
             return new Endpoint(endpointModule, request.method);
         } catch (error) {
             response.code = error.code;

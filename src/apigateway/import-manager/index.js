@@ -20,12 +20,8 @@ class ImportManager {
         this.__handlers = handlers;
     }
 
-    appendImportPath(importPath) {
-        this.__importPath.push(importPath);
-    }
-
-    getImportPath() {
-        return this.__importPath.join(this.fileSeparator);
+    getImportPath(importSections) {
+        return importSections.join(this.fileSeparator);
     }
 
     cleanPath(dirtyPath) {
@@ -44,11 +40,6 @@ class ImportManager {
             this.__logger.log({level: 'ERROR', log: error.stack.split('\n').map((trace) => trace.replace('    ', ''))});
             this.raiseRouterConfigError(`Import Error ${resolved}: ${error.message}`);
         }
-    }
-
-    reset() {
-        this.__handlers = null;
-        this.__importPath = [];
     }
 
     raise403() {

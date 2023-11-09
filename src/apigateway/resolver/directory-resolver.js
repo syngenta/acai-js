@@ -6,12 +6,13 @@ class DirectoryResolver {
         this.__sep = importer.fileSeparator;
         this.__basePath = params.basePath;
         this.__handlerPath = params.handlerPath;
-        this.hasPathParams = false;
+        this.importParts = [];
         this.pathParams = [];
+        this.hasPathParams = false;
     }
 
     resolve(request) {
-        this.__importer.setHandlers(this.__handlerPath);
+        this.reset();
         const cleanedPaths = this.__getFilePaths(request);
         const fileTree = this.__importer.getFileTree();
         const endpointPath = this.__getEndpointPath(fileTree, cleanedPaths);
@@ -20,9 +21,10 @@ class DirectoryResolver {
     }
 
     reset() {
-        this.hasPathParams = false;
+        this.__importer.setHandlers(this.__handlerPath);
+        this.importParts = [];
         this.pathParams = [];
-        this.__importer.reset();
+        this.hasPathParams = false;
     }
 
     __getFilePaths(request) {
@@ -35,7 +37,7 @@ class DirectoryResolver {
 
     __getEndpointPath(fileTree, {handlerFilePrefix, requestedFilePath}) {
         this.__findRequestedFileWithinFileTree(fileTree, requestedFilePath.split(this.__sep), 0);
-        const importFilePath = this.__importer.getImportPath();
+        const importFilePath = this.__importer.getImportPath(this.importParts);
         const endpointPath = `${handlerFilePrefix}/${importFilePath}`;
         return endpointPath;
     }
@@ -48,7 +50,7 @@ class DirectoryResolver {
             if (possibleDir in fileTree) {
                 this.__handleDirectoryPath(fileTree, possibleDir, splitRequest, index);
             } else if (possibleFile in fileTree) {
-                this.__importer.appendImportPath(possibleFile);
+                this.importParts.push(possibleFile);
             } else if ('__dynamicPath' in fileTree && fileTree['__dynamicPath'].size > 0) {
                 this.__handleDynamicPath(fileTree, splitRequest, index);
             } else {
@@ -58,9 +60,9 @@ class DirectoryResolver {
     }
 
     __handleDirectoryPath(fileTree, possibleDir, splitRequest, index) {
-        this.__importer.appendImportPath(possibleDir);
+        this.importParts.push(possibleDir);
         if (index + 1 === splitRequest.length) {
-            this.__importer.appendImportPath('index.js');
+            this.importParts.push('index.js');
         } else {
             this.__findRequestedFileWithinFileTree(fileTree[possibleDir], splitRequest, index + 1);
         }
@@ -68,11 +70,11 @@ class DirectoryResolver {
 
     __handleDynamicPath(fileTree, splitRequest, index) {
         const [part] = fileTree['__dynamicPath'];
-        this.__importer.appendImportPath(part);
+        this.importParts.push(part);
         this.hasPathParams = true;
         this.pathParams[index] = splitRequest[index];
         if (!part.includes('.js') && index + 1 === splitRequest.length) {
-            this.__importer.appendImportPath('index.js');
+            this.importParts.push('index.js');
         } else if (!part.includes('.js')) {
             this.__findRequestedFileWithinFileTree(fileTree[part], splitRequest, index + 1);
         }
