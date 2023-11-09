@@ -6,9 +6,9 @@ const PatternResolver = require('./pattern-resolver');
 
 class RouteResolver {
     constructor(params) {
-        this.__importer = new ImportManager();
         this.__params = params;
         this.__params.routingMode = params.routingMode || 'directory';
+        this.__importer = new ImportManager();
         this.__resolvers = {
             pattern: PatternResolver,
             directory: DirectoryResolver,
@@ -27,16 +27,18 @@ class RouteResolver {
             if (typeof endpointModule[request.method] !== 'function') {
                 this.__importer.raise403();
             }
+            resolver.reset();
             return new Endpoint(endpointModule, request.method);
         } catch (error) {
             response.code = error.code;
             response.setError(error.key, error.message);
+            resolver.reset();
             return new Endpoint({}, 'error');
         }
     }
 
     getResolver() {
-        return new this.__resolvers[this.__params.routingMode](this.__params);
+        return new this.__resolvers[this.__params.routingMode](this.__params, this.__importer);
     }
 
     __validateConfigs() {

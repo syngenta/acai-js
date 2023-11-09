@@ -1,17 +1,29 @@
 const ImportManager = require('../import-manager');
 
 class DirectoryResolver {
-    constructor(params) {
-        this.__importer = new ImportManager();
+    constructor(params, importer) {
+        this.__importer = importer;
+        this.__sep = importer.fileSeparator;
         this.__basePath = params.basePath;
         this.__handlerPath = params.handlerPath;
         this.hasPathParams = false;
+        this.pathParams = [];
     }
 
     resolve(request) {
+        this.__importer.setHandlers(this.__handlerPath);
         const cleanedPaths = this.__getFilePaths(request);
-        const endpointPath = this.__getEndpointPath(cleanedPaths);
-        return this.__importer.importModuleFromPath(endpointPath);
+        const fileTree = this.__importer.getFileTree();
+        const endpointPath = this.__getEndpointPath(fileTree, cleanedPaths);
+        const module = this.__importer.importModuleFromPath(endpointPath);
+        this.reset();
+        return module;
+    }
+
+    reset() {
+        this.hasPathParams = false;
+        this.pathParams = [];
+        this.__importer.reset();
     }
 
     __getFilePaths(request) {
@@ -22,39 +34,49 @@ class DirectoryResolver {
         return {basePath, handlerFilePrefix, requestedRoutePath, requestedFilePath};
     }
 
-    __getEndpointPath({handlerFilePrefix, requestedFilePath}) {
-        const requestPath = this.__getPathFromRequest(handlerFilePrefix, requestedFilePath);
-        const endpointPath = `${handlerFilePrefix}/${requestPath}`;
-        const endpointFile = endpointPath.includes('.js') ? endpointPath : `${endpointPath}.js`;
-        const endpointIndexFile = `${endpointPath}/index.js`;
-        this.__importer.validateFolderStructure(endpointPath, endpointFile);
-        if (this.__importer.isFile(endpointFile)) {
-            return endpointFile;
-        }
-        if (this.__importer.isDirectory(endpointPath) && this.__importer.isFile(endpointIndexFile)) {
-            return endpointIndexFile;
-        }
-        this.__importer.raise404();
+    __getEndpointPath(fileTree, {handlerFilePrefix, requestedFilePath}) {
+        this.__findRequestedFileWithinFileTree(fileTree, requestedFilePath.split(this.__sep), 0);
+        const importFilePath = this.__importer.getImportPath();
+        const endpointPath = `${handlerFilePrefix}/${importFilePath}`;
+        return endpointPath;
     }
 
-    __getPathFromRequest(handlerFilePrefix, requestedFilePath) {
-        const pathParts = [];
-        const splitRequest = requestedFilePath.split('/');
-        for (const requestPart of splitRequest) {
-            const currentPath = pathParts.length ? `/${pathParts.join('/')}/` : '/';
-            const currentDirectory = `${handlerFilePrefix}${currentPath}`;
-            const requestFile = `${handlerFilePrefix}${currentPath}${requestPart}.js`;
-            const requestDirectory = `${handlerFilePrefix}${currentPath}${requestPart}`;
-            if (this.__importer.isFile(requestFile) || this.__importer.isDirectory(requestDirectory)) {
-                pathParts.push(requestPart);
+    __findRequestedFileWithinFileTree(fileTree, splitRequest, index) {
+        if (index < splitRequest.length) {
+            const part = splitRequest[index];
+            const possibleDir = part;
+            const possibleFile = `${part}.js`;
+            if (possibleDir in fileTree) {
+                this.__handleDirectoryPath(fileTree, possibleDir, splitRequest, index);
+            } else if (possibleFile in fileTree) {
+                this.__importer.appendImportPath(possibleFile);
+            } else if ('__dynamicPath' in fileTree && fileTree['__dynamicPath'].size > 0) {
+                this.__handleDynamicPath(fileTree, splitRequest, index);
             } else {
-                this.hasPathParams = true;
-                const resources = this.__importer.getPathParameterResource(currentDirectory);
-                this.__importer.validatePathParameterResource(resources);
-                resources.length ? pathParts.push(resources[0]) : null;
+                this.__importer.raise404();
             }
         }
-        return pathParts.join('/');
+    }
+
+    __handleDirectoryPath(fileTree, possibleDir, splitRequest, index) {
+        this.__importer.appendImportPath(possibleDir);
+        if (index + 1 === splitRequest.length) {
+            this.__importer.appendImportPath('index.js');
+        } else {
+            this.__findRequestedFileWithinFileTree(fileTree[possibleDir], splitRequest, index + 1);
+        }
+    }
+
+    __handleDynamicPath(fileTree, splitRequest, index) {
+        const [part] = fileTree['__dynamicPath'];
+        this.__importer.appendImportPath(part);
+        this.hasPathParams = true;
+        this.pathParams[index] = splitRequest[index];
+        if (!part.includes('.js') && index + 1 === splitRequest.length) {
+            this.__importer.appendImportPath('index.js');
+        } else if (!part.includes('.js')) {
+            this.__findRequestedFileWithinFileTree(fileTree[part], splitRequest, index + 1);
+        }
     }
 }
 
