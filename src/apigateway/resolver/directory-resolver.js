@@ -70,10 +70,10 @@ class DirectoryResolver {
 
     __handleDynamicPath(fileTree, splitRequest, index) {
         const [part] = fileTree['__dynamicPath'];
-        this.importParts.push(part);
-        this.hasPathParams = true;
         this.pathParams[index] = splitRequest[index];
-        if (!part.includes('.js') && index + 1 === splitRequest.length) {
+        this.hasPathParams = true;
+        this.importParts.push(part);
+        if (!part.includes('.js') && index + 1 === splitRequest.length - 1) {
             this.importParts.push('index.js');
         } else if (!part.includes('.js')) {
             this.__findRequestedFileWithinFileTree(fileTree[part], splitRequest, index + 1);
