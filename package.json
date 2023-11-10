@@ -14,7 +14,7 @@
         "url": "https://github.com/syngenta/acai-js/issues"
     },
     "scripts": {
-        "ts": "MIN_LOG_LEVEL=OFF nyc mocha test/src/apigateway/resolver/directory-resolver.test.js",
+        "ts": "MIN_LOG_LEVEL=OFF nyc mocha test/src/apigateway/resolver/pattern-resolver.test.js",
         "test": "MIN_LOG_LEVEL=OFF nyc mocha test/**/**.test.js",
         "report": "MIN_LOG_LEVEL=OFF nyc report --reporter=lcov",
         "lint": "eslint src/**"

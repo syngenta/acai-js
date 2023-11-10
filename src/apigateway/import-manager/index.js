@@ -102,7 +102,7 @@ class ImportManager {
         if (typeof tree === 'object' && '__dynamicPath' in tree === false) {
             tree['__dynamicPath'] = new Set();
         }
-        if (part.startsWith('{')) {
+        if (part.includes('{') && part.includes('}')) {
             tree['__dynamicPath'].add(part);
         }
         this.__checkMultipleDynamicPaths(tree, parts);

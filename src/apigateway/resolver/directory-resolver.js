@@ -6,18 +6,18 @@ class DirectoryResolver {
         this.__sep = importer.fileSeparator;
         this.__basePath = params.basePath;
         this.__handlerPath = params.handlerPath;
+        this.hasPathParams = false;
         this.importParts = [];
         this.pathParams = [];
-        this.hasPathParams = false;
     }
 
     resolve(request) {
         this.reset();
-        const cleanedPaths = this.__getFilePaths(request);
         const fileTree = this.__importer.getFileTree();
+        const cleanedPaths = this.__getFilePaths(request);
         const endpointPath = this.__getEndpointPath(fileTree, cleanedPaths);
-        const resolvedPath = this.__importer.importModuleFromPath(endpointPath);
-        return resolvedPath;
+        const resolvedModule = this.__importer.importModuleFromPath(endpointPath);
+        return resolvedModule;
     }
 
     reset() {
