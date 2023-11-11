@@ -1,6 +1,7 @@
 const {assert} = require('chai');
 const ListResolver = require('../../../../src/apigateway/resolver/list-resolver');
-const {Request, Response} = require('../../../../src').apigateway;
+const ImportManager = require('../../../../src/apigateway/import-manager');
+const {Request} = require('../../../../src').apigateway;
 const mockData = require('../../../mocks/apigateway/mock-data');
 
 describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
@@ -11,8 +12,8 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
             'POST::basic': 'test/mocks/apigateway/mock-list-handlers/basic.js',
             'GET::n1/n2/basic': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js'
         };
-        const resolver = new ListResolver({basePath, handlerList});
-        const response = new Response();
+        const importer = new ImportManager();
+        const resolver = new ListResolver({basePath, handlerList}, importer);
         it('should resolve', () => {
             const mock = mockData.getApiGateWayRoute();
             const request = new Request(mock);
@@ -58,8 +59,8 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
             'PATCH::n1/n2/{org}/basic/{id}': 'test/mocks/apigateway/mock-list-handlers/n1/n2/basic.js',
             'POST::basic/{id}/fake': 'test/mocks/apigateway/mock-list-handlers/fake.js'
         };
-        const resolver = new ListResolver({basePath, handlerList});
-        const response = new Response();
+        const importer = new ImportManager();
+        const resolver = new ListResolver({basePath, handlerList}, importer);
         it('should resolve', () => {
             const route = 'basic/1';
             const method = 'POST';
@@ -74,7 +75,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
             const mock = mockData.getApiGateWayCustomRouteWithParams(route, method);
             const request = new Request(mock);
             try {
-                const result = resolver.resolve(request);
+                resolver.resolve(request);
                 assert.isFalse(true);
             } catch (error) {
                 assert.equal(error.code, 404);
@@ -107,14 +108,14 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
                 'POST::basic/{org}': 'test/mocks/apigateway/mock-list-handlers/fake.js',
                 'DELETE::basic/{org}': 'test/mocks/apigateway/mock-list-handlers/fake.js'
             };
-            const resolver = new ListResolver({basePath, handlerList});
-            const response = new Response();
+            const importer = new ImportManager();
+            const resolver = new ListResolver({basePath, handlerList}, importer);
             const route = 'basic/1';
             const method = 'POST';
             const mock = mockData.getApiGateWayCustomRouteWithParams(route, method);
             const request = new Request(mock);
             try {
-                const result = resolver.resolve(request);
+                resolver.resolve(request);
                 assert.isFalse(true);
             } catch (error) {
                 assert.equal(error.code, 500);
@@ -126,14 +127,14 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
             const handlerList = {
                 'DELETE:basic/{bad}': 'test/mocks/apigateway/mock-list-handlers/bad.js'
             };
-            const resolver = new ListResolver({basePath, handlerList});
-            const response = new Response();
+            const importer = new ImportManager();
+            const resolver = new ListResolver({basePath, handlerList}, importer);
             const route = 'basic/1';
             const method = 'POST';
             const mock = mockData.getApiGateWayCustomRouteWithParams(route, method);
             const request = new Request(mock);
             try {
-                const result = resolver.resolve(request);
+                resolver.resolve(request);
                 assert.isFalse(true);
             } catch (error) {
                 assert.equal(error.code, 500);

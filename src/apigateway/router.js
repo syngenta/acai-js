@@ -80,7 +80,7 @@ class Router {
                 event,
                 request: request.request,
                 response: response.response,
-                error: error && error.stack ? error.stack.split('\n').map((trace) => trace.replace('    ', '')) : error
+                error: error.stack.split('\n').map((trace) => trace.replace('    ', ''))
             }
         });
     }

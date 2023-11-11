@@ -6,9 +6,8 @@ const PatternResolver = require('./pattern-resolver');
 
 class RouteResolver {
     constructor(params) {
-        this.__importer = new ImportManager();
         this.__params = params;
-        this.__params.routingMode = params.routingMode || 'directory';
+        this.__importer = new ImportManager();
         this.__resolvers = {
             pattern: PatternResolver,
             directory: DirectoryResolver,
@@ -36,7 +35,8 @@ class RouteResolver {
     }
 
     getResolver() {
-        return new this.__resolvers[this.__params.routingMode](this.__params);
+        const mode = this.__params.routingMode || 'directory';
+        return new this.__resolvers[mode](this.__params, this.__importer);
     }
 
     __validateConfigs() {
@@ -75,8 +75,8 @@ class RouteResolver {
     __splitRoutes(endpoint, request) {
         const requiredPath = endpoint.requirements[request.method].requiredPath;
         const requestedRoute = request.path.replace(this.__params.basePath, '');
-        const requestSplit = this.__importer.cleanPath(requestedRoute).split('/');
-        const pathSplit = this.__importer.cleanPath(requiredPath).split('/');
+        const requestSplit = this.__importer.cleanPath(requestedRoute).split(this.__importer.fileSeparator);
+        const pathSplit = this.__importer.cleanPath(requiredPath).split(this.__importer.fileSeparator);
         return {requestSplit, pathSplit};
     }
 
@@ -88,14 +88,14 @@ class RouteResolver {
 
     __setRequiredPathConfig(request, splits) {
         for (const index in splits.requestSplit) {
-            if (splits.pathSplit[index] && splits.pathSplit[index].startsWith('{') && splits.pathSplit[index].endsWith('}')) {
+            if (splits.pathSplit[index] && splits.pathSplit[index].includes('{') && splits.pathSplit[index].includes('}')) {
                 const keyBracket = splits.pathSplit[index].split('{')[1];
                 const key = keyBracket.split('}')[0];
                 const value = splits.requestSplit[index];
                 request.pathParams = {key, value};
             }
         }
-        request.route = `/${this.__params.basePath}/${this.__importer.cleanPath(splits.pathSplit.join('/'))}`;
+        request.route = `/${this.__params.basePath}/${this.__importer.cleanPath(splits.pathSplit.join(this.__importer.fileSeparator))}`;
     }
 }
 

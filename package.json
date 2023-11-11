@@ -20,10 +20,11 @@
     },
     "dependencies": {
         "@apideck/reva": "^0.2.1",
-        "ajv": "8.12.0",
+        "ajv": "^8.12.0",
         "aws-lambda": "^1.0.7",
         "aws-sdk": "^2.1489.0",
         "csv-parse": "^5.5.2",
+        "glob": "^10.3.10",
         "js-yaml": "4.1.0",
         "json-schema-merge-allof": "^0.8.1",
         "json-schema-ref-parser": "9.0.9",
@@ -49,7 +50,7 @@
         "sinon": "^13.0.1"
     },
     "engines": {
-        "node": ">=14.17.0"
+        "node": ">=18.18.2"
     },
     "nyc": {
         "temp-directory": "./node_modules/.nyc_output"

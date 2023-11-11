@@ -1,16 +1,23 @@
-const ImportManager = require('../import-manager');
-
 class ListResolver {
-    constructor(params) {
-        this.__importer = new ImportManager();
+    constructor(params, importer) {
+        this.__importer = importer;
         this.__basePath = params.basePath;
         this.__list = params.handlerList;
         this.hasPathParams = false;
     }
 
     resolve(request) {
+        this.reset();
         const endpointPath = this.__getEndpointPath(request);
-        return this.__importer.importModuleFromPath(endpointPath);
+        try {
+            return this.__importer.importModuleFromPath(endpointPath);
+        } catch (error) {
+            this.__importer.raiseRouterConfigError(`file not found: ${endpointPath}`);
+        }
+    }
+
+    reset() {
+        this.hasPathParams = false;
     }
 
     __getEndpointPath(request) {
@@ -22,9 +29,6 @@ class ListResolver {
         }
         if (requestPath.files.length > 1) {
             this.__importer.raiseRouterConfigError(`found two conflicting routes: ${requestPath.paths.join(',')}`);
-        }
-        if (!this.__importer.isFile(requestPath.files[0])) {
-            this.__importer.raiseRouterConfigError(`file not found: ${requestPath.files[0]}`);
         }
         return requestPath.files[0];
     }
@@ -63,13 +67,13 @@ class ListResolver {
     }
 
     __requestMatchesRoute(path, route) {
-        const splitRoute = route.split('/');
-        const splitRequest = path.split('/');
+        const splitRoute = route.split(this.__importer.fileSeparator);
+        const splitRequest = path.split(this.__importer.fileSeparator);
         if (splitRoute.length !== splitRequest.length) {
             return false;
         }
         for (const index in splitRequest) {
-            if (splitRoute[index] && splitRoute[index].startsWith('{') && splitRoute[index].endsWith('}')) {
+            if (splitRoute[index] && splitRoute[index].includes('{') && splitRoute[index].includes('}')) {
                 this.hasPathParams = true;
                 continue;
             }

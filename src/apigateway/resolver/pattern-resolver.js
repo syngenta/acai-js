@@ -1,83 +1,90 @@
 const ImportManager = require('../import-manager');
 
 class PatternResolver {
-    constructor(params) {
-        this.__importer = new ImportManager();
+    constructor(params, importer) {
+        this.__importer = importer;
+        this.__sep = importer.fileSeparator;
         this.__basePath = params.basePath;
         this.__pattern = params.handlerPattern;
         this.hasPathParams = false;
+        this.importParts = [];
     }
 
     resolve(request) {
-        const filePath = this.__getFilePath(request.path);
-        if (filePath && this.__importer.isFile(filePath)) {
-            return this.__importer.importModuleFromPath(filePath);
-        }
-        this.__importer.raise404();
+        this.reset();
+        const fileTree = this.__importer.getFileTree();
+        const cleanedPaths = this.__getFilePaths(request);
+        const endpointPath = this.__getEndpointPath(fileTree, cleanedPaths);
+        const resolvedModule = this.__importer.importModuleFromPath(endpointPath);
+        return resolvedModule;
     }
 
-    __getFilePath(route) {
-        const root = this.__getPatternRoute();
-        return this.__getRequestFilePath(root, route);
+    reset() {
+        this.__importer.setHandlers(this.__pattern);
+        this.importParts = [];
+        this.hasPathParams = false;
     }
 
-    __getPatternRoute() {
-        const split = this.__pattern.split('*');
-        return this.__importer.cleanPath(split[0]);
+    __getFilePaths(request) {
+        const patternRoot = this.__importer.cleanPath(this.__pattern.split('*')[0]);
+        const basePath = this.__importer.cleanPath(this.__basePath);
+        const requestPath = this.__importer.cleanPath(request.path.replace(basePath, ''));
+        return {patternRoot, basePath, requestPath};
     }
 
-    __getRequestFilePath(patternRoute, route) {
-        const base = this.__importer.cleanPath(this.__basePath);
-        const noBaseRoute = this.__importer.cleanPath(route.replace(base, ''));
-        return this.__getPathFromRequest(patternRoute, noBaseRoute);
-    }
-
-    __getPathFromRequest(patternBase, requestedFilePath) {
-        const pathParts = [];
-        const splitRequest = requestedFilePath.split('/');
-        const splitPattern = this.__pattern.split('/');
+    __getEndpointPath(fileTree, {patternRoot, requestPath}) {
+        const splitPattern = this.__pattern.split(this.__sep);
         const filePattern = splitPattern[splitPattern.length - 1];
-        for (const [index, requestPart] of splitRequest.entries()) {
-            const file = filePattern.replace('*', requestPart);
-            const currentPath = pathParts.length ? `/${pathParts.join('/')}/` : '/';
-            const currentDirectory = `${patternBase}${currentPath}`;
-            const mvc = `${patternBase}${currentPath}${file}`;
-            const mvvm = `${patternBase}${currentPath}${requestPart}/${file}`;
-            const directory = `${patternBase}${currentPath}${requestPart}`;
-            this.__importer.validateFolderStructure(directory, mvc);
-            if (this.__importer.isFile(mvc) && !splitRequest[index + 1]) {
-                pathParts.push(file);
-            } else if (this.__importer.isFile(mvvm) && !splitRequest[index + 1]) {
-                pathParts.push(requestPart);
-                pathParts.push(file);
-            } else if (this.__importer.isDirectory(directory)) {
-                pathParts.push(requestPart);
-            } else {
-                this.__addParamFiles(currentDirectory, filePattern, patternBase, pathParts, splitRequest, index);
-            }
-        }
-        pathParts.unshift(patternBase);
-        return pathParts.join('/');
+        this.__findRequestedFileWithinFileTree(fileTree, filePattern, requestPath.split(this.__sep), 0);
+        const importFilePath = this.__importer.getImportPath(this.importParts);
+        const endpointPath = `${patternRoot}/${importFilePath}`;
+        return endpointPath;
     }
 
-    __addParamFiles(currentDirectory, filePattern, patternBase, pathParts, splitRequest, index) {
+    __findRequestedFileWithinFileTree(fileTree, filePattern, splitRequest, index) {
+        if (index < splitRequest.length) {
+            const requestPart = splitRequest[index];
+            const possibleFile = filePattern.replace('*', requestPart);
+            const possibleDir = requestPart;
+            if (possibleDir in fileTree) {
+                this.__handleDirectoryPath(fileTree, filePattern, possibleDir, splitRequest, index);
+            } else if (possibleFile in fileTree) {
+                this.importParts.push(possibleFile);
+            } else if ('__dynamicPath' in fileTree && fileTree['__dynamicPath'].size > 0) {
+                this.__handleDynamicPath(fileTree, filePattern, splitRequest, index);
+            } else {
+                this.__importer.raise404();
+            }
+        }
+    }
+
+    __handleDirectoryPath(fileTree, filePattern, possibleDir, splitRequest, index) {
+        this.importParts.push(possibleDir);
+        if (index + 1 === splitRequest.length) {
+            this.__determineAdditionalImportPath(fileTree, filePattern, possibleDir);
+        } else {
+            this.__findRequestedFileWithinFileTree(fileTree[possibleDir], filePattern, splitRequest, index + 1);
+        }
+    }
+
+    __handleDynamicPath(fileTree, filePattern, splitRequest, index) {
+        const [part] = fileTree['__dynamicPath'];
         this.hasPathParams = true;
-        const resources = this.__importer.getPathParameterResource(currentDirectory);
-        this.__importer.validatePathParameterResource(resources);
-        if (resources.length) {
-            pathParts.push(resources[0]);
-            const indexPattern = filePattern.replace('*', 'index');
-            const cleanDirectory = this.__importer.cleanPath(currentDirectory);
-            const mvvmDirectory = `${cleanDirectory}/${resources[0]}`;
-            const mvcIndex = `${cleanDirectory}/${resources[0]}/${indexPattern}`;
-            const nextPath = `${patternBase}/${pathParts.join('/')}/${splitRequest[index + 1]}`;
-            if (this.__importer.isFile(mvcIndex) && !this.__importer.isDirectory(nextPath)) {
-                pathParts.push(indexPattern);
-            }
-            if (this.__importer.isDirectory(mvvmDirectory) && !this.__importer.isDirectory(nextPath)) {
-                const dirResources = this.__importer.getPathParameterResource(mvvmDirectory);
-                dirResources.length ? pathParts.push(dirResources[0]) : null;
-            }
+        this.importParts.push(part);
+        if (!part.includes('.js') && index + 1 >= splitRequest.length - 1) {
+            this.__determineAdditionalImportPath(fileTree, filePattern, part);
+        } else if (!part.includes('.js')) {
+            this.__findRequestedFileWithinFileTree(fileTree[part], filePattern, splitRequest, index + 1);
+        }
+    }
+
+    __determineAdditionalImportPath(fileTree, filePattern, possibleDir) {
+        const indexFile = filePattern.replace('*', 'index');
+        const mvvmFile = filePattern.replace('*', possibleDir);
+        if (mvvmFile in fileTree[possibleDir]) {
+            this.importParts.push(mvvmFile);
+        } else if (indexFile in fileTree[possibleDir]) {
+            this.importParts.push(indexFile);
         }
     }
 }

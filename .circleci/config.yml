@@ -35,7 +35,7 @@ commands:
 jobs:
     install-build-test:
         docker:
-            - image: node:14
+            - image: node:18
         steps:
             - checkout
             - node-install
@@ -44,7 +44,7 @@ jobs:
             - node-report
     install-build-deploy:
         docker:
-            - image: node:14
+            - image: node:18
         steps:
             - checkout
             - node-install
