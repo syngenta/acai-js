@@ -8,7 +8,6 @@ class DirectoryResolver {
         this.__handlerPath = params.handlerPath;
         this.hasPathParams = false;
         this.importParts = [];
-        this.pathParams = [];
     }
 
     resolve(request) {
@@ -23,7 +22,6 @@ class DirectoryResolver {
     reset() {
         this.__importer.setHandlers(this.__handlerPath);
         this.importParts = [];
-        this.pathParams = [];
         this.hasPathParams = false;
     }
 
@@ -70,7 +68,6 @@ class DirectoryResolver {
 
     __handleDynamicPath(fileTree, splitRequest, index) {
         const [part] = fileTree['__dynamicPath'];
-        this.pathParams[index] = splitRequest[index];
         this.hasPathParams = true;
         this.importParts.push(part);
         if (!part.includes('.js') && index + 1 === splitRequest.length - 1) {

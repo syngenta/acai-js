@@ -8,7 +8,6 @@ class PatternResolver {
         this.__pattern = params.handlerPattern;
         this.hasPathParams = false;
         this.importParts = [];
-        this.pathParams = [];
     }
 
     resolve(request) {
@@ -23,7 +22,6 @@ class PatternResolver {
     reset() {
         this.__importer.setHandlers(this.__pattern);
         this.importParts = [];
-        this.pathParams = [];
         this.hasPathParams = false;
     }
 
@@ -71,7 +69,6 @@ class PatternResolver {
 
     __handleDynamicPath(fileTree, filePattern, splitRequest, index) {
         const [part] = fileTree['__dynamicPath'];
-        this.pathParams[index] = splitRequest[index];
         this.hasPathParams = true;
         this.importParts.push(part);
         if (!part.includes('.js') && index + 1 >= splitRequest.length - 1) {
@@ -88,8 +85,6 @@ class PatternResolver {
             this.importParts.push(mvvmFile);
         } else if (indexFile in fileTree[possibleDir]) {
             this.importParts.push(indexFile);
-        } else {
-            this.__importer.raise404();
         }
     }
 }
