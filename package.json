@@ -50,7 +50,7 @@
         "sinon": "^13.0.1"
     },
     "engines": {
-        "node": ">=14.17.0"
+        "node": ">=18.18.2"
     },
     "nyc": {
         "temp-directory": "./node_modules/.nyc_output"
