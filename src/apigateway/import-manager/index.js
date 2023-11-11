@@ -29,10 +29,6 @@ class ImportManager {
         return cleanPath.join(path.sep);
     }
 
-    globFiles(pattern) {
-        return globSync(pattern);
-    }
-
     importModuleFromPath(resolved) {
         try {
             return require(path.join(process.cwd(), resolved));
@@ -66,7 +62,7 @@ class ImportManager {
     __getFilesList() {
         const globHandlerPattern = this.__getGlobPattern();
         const handlerFilePrefix = this.__getHandlerPrefix();
-        const files = this.globFiles(globHandlerPattern);
+        const files = globSync(globHandlerPattern);
         return files.map((file) => file.replace(handlerFilePrefix, ''));
     }
 

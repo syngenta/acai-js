@@ -6,6 +6,10 @@ class ListResolver {
         this.hasPathParams = false;
     }
 
+    autoLoad() {
+        return;
+    }
+
     resolve(request) {
         this.reset();
         const endpointPath = this.__getEndpointPath(request);

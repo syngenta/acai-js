@@ -10,6 +10,11 @@ class PatternResolver {
         this.importParts = [];
     }
 
+    autoLoad() {
+        this.__importer.setHandlers(this.__pattern);
+        this.__importer.getFileTree();
+    }
+
     resolve(request) {
         this.reset();
         const fileTree = this.__importer.getFileTree();

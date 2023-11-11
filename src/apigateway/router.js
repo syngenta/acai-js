@@ -7,18 +7,25 @@ const Validator = require('../common/validator');
 
 class Router {
     constructor(params) {
+        this.__params = params;
         this.__beforeAll = params.beforeAll;
         this.__afterAll = params.afterAll;
         this.__withAuth = params.withAuth;
         this.__onError = params.onError;
         this.__autoValidate = params.autoValidate;
-        this.__schema = params.schemaPath ? Schema.fromFilePath(params.schemaPath, params) : {};
-        this.__resolver = new RouteResolver(params);
+        this.__schemaPath = params.schemaPath;
+        this.__schema = new Schema({}, {}, params);
         this.__validator = new Validator(this.__schema);
+        this.__resolver = new RouteResolver(params);
         this.__logger = new Logger({callback: params.loggerCallback});
         if (params.globalLogger) {
             this.__logger.setUp({callback: params.loggerCallback});
         }
+    }
+
+    autoLoad() {
+        this.__resolver.autoLoad();
+        this.__schema.autoLoad();
     }
 
     async route(event) {

@@ -25,6 +25,110 @@ describe('Test Router: src/apigateway/router.js', () => {
                 body: '{"test":true}'
             });
         });
+        it('should find route with autoload', async () => {
+            const event = mockData.getApiGateWayRoute();
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
+                schemaPath: 'test/mocks/openapi.yml'
+            });
+            router.autoLoad();
+            const results = await router.route(event);
+            assert.deepEqual(results, {
+                isBase64Encoded: false,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': '*'
+                },
+                statusCode: 200,
+                body: '{"test":true}'
+            });
+        });
+        it('should find route in pattern mode', async () => {
+            const event = mockData.getApiGateWayRoute('', 'get');
+            const router = new Router({
+                routingMode: 'pattern',
+                basePath: 'unit-test/v1',
+                handlerPattern: 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js',
+                schemaPath: 'test/mocks/openapi.yml'
+            });
+            const results = await router.route(event);
+            assert.deepEqual(results, {
+                isBase64Encoded: false,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': '*'
+                },
+                statusCode: 200,
+                body: '{"test":true}'
+            });
+        });
+        it('should find route in pattern mode with autoload', async () => {
+            const event = mockData.getApiGateWayRoute('', 'get');
+            const router = new Router({
+                routingMode: 'pattern',
+                basePath: 'unit-test/v1',
+                handlerPattern: 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js',
+                schemaPath: 'test/mocks/openapi.yml'
+            });
+            router.autoLoad();
+            const results = await router.route(event);
+            assert.deepEqual(results, {
+                isBase64Encoded: false,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': '*'
+                },
+                statusCode: 200,
+                body: '{"test":true}'
+            });
+        });
+        it('should find route in list mode', async () => {
+            const handlerList = {
+                'POST::basic': 'test/mocks/apigateway/mock-list-handlers/basic.js'
+            };
+            const event = mockData.getApiGateWayRoute();
+            const router = new Router({
+                routingMode: 'list',
+                basePath: 'unit-test/v1',
+                handlerList: handlerList,
+                schemaPath: 'test/mocks/openapi.yml'
+            });
+            router.autoLoad();
+            const result = await router.route(event);
+            assert.deepEqual(result, {
+                isBase64Encoded: false,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': '*'
+                },
+                statusCode: 200,
+                body: '{"test":true}'
+            });
+        });
+        it('should find route in list mode', async () => {
+            const handlerList = {
+                'POST::basic': 'test/mocks/apigateway/mock-list-handlers/basic.js'
+            };
+            const event = mockData.getApiGateWayRoute();
+            const router = new Router({
+                routingMode: 'list',
+                basePath: 'unit-test/v1',
+                handlerList: handlerList,
+                schemaPath: 'test/mocks/openapi.yml'
+            });
+            const result = await router.route(event);
+            assert.deepEqual(result, {
+                isBase64Encoded: false,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': '*'
+                },
+                statusCode: 200,
+                body: '{"test":true}'
+            });
+        });
         it('should find route wiht no trailing /', async () => {
             const event = mockData.getApiGateWayRoute();
             const router = new Router({

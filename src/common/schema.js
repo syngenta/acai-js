@@ -8,11 +8,12 @@ const RefParser = require('json-schema-ref-parser');
 class Schema {
     constructor(openAPISchema = {}, inlineSchema = {}, params = {}) {
         this.__refParser = RefParser;
-        this.__openAPISchema = openAPISchema;
         this.__openApliValidator = new Reva();
-        this.__inlineSchema = inlineSchema;
+        this.__schemaPath = params.schemaPath;
         this.__strictValidation = params.strictValidation || false;
         this.__ajv = new Ajv({allErrors: true, validateFormats: this.__strictValidation});
+        this.inlineSchema = inlineSchema;
+        this.openAPISchema = openAPISchema;
     }
 
     static fromFilePath(schemaPath, params = {}) {
@@ -24,24 +25,39 @@ class Schema {
         return new Schema({}, inlineSchema, params);
     }
 
+    autoLoad() {
+        this.loadSchema();
+    }
+
+    loadSchema() {
+        if (this.__schemaPath) {
+            this.openAPISchema = yaml.load(fs.readFileSync(this.__schemaPath, 'utf8'));
+        }
+    }
+
     async validateOpenApi(path, method, request) {
-        const refSchema = await this.__refParser.dereference(this.__openAPISchema);
+        this.loadSchema();
+        const refSchema = await this.__refParser.dereference(this.openAPISchema);
         const operation = this.__getOperationSchema(refSchema, path, method);
         const result = this.__openApliValidator.validate({operation, request});
         return result.errors || [];
     }
 
     async validate(entityName = '', data = {}) {
-        let schema = {};
-        if (this.__openAPISchema && entityName) {
-            const refSchema = await this.__refParser.dereference(this.__openAPISchema);
-            schema = await this.__combineSchemas(entityName, refSchema);
-        } else {
-            schema = this.__inlineSchema;
-        }
+        this.loadSchema();
+        const schema = await this.__getSchemaObject(entityName);
         const ajvValidate = this.__ajv.compile(schema);
         await ajvValidate(data);
         return ajvValidate.errors;
+    }
+
+    async __getSchemaObject(entityName) {
+        if (Object.keys(this.openAPISchema).length && entityName) {
+            const refSchema = await this.__refParser.dereference(this.openAPISchema);
+            return await this.__combineSchemas(entityName, refSchema);
+        } else {
+            return this.inlineSchema;
+        }
     }
 
     __combineSchemas(schemaComponentName, refSchema) {
