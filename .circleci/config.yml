@@ -29,9 +29,9 @@ commands:
         steps:
             - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
             - run: npm version $CIRCLE_TAG --allow-same-version --no-git-tag-version
-            # - run: npm publish --access public
+            - run: npm publish --access public
             # for beta releases
-            - run: npm publish --access public --tag beta
+            # - run: npm publish --access public --tag beta
 jobs:
     install-build-test:
         docker:
