@@ -4,7 +4,7 @@ const ImportManager = require('../../../../src/apigateway/import-manager');
 const {Request} = require('../../../../src').apigateway;
 const mockData = require('../../../mocks/apigateway/mock-data');
 
-describe('Test PatternResolver Resovler: src/apigateway/resolver/pattern-resolver', () => {
+describe('Test Pattern Resovler: src/apigateway/resolver/pattern-resolver', () => {
     describe('test suffix pattern routing', () => {
         const handlerPattern = 'test/mocks/apigateway/mock-pattern-handlers/suffix/**/*.controller.js';
         const basePath = 'unit-test/v1';

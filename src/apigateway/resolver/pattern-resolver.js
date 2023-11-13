@@ -50,6 +50,7 @@ class PatternResolver {
         if (index < splitRequest.length) {
             const requestPart = splitRequest[index];
             const possibleFile = filePattern.replace('*', requestPart);
+            const possibleIndex = filePattern.replace('*', 'index');
             const possibleDir = requestPart;
             if (possibleDir in fileTree) {
                 this.__handleDirectoryPath(fileTree, filePattern, possibleDir, splitRequest, index);
@@ -57,6 +58,8 @@ class PatternResolver {
                 this.importParts.push(possibleFile);
             } else if ('__dynamicPath' in fileTree && fileTree['__dynamicPath'].size > 0) {
                 this.__handleDynamicPath(fileTree, filePattern, splitRequest, index);
+            } else if (this.hasPathParams && possibleIndex in fileTree && index === splitRequest.length - 1) {
+                this.importParts.push(possibleIndex);
             } else {
                 this.__importer.raise404();
             }
@@ -76,7 +79,7 @@ class PatternResolver {
         const [part] = fileTree['__dynamicPath'];
         this.hasPathParams = true;
         this.importParts.push(part);
-        if (!part.includes('.js') && index + 1 >= splitRequest.length - 1) {
+        if (!part.includes('.js') && index + 1 >= splitRequest.length) {
             this.__determineAdditionalImportPath(fileTree, filePattern, part);
         } else if (!part.includes('.js')) {
             this.__findRequestedFileWithinFileTree(fileTree[part], filePattern, splitRequest, index + 1);
