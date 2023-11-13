@@ -8,6 +8,7 @@ class RouteResolver {
     constructor(params) {
         this.__params = params;
         this.__importer = new ImportManager();
+        this.__resolver = null;
         this.__resolvers = {
             pattern: PatternResolver,
             directory: DirectoryResolver,
@@ -15,12 +16,22 @@ class RouteResolver {
         };
     }
 
+    autoLoad() {
+        this.__setResolverMode();
+        this.__resolver.autoLoad();
+    }
+
+    getResolver() {
+        this.__setResolverMode();
+        return this.__resolver;
+    }
+
     getEndpoint(request, response) {
         try {
             this.__validateConfigs();
-            const resolver = this.getResolver();
-            const endpointModule = resolver.resolve(request);
-            if (resolver.hasPathParams) {
+            this.__setResolverMode();
+            const endpointModule = this.__resolver.resolve(request);
+            if (this.__resolver.hasPathParams) {
                 this.__configurePathParams(endpointModule, request);
             }
             if (typeof endpointModule[request.method] !== 'function') {
@@ -34,9 +45,11 @@ class RouteResolver {
         }
     }
 
-    getResolver() {
-        const mode = this.__params.routingMode || 'directory';
-        return new this.__resolvers[mode](this.__params, this.__importer);
+    __setResolverMode() {
+        if (!this.__resolver) {
+            const mode = this.__params.routingMode;
+            this.__resolver = new this.__resolvers[mode](this.__params, this.__importer);
+        }
     }
 
     __validateConfigs() {

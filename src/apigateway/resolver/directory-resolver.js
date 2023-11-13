@@ -10,6 +10,11 @@ class DirectoryResolver {
         this.importParts = [];
     }
 
+    autoLoad() {
+        this.__importer.setHandlers(this.__handlerPath);
+        this.__importer.getFileTree();
+    }
+
     resolve(request) {
         this.reset();
         const fileTree = this.__importer.getFileTree();
