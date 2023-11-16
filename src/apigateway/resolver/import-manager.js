@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const {globSync} = require('glob');
-const ImportError = require('../import-manager/import-error');
+const ApiError = require('../api-error.js');
 const Logger = require('../../common/logger.js');
 
 class ImportManager {
@@ -39,15 +39,15 @@ class ImportManager {
     }
 
     raise403() {
-        throw new ImportError(403, 'method', 'method not allowed');
+        throw new ApiError(403, 'method', 'method not allowed');
     }
 
     raise404() {
-        throw new ImportError(404, 'url', 'endpoint not found');
+        throw new ApiError(404, 'url', 'endpoint not found');
     }
 
     raiseRouterConfigError(message) {
-        throw new ImportError(500, 'router-config', message);
+        throw new ApiError(500, 'router-config', message);
     }
 
     getFileTree() {

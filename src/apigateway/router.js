@@ -18,6 +18,7 @@ class Router {
         this.__validator = new Validator(this.__schema);
         this.__resolver = new RouteResolver(params);
         this.__logger = new Logger({callback: params.loggerCallback});
+        this.__validator.validateRouterConfigs(params);
         if (params.globalLogger) {
             this.__logger.setUp({callback: params.loggerCallback});
         }

@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const ListResolver = require('../../../../src/apigateway/resolver/list-resolver');
-const ImportManager = require('../../../../src/apigateway/import-manager');
+const ImportManager = require('../../../../src/apigateway/resolver/import-manager');
 const {Request} = require('../../../../src').apigateway;
 const mockData = require('../../../mocks/apigateway/mock-data');
 

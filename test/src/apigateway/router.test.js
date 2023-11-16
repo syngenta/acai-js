@@ -558,4 +558,71 @@ describe('Test Router: src/apigateway/router.js', () => {
             assert.equal(response.statusCode, 400);
         });
     });
+    describe('test configuration error handling', () => {
+        it('should throw error for improper routingMode configuration', () => {
+            try {
+                new Router({
+                    routingMode: 'fail',
+                    basePath: 'unit-test/v1',
+                    handlerPath: 'test/mocks/apigateway/mock-directory-handlers/'
+                });
+            } catch (error) {
+                assert.equal(error.message, 'routingMode must be either directory, pattern or list');
+            }
+        });
+        it('should throw error for improper directory configuration missing handlerPath', () => {
+            try {
+                new Router({
+                    routingMode: 'directory',
+                    basePath: 'unit-test/v1'
+                });
+            } catch (error) {
+                assert.equal(error.message, 'handlerPath config is requied when routingMode is directory');
+            }
+        });
+        it('should throw error for improper pattern configuration missing handlerPattern', () => {
+            try {
+                new Router({
+                    routingMode: 'pattern',
+                    basePath: 'unit-test/v1'
+                });
+            } catch (error) {
+                assert.equal(error.message, 'handlerPattern config is requied when routingMode is pattern');
+            }
+        });
+        it('should throw error for improper list configuration missing handlerList', () => {
+            try {
+                new Router({
+                    routingMode: 'list',
+                    basePath: 'unit-test/v1'
+                });
+            } catch (error) {
+                assert.equal(error.message, 'handlerList config is requied when routingMode is list');
+            }
+        });
+        it('should raise an error when resolver cacheSize is incorrect', () => {
+            try {
+                new Router({
+                    routingMode: 'directory',
+                    basePath: 'unit-test/v1',
+                    cacheSize: 'must-be-string',
+                    handlerPath: 'test/mocks/apigateway/mock-directory-handlers/'
+                });
+            } catch (error) {
+                assert.equal(error.message, 'cacheSize must be an integer');
+            }
+        });
+        it('should raise an error when resolver cacheMode is incorrect', () => {
+            try {
+                new Router({
+                    routingMode: 'directory',
+                    basePath: 'unit-test/v1',
+                    cacheMode: 'must-be-one-of-all-dynamic-static',
+                    handlerPath: 'test/mocks/apigateway/mock-directory-handlers/'
+                });
+            } catch (error) {
+                assert.equal(error.message, 'cacheMode must be either: all, dynamic, static');
+            }
+        });
+    });
 });

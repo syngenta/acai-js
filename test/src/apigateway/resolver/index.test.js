@@ -3,7 +3,7 @@ const RouteResolver = require('../../../../src/apigateway/resolver');
 const DirectoryResolver = require('../../../../src/apigateway/resolver/directory-resolver');
 const PatternResolver = require('../../../../src/apigateway/resolver/pattern-resolver');
 const ListResolver = require('../../../../src/apigateway/resolver/list-resolver');
-const ImportManager = require('../../../../src/apigateway/import-manager');
+const ImportManager = require('../../../../src/apigateway/resolver/import-manager');
 const {Request, Response} = require('../../../../src').apigateway;
 const mockData = require('../../../mocks/apigateway/mock-data');
 
@@ -32,71 +32,6 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const importer = new ImportManager();
             const resolver = new RouteResolver({basePath, routingMode, handlerList}, importer).getResolver();
             assert.isTrue(resolver instanceof ListResolver);
-        });
-        it('should throw error for improper routingMode configuration', () => {
-            const basePath = 'unit-test/v1';
-            const routingMode = 'fail';
-            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
-            const importer = new ImportManager();
-            const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
-            const mock = mockData.getApiGateWayRouteBadImport();
-            const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 500);
-            assert.equal(response.hasErrors, true);
-            assert.equal(
-                response.body,
-                '{"errors":[{"key_path":"router-config","message":"routingMode must be either directory, pattern or list"}]}'
-            );
-        });
-        it('should throw error for improper directory configuration missing handlerPath', () => {
-            const basePath = 'unit-test/v1';
-            const routingMode = 'directory';
-            const importer = new ImportManager();
-            const resolver = new RouteResolver({basePath, routingMode}, importer);
-            const mock = mockData.getApiGateWayRouteBadImport();
-            const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 500);
-            assert.equal(response.hasErrors, true);
-            assert.equal(
-                response.body,
-                '{"errors":[{"key_path":"router-config","message":"handlerPath config is requied when routingMode is directory"}]}'
-            );
-        });
-        it('should throw error for improper pattern configuration missing handlerPattern', () => {
-            const basePath = 'unit-test/v1';
-            const routingMode = 'pattern';
-            const importer = new ImportManager();
-            const resolver = new RouteResolver({basePath, routingMode}, importer);
-            const mock = mockData.getApiGateWayRouteBadImport();
-            const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 500);
-            assert.equal(response.hasErrors, true);
-            assert.equal(
-                response.body,
-                '{"errors":[{"key_path":"router-config","message":"handlerPattern config is requied when routingMode is pattern"}]}'
-            );
-        });
-        it('should throw error for improper list configuration missing handlerList', () => {
-            const basePath = 'unit-test/v1';
-            const routingMode = 'list';
-            const importer = new ImportManager();
-            const resolver = new RouteResolver({basePath, routingMode}, importer);
-            const mock = mockData.getApiGateWayRouteBadImport();
-            const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 500);
-            assert.equal(response.hasErrors, true);
-            assert.equal(
-                response.body,
-                '{"errors":[{"key_path":"router-config","message":"handlerList config is requied when routingMode is list"}]}'
-            );
         });
         it('should not be able to find endpoint and throws unhandled error', async () => {
             const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
@@ -409,35 +344,6 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
         });
     });
     describe('test resolver cache', () => {
-        it('should raise an error when resolver cacheSize is incorrect', () => {
-            const basePath = 'unit-test/v1';
-            const routingMode = 'directory';
-            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
-            const cacheSize = 'must-be-string';
-            const mock = mockData.getData();
-            const request = new Request(mock);
-            const response = new Response();
-            const importer = new ImportManager();
-            const resolver = new RouteResolver({basePath, routingMode, handlerPath, cacheSize}, importer);
-            resolver.getEndpoint(request, response);
-            assert.equal(response.body, '{"errors":[{"key_path":"router-config","message":"cacheSize must be an integer"}]}');
-        });
-        it('should raise an error when resolver cacheMode is incorrect', () => {
-            const basePath = 'unit-test/v1';
-            const routingMode = 'directory';
-            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
-            const cacheMode = 'must-be-one-of-all-dynamic-static-';
-            const mock = mockData.getData();
-            const request = new Request(mock);
-            const response = new Response();
-            const importer = new ImportManager();
-            const resolver = new RouteResolver({basePath, routingMode, handlerPath, cacheMode}, importer);
-            resolver.getEndpoint(request, response);
-            assert.equal(
-                response.body,
-                '{"errors":[{"key_path":"router-config","message":"cacheMode must be either: all, dynamic, static"}]}'
-            );
-        });
         it('should not have any cache misses', () => {
             const basePath = 'unit-test/v1';
             const routingMode = 'directory';

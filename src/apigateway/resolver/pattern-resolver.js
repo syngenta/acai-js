@@ -1,4 +1,4 @@
-const ImportManager = require('../import-manager');
+const ImportManager = require('./import-manager');
 
 class PatternResolver {
     constructor(params, importer) {
