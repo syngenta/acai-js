@@ -13,11 +13,7 @@ class ListResolver {
     resolve(request) {
         this.reset();
         const endpointPath = this.__getEndpointPath(request);
-        try {
-            return this.__importer.importModuleFromPath(endpointPath);
-        } catch (error) {
-            this.__importer.raiseRouterConfigError(`file not found: ${endpointPath}`);
-        }
+        return this.__importer.importModuleFromPath(endpointPath);
     }
 
     reset() {
@@ -32,7 +28,7 @@ class ListResolver {
             this.__importer.raise404();
         }
         if (requestPath.files.length > 1) {
-            this.__importer.raiseRouterConfigError(`found two conflicting routes: ${requestPath.paths.join(',')}`);
+            this.__importer.raise409(`found two conflicting routes: ${requestPath.paths.join(',')}`);
         }
         return requestPath.files[0];
     }
@@ -41,7 +37,7 @@ class ListResolver {
         const filteredHandlers = {};
         for (const handlerRoute in this.__list) {
             if (!handlerRoute.includes('::')) {
-                this.__importer.raiseRouterConfigError(`route does not follow pattern <METHOD>::route ${handlerRoute}`);
+                this.__importer.raise409(`route does not follow pattern <METHOD>::route ${handlerRoute}`);
             }
             const methodKey = `${method.toLowerCase()}::`;
             if (handlerRoute.toLowerCase().includes(methodKey)) {

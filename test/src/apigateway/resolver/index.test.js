@@ -33,32 +33,6 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerList}, importer).getResolver();
             assert.isTrue(resolver instanceof ListResolver);
         });
-        it('should not be able to find endpoint and throws unhandled error', async () => {
-            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
-            const basePath = 'unit-test/v1';
-            const routingMode = 'directory';
-            const importer = new ImportManager();
-            const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
-            const mock = mockData.getBadImportData();
-            const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 500);
-            assert.equal(response.hasErrors, true);
-        });
-        it('should find file but throw an error because file has a problem', () => {
-            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
-            const basePath = 'unit-test/v1';
-            const routingMode = 'directory';
-            const importer = new ImportManager();
-            const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
-            const mock = mockData.getApiGateWayRouteBadImport();
-            const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 500);
-            assert.equal(response.hasErrors, true);
-        });
     });
     describe('test directory resolver with path parameters', () => {
         it('should resolve endpoint with trailing path parameter', () => {
@@ -69,8 +43,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
             assert.equal(request.route, '/unit-test/v1/path-parameters/{id}');
         });
@@ -82,10 +55,13 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('bad-path-parameters/1', 'post');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 404);
-            assert.equal(response.hasErrors, true);
+            try {
+                resolver.getEndpoint(request);
+                assert.isFalse(true);
+            } catch (error) {
+                assert.equal(error.code, 404);
+                assert.equal(error.message, 'endpoint not found');
+            }
         });
         it('should not resolve endpoint with trailing path parameter but missing requiredPath', () => {
             const basePath = 'unit-test/v1';
@@ -95,10 +71,13 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('bad-path-parameters/1', 'delete');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 404);
-            assert.equal(response.hasErrors, true);
+            try {
+                resolver.getEndpoint(request);
+                assert.isFalse(true);
+            } catch (error) {
+                assert.equal(error.code, 404);
+                assert.equal(error.message, 'endpoint not found');
+            }
         });
         it('should find the nested file with trailing path parameter', () => {
             const basePath = 'unit-test/v1';
@@ -108,8 +87,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/nested-2/path-parameters/1', 'patch');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
             assert.equal(request.route, '/unit-test/v1/nested-1/nested-2/path-parameters/{id}');
         });
@@ -121,8 +99,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'delete');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
             assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
@@ -134,8 +111,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('multi-trailing/some-key/some-value', 'get');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {key: 'some-key', value: 'some-value'});
             assert.equal(request.route, '/unit-test/v1/multi-trailing/{key}/{value}');
         });
@@ -149,8 +125,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
             assert.equal(request.route, '/unit-test/v1/path-parameters/{id}');
         });
@@ -162,8 +137,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/path-parameters/1', 'post');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
             assert.equal(request.route, '/unit-test/v1/nested-1/path-parameters/{id}');
         });
@@ -175,8 +149,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'delete');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
             assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
@@ -188,10 +161,13 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1/2', 'delete');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 404);
-            assert.equal(response.hasErrors, true);
+            try {
+                resolver.getEndpoint(request);
+                assert.isFalse(true);
+            } catch (error) {
+                assert.equal(error.code, 404);
+                assert.equal(error.message, 'endpoint not found');
+            }
         });
     });
     describe('test prefix pattern resolver with path parameters', () => {
@@ -203,8 +179,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
             assert.equal(request.route, '/unit-test/v1/path-parameters/{id}');
         });
@@ -216,8 +191,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/path-parameters/1', 'post');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
             assert.equal(request.route, '/unit-test/v1/nested-1/path-parameters/{id}');
         });
@@ -229,8 +203,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'delete');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
             assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
@@ -242,10 +215,13 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1/2', 'delete');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 404);
-            assert.equal(response.hasErrors, true);
+            try {
+                resolver.getEndpoint(request);
+                assert.isFalse(true);
+            } catch (error) {
+                assert.equal(error.code, 404);
+                assert.equal(error.message, 'endpoint not found');
+            }
         });
     });
     describe('test exact pattern resolver with path parameters', () => {
@@ -257,8 +233,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('path-parameters/1', 'get');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
         });
         it('should resolve endpoint with nested file and trailing path parameter and have path params', () => {
@@ -269,8 +244,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/path-parameters/1', 'patch');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
         });
         it('should resolve endpoint with nested file, middle & trailing path parameters and have path params', () => {
@@ -281,8 +255,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1', 'put');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
             assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
@@ -294,10 +267,13 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerPattern}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('nested-1/syngenta/path-parameters/1/2', 'delete');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
-            assert.equal(response.code, 404);
-            assert.equal(response.hasErrors, true);
+            try {
+                resolver.getEndpoint(request);
+                assert.isFalse(true);
+            } catch (error) {
+                assert.equal(error.code, 404);
+                assert.equal(error.message, 'endpoint not found');
+            }
         });
     });
     describe('test list resolver with path parameters', () => {
@@ -313,8 +289,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerList}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('basic/1', 'post');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
             assert.equal(request.route, '/unit-test/v1/basic/{id}');
         });
@@ -325,8 +300,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerList}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('n1/n2/basic/1', 'put');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1'});
             assert.equal(request.route, '/unit-test/v1/n1/n2/basic/{id}');
         });
@@ -337,8 +311,7 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const resolver = new RouteResolver({basePath, routingMode, handlerList}, importer);
             const mock = mockData.getApiGateWayCustomRouteWithParams('n1/n2/syngenta/basic/1', 'patch');
             const request = new Request(mock);
-            const response = new Response();
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
             assert.deepEqual(request.pathParams, {id: '1', nested: 'syngenta'});
             assert.equal(request.route, '/unit-test/v1/n1/n2/{nested}/basic/{id}');
         });
@@ -350,13 +323,12 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
             const mock = mockData.getData();
             const request = new Request(mock);
-            const response = new Response();
             const importer = new ImportManager();
             const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
-            resolver.getEndpoint(request, response);
-            resolver.getEndpoint(request, response);
-            resolver.getEndpoint(request, response);
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
+            resolver.getEndpoint(request);
+            resolver.getEndpoint(request);
+            resolver.getEndpoint(request);
             assert.equal(resolver.cacheMisses, 1);
         });
         it('should have any 4 cache misses', () => {
@@ -366,13 +338,12 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             const mock = mockData.getData();
             const cacheSize = 0;
             const request = new Request(mock);
-            const response = new Response();
             const importer = new ImportManager();
             const resolver = new RouteResolver({basePath, routingMode, handlerPath, cacheSize}, importer);
-            resolver.getEndpoint(request, response);
-            resolver.getEndpoint(request, response);
-            resolver.getEndpoint(request, response);
-            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request);
+            resolver.getEndpoint(request);
+            resolver.getEndpoint(request);
+            resolver.getEndpoint(request);
             assert.equal(resolver.cacheMisses, 4);
         });
     });

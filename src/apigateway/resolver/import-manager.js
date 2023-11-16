@@ -30,12 +30,7 @@ class ImportManager {
     }
 
     importModuleFromPath(resolved) {
-        try {
-            return require(path.join(process.cwd(), resolved));
-        } catch (error) {
-            this.__logger.log({level: 'ERROR', log: error.stack.split('\n').map((trace) => trace.replace('    ', ''))});
-            this.raiseRouterConfigError(`Import Error ${resolved}: ${error.message}`);
-        }
+        return require(path.join(process.cwd(), resolved));
     }
 
     raise403() {
@@ -46,8 +41,8 @@ class ImportManager {
         throw new ApiError(404, 'url', 'endpoint not found');
     }
 
-    raiseRouterConfigError(message) {
-        throw new ApiError(500, 'router-config', message);
+    raise409(message) {
+        throw new ApiError(409, 'request-path', `request path conflict; ${message}`);
     }
 
     getFileTree() {
@@ -111,9 +106,7 @@ class ImportManager {
             const files = [...tree['__dynamicPath']].join(',');
             parts.pop();
             const location = parts.join(this.fileSeparator);
-            this.raiseRouterConfigError(
-                `Cannot have two dynamic files or directories in the same directory. Files: ${files}, location: ${location}`
-            );
+            this.raise409(`found two dynamic files/directories in the same directory. files: ${files}, location: ${location}`);
         }
     }
 
@@ -122,7 +115,7 @@ class ImportManager {
         if (opposite in tree) {
             parts.pop();
             const location = parts.join(this.fileSeparator);
-            this.raiseRouterConfigError(`Cannot have file and directory share same name. Files: ${part}, Location: ${location}`);
+            this.raise409(`found file & directory with same name. files: ${part}, location: ${location}`);
         }
     }
 }

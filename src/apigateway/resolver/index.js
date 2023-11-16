@@ -33,22 +33,16 @@ class RouteResolver {
         return this.__resolver;
     }
 
-    getEndpoint(request, response) {
-        try {
-            this.__setResolverMode();
-            const endpointModule = this.__getEndpointModule(request);
-            if (this.__resolver.hasPathParams) {
-                this.__configurePathParams(endpointModule, request);
-            }
-            if (typeof endpointModule[request.method] !== 'function') {
-                this.__importer.raise403();
-            }
-            return new Endpoint(endpointModule, request.method);
-        } catch (error) {
-            response.code = error.code;
-            response.setError(error.key, error.message);
-            return new Endpoint({}, 'error');
+    getEndpoint(request) {
+        this.__setResolverMode();
+        const endpointModule = this.__getEndpointModule(request);
+        if (this.__resolver.hasPathParams) {
+            this.__configurePathParams(endpointModule, request);
         }
+        if (typeof endpointModule[request.method] !== 'function') {
+            this.__importer.raise403();
+        }
+        return new Endpoint(endpointModule, request.method);
     }
 
     __getEndpointModule(request) {

@@ -45,9 +45,7 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
                 resolver.resolve(request);
                 assert.isFalse(true);
             } catch (error) {
-                assert.equal(error.code, 500);
-                assert.equal(error.key, 'router-config');
-                assert.isTrue(error.message.includes('file not found'));
+                assert.isTrue(error.message.includes('Cannot find module'));
             }
         });
     });
@@ -118,8 +116,8 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
                 resolver.resolve(request);
                 assert.isFalse(true);
             } catch (error) {
-                assert.equal(error.code, 500);
-                assert.equal(error.key, 'router-config');
+                assert.equal(error.code, 409);
+                assert.equal(error.key, 'request-path');
                 assert.isTrue(error.message.includes('found two conflicting routes:'));
             }
         });
@@ -137,8 +135,8 @@ describe('Test List Resovler: src/apigateway/resolver/list-resolver.js', () => {
                 resolver.resolve(request);
                 assert.isFalse(true);
             } catch (error) {
-                assert.equal(error.code, 500);
-                assert.equal(error.key, 'router-config');
+                assert.equal(error.code, 409);
+                assert.equal(error.key, 'request-path');
                 assert.isTrue(error.message.includes('route does not follow pattern <METHOD>::route'));
             }
         });

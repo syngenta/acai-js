@@ -47,36 +47,6 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
             assert.isTrue(typeof result.post === 'function');
         });
     });
-    describe('test basic routing: detects improper project structure', () => {
-        it('should throw an error about multiple dynamic files in one directory', () => {
-            const basePath = 'unit-test/v1';
-            const handlerPath = 'test/mocks/apigateway/mock-bad-multi-dynamic';
-            const importer = new ImportManager();
-            const resolver = new DirectoryResolver({basePath, handlerPath}, importer);
-            const mock = mockData.getApiGateWayRoute();
-            const request = new Request(mock);
-            try {
-                resolver.resolve(request);
-                assert.isTrue(false);
-            } catch (error) {
-                assert.isTrue(error.message.includes('Cannot have two dynamic files or directories in the same directory.'));
-            }
-        });
-        it('should throw an error about directory and files sharing the same name', () => {
-            const basePath = 'unit-test/v1';
-            const handlerPath = 'test/mocks/apigateway/mock-bad-same-file-dir';
-            const importer = new ImportManager();
-            const resolver = new DirectoryResolver({basePath, handlerPath}, importer);
-            const mock = mockData.getApiGateWayRoute();
-            const request = new Request(mock);
-            try {
-                resolver.resolve(request);
-                assert.isTrue(false);
-            } catch (error) {
-                assert.isTrue(error.message.includes('Cannot have file and directory share same name.'));
-            }
-        });
-    });
     describe('test routing: with path parameters', () => {
         const basePath = 'unit-test/v1';
         const handlerPath = 'test/mocks/apigateway/mock-directory-handlers/';

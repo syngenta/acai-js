@@ -168,7 +168,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
         });
         it('should not allow method', async () => {
-            const event = mockData.getApiGateWayRoute('', 'GET');
+            const event = mockData.getApiGateWayRoute('', 'PATCH');
             const router = new Router({
                 routingMode: 'directory',
                 basePath: 'unit-test/v1',
@@ -623,6 +623,82 @@ describe('Test Router: src/apigateway/router.js', () => {
             } catch (error) {
                 assert.equal(error.message, 'cacheMode must be either: all, dynamic, static');
             }
+        });
+        it('should throw an error about multiple dynamic files in one directory', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-bad-multi-dynamic'
+            });
+            const event = mockData.getApiGateWayRoute();
+            const response = await router.route(event);
+            const expected = {
+                errors: [
+                    {
+                        key_path: 'request-path',
+                        message:
+                            'request path conflict; found two dynamic files/directories in the same directory. files: {param}.js,{param}, location: {param}'
+                    }
+                ]
+            };
+            assert.equal(409, response.statusCode);
+            assert.deepEqual(expected, JSON.parse(response.body));
+        });
+        it('should throw an error about directory and files sharing the same name', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-bad-same-file-dir'
+            });
+            const event = mockData.getApiGateWayRoute();
+            const response = await router.route(event);
+            const expected = {
+                errors: [
+                    {
+                        key_path: 'request-path',
+                        message:
+                            'request path conflict; found file & directory with same name. files: same-file-directory, location: same-file-directory'
+                    }
+                ]
+            };
+            assert.equal(409, response.statusCode);
+            assert.deepEqual(expected, JSON.parse(response.body));
+        });
+        it('should handle unknown error, but replace error message with default', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers'
+            });
+            const event = mockData.getBadImportData();
+            const response = await router.route(event);
+            const expected = {errors: [{key_path: 'server', message: 'internal server error'}]};
+            assert.equal(500, response.statusCode);
+            assert.deepEqual(expected, JSON.parse(response.body));
+        });
+        it('should handle unknown error and show exact error message', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                outputError: true
+            });
+            const event = mockData.getBadImportData();
+            const response = await router.route(event);
+            assert.equal(500, response.statusCode);
+            assert.isTrue(JSON.parse(response.body).errors[0].message.includes('Cannot find module'));
+        });
+        it('should find file but throw an error because file has a problem and replace error message with default', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers'
+            });
+            const event = mockData.getApiGateWayRouteBadImport();
+            const response = await router.route(event);
+            const expected = {errors: [{key_path: 'server', message: 'internal server error'}]};
+            assert.equal(500, response.statusCode);
+            assert.deepEqual(expected, JSON.parse(response.body));
         });
     });
 });
