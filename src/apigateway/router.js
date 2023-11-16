@@ -77,26 +77,21 @@ class Router {
 
     async __handleError(event, request, response, error) {
         response.code = 500;
-        if (this.__outputError) {
-            response.setError('unknown', error.message);
-        } else {
-            response.body = {};
-            response.setError('server', 'internal server error');
-        }
+        response.setError('server', this.__outputError ? error.message : 'internal server error');
         if (typeof this.__onError === 'function') {
             this.__onError(request, response, error);
         }
-        this.__logError(event, request, response, error);
+        this.__logError(event, request, error);
     }
 
-    __logError(event, request, response, error) {
+    __logError(event, request, error) {
         this.__logger.log({
             level: 'ERROR',
             log: {
                 event,
                 request: request.request,
-                response: response.response,
-                error: error.stack.split('\n').map((trace) => trace.replace('    ', ''))
+                error: error.message,
+                stack: error.stack.split('\n').map((trace) => trace.replace('    ', ''))
             }
         });
     }
