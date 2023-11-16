@@ -1,4 +1,4 @@
-class ImportError {
+class ApiError {
     constructor(code = 500, key = 'unknown', message = 'something went wrong') {
         this.code = code;
         this.key = key;
@@ -6,4 +6,4 @@ class ImportError {
     }
 }
 
-module.exports = ImportError;
+module.exports = ApiError;

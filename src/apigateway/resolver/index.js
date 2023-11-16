@@ -1,5 +1,5 @@
 const Endpoint = require('../endpoint');
-const ImportManager = require('../import-manager');
+const ImportManager = require('./import-manager');
 const DirectoryResolver = require('./directory-resolver');
 const ListResolver = require('./list-resolver');
 const PatternResolver = require('./pattern-resolver');
@@ -33,23 +33,16 @@ class RouteResolver {
         return this.__resolver;
     }
 
-    getEndpoint(request, response) {
-        try {
-            this.__validateConfigs();
-            this.__setResolverMode();
-            const endpointModule = this.__getEndpointModule(request);
-            if (this.__resolver.hasPathParams) {
-                this.__configurePathParams(endpointModule, request);
-            }
-            if (typeof endpointModule[request.method] !== 'function') {
-                this.__importer.raise403();
-            }
-            return new Endpoint(endpointModule, request.method);
-        } catch (error) {
-            response.code = error.code;
-            response.setError(error.key, error.message);
-            return new Endpoint({}, 'error');
+    getEndpoint(request) {
+        this.__setResolverMode();
+        const endpointModule = this.__getEndpointModule(request);
+        if (this.__resolver.hasPathParams) {
+            this.__configurePathParams(endpointModule, request);
         }
+        if (typeof endpointModule[request.method] !== 'function') {
+            this.__importer.raise403();
+        }
+        return new Endpoint(endpointModule, request.method);
     }
 
     __getEndpointModule(request) {
@@ -68,28 +61,6 @@ class RouteResolver {
         if (!this.__resolver) {
             const mode = this.__params.routingMode;
             this.__resolver = new this.__resolvers[mode](this.__params, this.__importer);
-        }
-    }
-
-    __validateConfigs() {
-        const {routingMode, handlerPath, handlerPattern, handlerList, cacheSize, cacheMode} = this.__params;
-        if (!Number.isInteger(cacheSize) && cacheSize !== undefined) {
-            this.__importer.raiseRouterConfigError('cacheSize must be an integer');
-        }
-        if (cacheMode !== 'all' && cacheMode !== 'all' && cacheMode !== 'dynamic' && cacheMode !== undefined) {
-            this.__importer.raiseRouterConfigError('cacheMode must be either: all, dynamic, static');
-        }
-        if (routingMode !== 'pattern' && routingMode !== 'directory' && routingMode !== 'list') {
-            this.__importer.raiseRouterConfigError('routingMode must be either directory, pattern or list');
-        }
-        if (routingMode === 'directory' && !handlerPath) {
-            this.__importer.raiseRouterConfigError('handlerPath config is requied when routingMode is directory');
-        }
-        if (routingMode === 'pattern' && !handlerPattern) {
-            this.__importer.raiseRouterConfigError('handlerPattern config is requied when routingMode is pattern');
-        }
-        if (routingMode === 'list' && !handlerList) {
-            this.__importer.raiseRouterConfigError('handlerList config is requied when routingMode is list');
         }
     }
 

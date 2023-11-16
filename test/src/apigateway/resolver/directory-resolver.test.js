@@ -1,6 +1,6 @@
 const {assert} = require('chai');
 const DirectoryResolver = require('../../../../src/apigateway/resolver/directory-resolver');
-const ImportManager = require('../../../../src/apigateway/import-manager');
+const ImportManager = require('../../../../src/apigateway/resolver/import-manager');
 const {Request} = require('../../../../src').apigateway;
 const mockData = require('../../../mocks/apigateway/mock-data');
 
@@ -45,36 +45,6 @@ describe('Test Directory Resovler: src/apigateway/resolver/directory-resolver.js
             const request = new Request(mock);
             const result = resolver.resolve(request);
             assert.isTrue(typeof result.post === 'function');
-        });
-    });
-    describe('test basic routing: detects improper project structure', () => {
-        it('should throw an error about multiple dynamic files in one directory', () => {
-            const basePath = 'unit-test/v1';
-            const handlerPath = 'test/mocks/apigateway/mock-bad-multi-dynamic';
-            const importer = new ImportManager();
-            const resolver = new DirectoryResolver({basePath, handlerPath}, importer);
-            const mock = mockData.getApiGateWayRoute();
-            const request = new Request(mock);
-            try {
-                resolver.resolve(request);
-                assert.isTrue(false);
-            } catch (error) {
-                assert.isTrue(error.message.includes('Cannot have two dynamic files or directories in the same directory.'));
-            }
-        });
-        it('should throw an error about directory and files sharing the same name', () => {
-            const basePath = 'unit-test/v1';
-            const handlerPath = 'test/mocks/apigateway/mock-bad-same-file-dir';
-            const importer = new ImportManager();
-            const resolver = new DirectoryResolver({basePath, handlerPath}, importer);
-            const mock = mockData.getApiGateWayRoute();
-            const request = new Request(mock);
-            try {
-                resolver.resolve(request);
-                assert.isTrue(false);
-            } catch (error) {
-                assert.isTrue(error.message.includes('Cannot have file and directory share same name.'));
-            }
         });
     });
     describe('test routing: with path parameters', () => {
