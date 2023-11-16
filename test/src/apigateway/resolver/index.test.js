@@ -191,6 +191,19 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             assert.deepEqual(request.pathParams, {id: '1', org: 'syngenta'});
             assert.equal(request.route, '/unit-test/v1/nested-1/{org}/path-parameters/{id}');
         });
+        it('should find file with multiple trailing path parameters', () => {
+            const basePath = 'unit-test/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const importer = new ImportManager();
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
+            const mock = mockData.getApiGateWayCustomRouteWithParams('multi-trailing/some-key/some-value', 'get');
+            const request = new Request(mock);
+            const response = new Response();
+            resolver.getEndpoint(request, response);
+            assert.deepEqual(request.pathParams, {key: 'some-key', value: 'some-value'});
+            assert.equal(request.route, '/unit-test/v1/multi-trailing/{key}/{value}');
+        });
     });
     describe('test suffix pattern resolver with path parameters', () => {
         it('should resolve endpoint with trailing path parameter and have path params', () => {
@@ -393,6 +406,68 @@ describe('Test Resolver: src/apigateway/resolver/index.js', () => {
             resolver.getEndpoint(request, response);
             assert.deepEqual(request.pathParams, {id: '1', nested: 'syngenta'});
             assert.equal(request.route, '/unit-test/v1/n1/n2/{nested}/basic/{id}');
+        });
+    });
+    describe('test resolver cache', () => {
+        it('should raise an error when resolver cacheSize is incorrect', () => {
+            const basePath = 'unit-test/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const cacheSize = 'must-be-string';
+            const mock = mockData.getData();
+            const request = new Request(mock);
+            const response = new Response();
+            const importer = new ImportManager();
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath, cacheSize}, importer);
+            resolver.getEndpoint(request, response);
+            assert.equal(response.body, '{"errors":[{"key_path":"router-config","message":"cacheSize must be an integer"}]}');
+        });
+        it('should raise an error when resolver cacheMode is incorrect', () => {
+            const basePath = 'unit-test/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const cacheMode = 'must-be-one-of-all-dynamic-static-';
+            const mock = mockData.getData();
+            const request = new Request(mock);
+            const response = new Response();
+            const importer = new ImportManager();
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath, cacheMode}, importer);
+            resolver.getEndpoint(request, response);
+            assert.equal(
+                response.body,
+                '{"errors":[{"key_path":"router-config","message":"cacheMode must be either: all, dynamic, static"}]}'
+            );
+        });
+        it('should not have any cache misses', () => {
+            const basePath = 'unit-test/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const mock = mockData.getData();
+            const request = new Request(mock);
+            const response = new Response();
+            const importer = new ImportManager();
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath}, importer);
+            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request, response);
+            assert.equal(resolver.cacheMisses, 1);
+        });
+        it('should have any 4 cache misses', () => {
+            const basePath = 'unit-test/v1';
+            const routingMode = 'directory';
+            const handlerPath = 'test/mocks/apigateway/mock-directory-handlers';
+            const mock = mockData.getData();
+            const cacheSize = 0;
+            const request = new Request(mock);
+            const response = new Response();
+            const importer = new ImportManager();
+            const resolver = new RouteResolver({basePath, routingMode, handlerPath, cacheSize}, importer);
+            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request, response);
+            resolver.getEndpoint(request, response);
+            assert.equal(resolver.cacheMisses, 4);
         });
     });
 });

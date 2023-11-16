@@ -3,17 +3,24 @@ const ImportManager = require('../import-manager');
 const DirectoryResolver = require('./directory-resolver');
 const ListResolver = require('./list-resolver');
 const PatternResolver = require('./pattern-resolver');
+const ResolverCache = require('./cache');
 
 class RouteResolver {
     constructor(params) {
         this.__params = params;
         this.__importer = new ImportManager();
+        this.__cacher = new ResolverCache(params.cacheSize, params.cacheMode);
+        this.__cacheMisses = 0;
         this.__resolver = null;
         this.__resolvers = {
             pattern: PatternResolver,
             directory: DirectoryResolver,
             list: ListResolver
         };
+    }
+
+    get cacheMisses() {
+        return this.__cacheMisses;
     }
 
     autoLoad() {
@@ -30,7 +37,7 @@ class RouteResolver {
         try {
             this.__validateConfigs();
             this.__setResolverMode();
-            const endpointModule = this.__resolver.resolve(request);
+            const endpointModule = this.__getEndpointModule(request);
             if (this.__resolver.hasPathParams) {
                 this.__configurePathParams(endpointModule, request);
             }
@@ -45,6 +52,18 @@ class RouteResolver {
         }
     }
 
+    __getEndpointModule(request) {
+        const cached = this.__cacher.get(request.path);
+        if (cached) {
+            this.__resolver.hasPathParams = cached.isDynamic;
+            return cached.endpointModule;
+        }
+        this.__cacheMisses++;
+        const endpointModule = this.__resolver.resolve(request);
+        this.__cacher.put(request.path, endpointModule, this.__resolver.hasPathParams);
+        return endpointModule;
+    }
+
     __setResolverMode() {
         if (!this.__resolver) {
             const mode = this.__params.routingMode;
@@ -53,7 +72,13 @@ class RouteResolver {
     }
 
     __validateConfigs() {
-        const {routingMode, handlerPath, handlerPattern, handlerList} = this.__params;
+        const {routingMode, handlerPath, handlerPattern, handlerList, cacheSize, cacheMode} = this.__params;
+        if (!Number.isInteger(cacheSize) && cacheSize !== undefined) {
+            this.__importer.raiseRouterConfigError('cacheSize must be an integer');
+        }
+        if (cacheMode !== 'all' && cacheMode !== 'all' && cacheMode !== 'dynamic' && cacheMode !== undefined) {
+            this.__importer.raiseRouterConfigError('cacheMode must be either: all, dynamic, static');
+        }
         if (routingMode !== 'pattern' && routingMode !== 'directory' && routingMode !== 'list') {
             this.__importer.raiseRouterConfigError('routingMode must be either directory, pattern or list');
         }
