@@ -16,6 +16,7 @@ class Router {
         this.__autoValidate = params.autoValidate;
         this.__schemaPath = params.schemaPath;
         this.__outputError = params.outputError;
+        this.__responseValidation = params.responseValidation;
         this.__schema = new Schema({}, {}, params);
         this.__validator = new Validator(this.__schema);
         this.__resolver = new RouteResolver(params);
@@ -72,6 +73,9 @@ class Router {
         }
         if (!response.hasErrors && typeof this.__afterAll === 'function') {
             await this.__afterAll(request, response, endpoint.requirements);
+        }
+        if (!response.hasErrors && this.__responseValidation) {
+            await this.__validator.validateResponse(response, endpoint.requirements);
         }
     }
 

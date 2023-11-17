@@ -77,6 +77,19 @@ class Validator {
         return true;
     }
 
+    async validateResponse(response, requirements) {
+        if (requirements.responseBody) {
+            const errors = await this.__schema.validate(requirements.responseBody, response.rawBody);
+            if (errors) {
+                response.code = 422;
+                errors.forEach((error) => {
+                    const path = error.instancePath ? error.instancePath : 'root';
+                    response.setError(path, error.message);
+                });
+            }
+        }
+    }
+
     __validateAvailableFields(response, available, sent, source, code) {
         Object.keys(sent).forEach((field) => {
             if (!available.includes(field)) {
@@ -95,7 +108,7 @@ class Validator {
         });
     }
 
-    async __validateApigatewayBody(response, requirement, sent, source, code) {
+    async __validateApigatewayBody(response, requirement, sent, _, code) {
         const errors = await this.__schema.validate(requirement, sent);
         if (errors) {
             response.code = code;
