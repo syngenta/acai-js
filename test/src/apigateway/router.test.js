@@ -701,4 +701,74 @@ describe('Test Router: src/apigateway/router.js', () => {
             assert.deepEqual(expected, JSON.parse(response.body));
         });
     });
+    describe('test response validation', () => {
+        it('should validate the response succesfully with responseBody defined in requirements', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                validateResponse: true
+            });
+            const expected = {test: true};
+            const event = mockData.getApiGateWayRoute();
+            const response = await router.route(event);
+            assert.equal(200, response.statusCode);
+            assert.deepEqual(expected, JSON.parse(response.body));
+        });
+        it('should validate the response and fail with responseBody defined in requirements', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                validateResponse: true
+            });
+            const expected = {
+                errors: [
+                    {key_path: '.test', message: 'must be boolean'},
+                    {key_path: '.nested.unit', message: 'must be boolean'}
+                ]
+            };
+            const event = mockData.getApiGateWayRoute('', 'PUT');
+            const response = await router.route(event);
+            assert.equal(422, response.statusCode);
+            assert.deepEqual(expected, JSON.parse(response.body));
+        });
+        it('should validate the response succesfully with responseBody defined in openAPI', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                autoValidate: true,
+                validateResponse: true
+            });
+            const event = mockData.getApiGateWayRouteWithProperData();
+            const response = await router.route(event);
+            const expected = {test: true};
+            assert.equal(200, response.statusCode);
+            assert.deepEqual(expected, JSON.parse(response.body));
+        });
+        it('should validate the response and fail with responseBody defined in openAPI', async () => {
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                autoValidate: true,
+                validateResponse: true
+            });
+            const expected = {
+                errors: [
+                    {key_path: '.test', message: 'must be boolean'},
+                    {key_path: '.nested.unit', message: 'must be boolean'}
+                ]
+            };
+            const event = mockData.getApiGateWayRouteWithProperData('PUT');
+            const response = await router.route(event);
+            assert.equal(422, response.statusCode);
+            assert.deepEqual(expected, JSON.parse(response.body));
+        });
+    });
 });

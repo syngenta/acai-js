@@ -11,6 +11,16 @@ class Response {
         };
     }
 
+    get contentType() {
+        if (this.headers['Content-Type']) {
+            return this.headers['Content-Type'];
+        }
+        if (typeof this.__body === 'object' || Array.isArray(this.__body)) {
+            return 'application/json';
+        }
+        throw new Error('Uncommon Content-Type in response; please explicitly set response.headers[`Content-Type`] in headers');
+    }
+
     get headers() {
         return this.__headers;
     }

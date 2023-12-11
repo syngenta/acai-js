@@ -8,6 +8,43 @@ tags:
     -
         name: unit-test
 paths:
+    /unit-test/v1/basic:
+        post:
+            tags:
+                - unit-test
+            operationId: PostBasic
+            deprecated: false
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-post-request-test'
+            responses:
+                200:
+                    description: successful request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-basic-response'
+        put:
+            tags:
+                - unit-test
+            operationId: PostBasic
+            deprecated: false
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-post-request-test'
+            responses:
+                200:
+                    description: successful request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-basic-nested-response'
     /unit-test/v1/schema:
         get:
             tags:
@@ -27,6 +64,7 @@ paths:
                         type: string
             responses:
                 200:
+                    description: successful request
                     content:
                         application/json:
                             schema:
@@ -44,6 +82,7 @@ paths:
                             $ref: '#/components/schemas/v1-post-request-test'
             responses:
                 200:
+                    description: successful request
                     content:
                         application/json:
                             schema:
@@ -72,6 +111,7 @@ paths:
                             $ref: '#/components/schemas/v1-patch-request-test'
             responses:
                 200:
+                    description: successful request
                     content:
                         application/json:
                             schema:
@@ -96,6 +136,7 @@ paths:
                             $ref: '#/components/schemas/v1-test-reference-model'
             responses:
                 200:
+                    description: successful request
                     content:
                         application/json:
                             schema:
@@ -120,6 +161,7 @@ paths:
                             $ref: '#/components/schemas/v1-test-reference-model'
             responses:
                 200:
+                    description: successful request
                     content:
                         application/json:
                             schema:
@@ -138,6 +180,7 @@ paths:
                         type: string
             responses:
                 200:
+                    description: successful request
                     content:
                         application/json:
                             schema:
@@ -161,6 +204,7 @@ paths:
                             $ref: '#/components/schemas/v1-test-reference-model'
             responses:
                 200:
+                    description: successful request
                     content:
                         application/json:
                             schema:
@@ -183,12 +227,28 @@ paths:
                         type: string
             responses:
                 200:
+                    description: successful request
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/v1-required-response'
 components:
     schemas:
+        v1-basic-response:
+            type: object
+            properties:
+                test:
+                    type: boolean
+        v1-basic-nested-response:
+            type: object
+            properties:
+                test:
+                    type: boolean
+                nested:
+                    type: object
+                    properties:
+                        unit:
+                            type: boolean
         v1-test-reference-model:
             type: object
             properties:
