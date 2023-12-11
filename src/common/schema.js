@@ -52,6 +52,24 @@ class Schema {
         return ajvValidate.errors;
     }
 
+    async validateOpenApiResponse(path, request, response) {
+        this.loadSchema();
+        const refSchema = await this.__refParser.dereference(this.openAPISchema);
+        const operation = this.__getOperationSchema(refSchema, path, request.method);
+        let schema = {};
+        try {
+            schema = operation.responses[response.code].content[response.contentType];
+            if (!schema) {
+                throw new Error();
+            }
+        } catch (error) {
+            throw new Error(
+                `problem with finding response schema for ${request.method}::${path} ${response.code}::${response.contentType}: ${error}`
+            );
+        }
+        return await this.validate(schema.schema, response.rawBody);
+    }
+
     async __getSchemaObject(entity = '') {
         if (Object.keys(this.openAPISchema).length && typeof entity === 'string' && entity.length) {
             const refSchema = await this.__refParser.dereference(this.openAPISchema);

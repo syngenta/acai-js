@@ -16,7 +16,7 @@ class Router {
         this.__autoValidate = params.autoValidate;
         this.__schemaPath = params.schemaPath;
         this.__outputError = params.outputError;
-        this.__responseValidation = params.responseValidation;
+        this.__validateResponse = params.validateResponse;
         this.__schema = new Schema({}, {}, params);
         this.__validator = new Validator(this.__schema);
         this.__resolver = new RouteResolver(params);
@@ -59,7 +59,7 @@ class Router {
         if (!response.hasErrors && this.__autoValidate) {
             await this.__validator.validateWithOpenAPI(request, response);
         }
-        if (!response.hasErrors && endpoint.hasRequirements && !this.__autoValidate) {
+        if (!response.hasErrors && !this.__autoValidate && endpoint.hasRequirements) {
             await this.__validator.validateWithRequirements(request, response, endpoint.requirements);
         }
         if (!response.hasErrors && endpoint.hasBefore) {
@@ -74,7 +74,10 @@ class Router {
         if (!response.hasErrors && typeof this.__afterAll === 'function') {
             await this.__afterAll(request, response, endpoint.requirements);
         }
-        if (!response.hasErrors && this.__responseValidation) {
+        if (!response.hasErrors && this.__autoValidate && this.__validateResponse) {
+            await this.__validator.validateResponsewithOpenAPI(request, response);
+        }
+        if (!response.hasErrors && !this.__autoValidate && endpoint.hasRequirements && this.__validateResponse) {
             await this.__validator.validateResponse(response, endpoint.requirements);
         }
     }

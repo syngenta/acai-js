@@ -42,7 +42,7 @@ class Validator {
             pathParameters: request.pathParams,
             body: request.body
         };
-        const route = !request.route.startsWith('/') ? `/${request.route}` : request.route;
+        const route = this.__getRequestRoute(request);
         const errors = await this.__schema.validateOpenApi(route, request.method, translatedRequest);
         this.__translateOpenAPIErrors(errors, response);
         return response;
@@ -77,17 +77,23 @@ class Validator {
         return true;
     }
 
+    async validateResponsewithOpenAPI(request, response) {
+        const route = this.__getRequestRoute(request);
+        const errors = await this.__schema.validateOpenApiResponse(route, request, response);
+        this.__translateResponseErrors(errors, response);
+        return response;
+    }
+
     async validateResponse(response, requirements) {
-        if (requirements.responseBody) {
-            const errors = await this.__schema.validate(requirements.responseBody, response.rawBody);
-            if (errors) {
-                response.code = 422;
-                errors.forEach((error) => {
-                    const path = error.instancePath ? error.instancePath : 'root';
-                    response.setError(path, error.message);
-                });
-            }
+        if (requirements && requirements.requiredResponse) {
+            const errors = await this.__schema.validate(requirements.requiredResponse, response.rawBody);
+            this.__translateResponseErrors(errors, response);
         }
+        return response;
+    }
+
+    __getRequestRoute(request) {
+        return !request.route.startsWith('/') ? `/${request.route}` : request.route;
     }
 
     __validateAvailableFields(response, available, sent, source, code) {
@@ -126,6 +132,16 @@ class Validator {
                 const key = error.path.split('.')[1];
                 const value = error.message;
                 response.setError(key, value);
+            });
+        }
+    }
+
+    __translateResponseErrors(errors, response) {
+        if (errors) {
+            response.code = 422;
+            errors.forEach((error) => {
+                const path = error.instancePath ? error.instancePath : 'root';
+                response.setError(path.replace(/\//g, '.'), error.message);
             });
         }
     }
