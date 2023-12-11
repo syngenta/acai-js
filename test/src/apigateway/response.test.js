@@ -97,8 +97,7 @@ describe('Test Response: src/apigateway/response.js', () => {
                     'Access-Control-Allow-Headers': '*'
                 },
                 statusCode: 400,
-                body:
-                    '{"errors":[{"key_path":"root","message":"unit-test has error"},{"key_path":"root","message":"unit-test can set multiple errors"}]}'
+                body: '{"errors":[{"key_path":"root","message":"unit-test has error"},{"key_path":"root","message":"unit-test can set multiple errors"}]}'
             });
         });
     });
@@ -114,9 +113,32 @@ describe('Test Response: src/apigateway/response.js', () => {
         });
         it('should compress body', () => {
             const response = new Response();
-            response.body = {'test': true};
+            response.body = {test: true};
             response.compress = true;
-            assert.equal(typeof response.body == 'string', true);
+            assert.equal(typeof response.body === 'string', true);
+        });
+    });
+    describe('test contentType', () => {
+        it('should default to application/json by default', () => {
+            const response = new Response();
+            assert.equal(response.contentType, 'application/json');
+        });
+        it('should maintiain content type set by application', () => {
+            const response = new Response();
+            response.headers['Content-Type'] = 'text/plain';
+            assert.equal(response.contentType, 'text/plain');
+        });
+        it('should throw an error for uncommon content types', () => {
+            const response = new Response();
+            response.body = '{{}{}}}}}11111````````';
+            try {
+                response.contentType;
+            } catch (error) {
+                assert.equal(
+                    error.message,
+                    'Uncommon Content-Type in response; please explicitly set response.headers[`Content-Type`] in headers'
+                );
+            }
         });
     });
 });

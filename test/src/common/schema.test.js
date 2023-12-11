@@ -1,6 +1,5 @@
 const {assert} = require('chai');
 const Schema = require('../../../src/common/schema');
-const mockData = require('../../mocks/apigateway/mock-data');
 
 describe('Test Schema: src/common/schema', () => {
     describe('test initializing Schemea', () => {
@@ -82,7 +81,7 @@ describe('Test Schema: src/common/schema', () => {
             const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'get', request);
             assert.equal(errors.length, 1);
         });
-        it('should validate from openapi with no errors (body) ', async () => {
+        it('should validate from openapi with no errors (body)', async () => {
             const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const request = {
                 body: {
@@ -108,7 +107,7 @@ describe('Test Schema: src/common/schema', () => {
             const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'post', request);
             assert.equal(errors.length, 1);
         });
-        it('should validate from openapi with no errors (all parts) ', async () => {
+        it('should validate from openapi with no errors (all parts)', async () => {
             const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const request = {
                 headers: {key: 'key'},
@@ -124,7 +123,7 @@ describe('Test Schema: src/common/schema', () => {
             const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'patch', request);
             assert.equal(errors.length, 0);
         });
-        it('should validate from openapi with errors (all parts) ', async () => {
+        it('should validate from openapi with errors (all parts)', async () => {
             const schema = Schema.fromFilePath('test/mocks/openapi.yml');
             const request = {
                 headers: {key: 'key'},
@@ -138,6 +137,19 @@ describe('Test Schema: src/common/schema', () => {
             };
             const errors = await schema.validateOpenApi('/unit-test/v1/schema', 'patch', request);
             assert.equal(errors.length, 3);
+        });
+        it('should error out on finding response that is not there', async () => {
+            const schema = Schema.fromFilePath('test/mocks/openapi.yml');
+            const request = {method: 'post'};
+            const response = {
+                code: 200,
+                contentType: 'fail'
+            };
+            try {
+                await schema.validateOpenApiResponse('/unit-test/v1/basic', request, response);
+            } catch (error) {
+                assert.equal(error.message, 'problem with finding response schema for post::/unit-test/v1/basic 200::fail: Error');
+            }
         });
     });
 });

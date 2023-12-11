@@ -15,10 +15,9 @@ class Response {
         if (this.headers['Content-Type']) {
             return this.headers['Content-Type'];
         }
-        try {
-            JSON.stringify(this.__body);
+        if (typeof this.__body === 'object' || Array.isArray(this.__body)) {
             return 'application/json';
-        } catch {}
+        }
         throw new Error('Uncommon Content-Type in response; please explicitly set response.headers[`Content-Type`] in headers');
     }
 
