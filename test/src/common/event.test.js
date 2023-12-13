@@ -26,10 +26,7 @@ describe('Test Generic Event with Basic Settings: src/common/event.js', () => {
             try {
                 const records = await ddbEvent.records;
             } catch (error) {
-                assert.equal(
-                    error.message,
-                    'operations must be an array, exclusively containing create, update, delete'
-                );
+                assert.equal(error.message, 'operations must be an array, exclusively containing create, update, delete');
             }
         });
     });
