@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const {globSync} = require('glob');
-const ApiError = require('../api-error.js');
+const ApiError = require('../error/api-error.js');
 const Logger = require('../../common/logger.js');
 
 class ImportManager {

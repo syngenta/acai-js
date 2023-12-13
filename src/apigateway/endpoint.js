@@ -31,6 +31,14 @@ class Endpoint {
         return this.requirements && typeof this.requirements.after === 'function';
     }
 
+    get hasTimeout() {
+        return this.requirements && Number.isInteger(this.requirements.timeout);
+    }
+
+    get timeout() {
+        return this.requirements.timeout;
+    }
+
     get method() {
         return this.__endpoint[this.__method];
     }

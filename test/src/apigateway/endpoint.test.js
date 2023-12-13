@@ -22,6 +22,9 @@ describe('Test Endpoint', () => {
         it('sholud not have a data class', async () => {
             assert.equal(endpoint.hasDataClass, false);
         });
+        it('should not have a timeout', async () => {
+            assert.equal(endpoint.hasTimeout, false);
+        });
     });
     describe('test advance endpoint properties', () => {
         const endpoint = new Endpoint(module, 'PUT');
@@ -33,6 +36,10 @@ describe('Test Endpoint', () => {
         });
         it('should have a data class', async () => {
             assert.equal(endpoint.hasDataClass, true);
+        });
+        it('should have a timeout', async () => {
+            assert.equal(endpoint.hasTimeout, true);
+            assert.equal(endpoint.timeout, 3000);
         });
     });
     describe('test run advance properties', () => {
@@ -64,7 +71,6 @@ describe('Test Endpoint', () => {
             const dataClass = await endpoint.dataClass(request);
             assert.equal(dataClass.exists, true);
         });
-
         it('should have run correctly', async () => {
             await endpoint.run(request, response);
             assert.deepEqual(response.response, {

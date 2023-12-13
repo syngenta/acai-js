@@ -34,7 +34,8 @@ exports.requirements = {
         requiredQuery: ['test', 'unit'],
         before: before,
         after: after,
-        dataClass: DataClass
+        dataClass: DataClass,
+        timeout: 3000
     },
     delete: {
         requiredQuery: ['test', 'unit']
