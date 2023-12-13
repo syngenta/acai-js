@@ -736,3 +736,34 @@ exports.getApiGateWayRouteWithProperData = (method = 'POST') => {
         })
     };
 };
+exports.getApiGateWayRouteForTimeout = (method = 'get') => {
+    return {
+        path: `unit-test/v1/timeout`,
+        httpMethod: method,
+        headers: {
+            'x-api-key': 'SOME-KEY',
+            'content-type': 'application/json'
+        },
+        requestContext: {
+            resourceId: 't89kib',
+            authorizer: {
+                apiKey: 'SOME KEY',
+                userId: 'x-1-3-4',
+                correlationId: 'abc12312',
+                principalId: '9de3f415a97e410386dbef146e88744e',
+                integrationLatency: 572
+            }
+        },
+        pathParameters: {
+            proxy: 'basic'
+        },
+        resource: '/{proxy+}',
+        queryStringParameters: {},
+        body: JSON.stringify({
+            name: 'Paul',
+            email: 'paul@email.com',
+            phone: 1234567890,
+            active: true
+        })
+    };
+};

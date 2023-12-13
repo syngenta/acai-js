@@ -1,10 +1,12 @@
-const ApiError = require('./api-error.js');
+const ApiError = require('./error/api-error');
+const ApiTimeout = require('./error/api-timeout');
 const Logger = require('../common/logger');
 const Request = require('./request');
 const RouteResolver = require('./resolver');
 const Response = require('./response');
-const Schema = require('../common/schema.js');
+const Schema = require('../common/schema');
 const Validator = require('../common/validator');
+const Timer = require('../common/timer');
 
 class Router {
     constructor(params) {
@@ -13,10 +15,13 @@ class Router {
         this.__afterAll = params.afterAll;
         this.__withAuth = params.withAuth;
         this.__onError = params.onError;
+        this.__onTimeout = params.onTimeout;
+        this.__timeout = params.timeout;
         this.__autoValidate = params.autoValidate;
         this.__schemaPath = params.schemaPath;
         this.__outputError = params.outputError;
         this.__validateResponse = params.validateResponse;
+        this.__timer = new Timer();
         this.__schema = new Schema({}, {}, params);
         this.__validator = new Validator(this.__schema);
         this.__resolver = new RouteResolver(params);
@@ -38,12 +43,7 @@ class Router {
         try {
             await this.__runRoute(request, response);
         } catch (error) {
-            if (error instanceof ApiError) {
-                response.code = error.code;
-                response.setError(error.key, error.message);
-            } else {
-                await this.__handleError(event, request, response, error);
-            }
+            await this.__handleAllErrors(event, request, response, error);
         }
         return response.response;
     }
@@ -66,7 +66,7 @@ class Router {
             await endpoint.before(request, response);
         }
         if (!response.hasErrors) {
-            await endpoint.run(request, response);
+            await this.__runEndpoint(endpoint, request, response);
         }
         if (!response.hasErrors && endpoint.hasAfter) {
             await endpoint.after(request, response);
@@ -82,13 +82,49 @@ class Router {
         }
     }
 
-    async __handleError(event, request, response, error) {
+    async __runEndpoint(endpoint, request, response) {
+        if (Number.isInteger(this.__timeout)) {
+            try {
+                const timeout = endpoint.hasTimeout ? endpoint.timeout : this.__timeout;
+                const result = await Promise.race([endpoint.run(request, response), this.__timer.start(timeout)]);
+                this.__timer.stop();
+                if (result === 'timeout') {
+                    throw new ApiTimeout();
+                }
+            } catch (error) {
+                throw error;
+            }
+        } else {
+            await endpoint.run(request, response);
+        }
+    }
+
+    async __handleAllErrors(event, request, response, error) {
+        if (error instanceof ApiError) {
+            response.code = error.code;
+            response.setError(error.key, error.message);
+        } else if (error instanceof ApiTimeout) {
+            await this.__handleTimeoutError(request, response, error);
+        } else {
+            await this.__handleInternalServerError(event, request, response, error);
+        }
+    }
+
+    async __handleTimeoutError(request, response, error) {
+        response.code = error.code;
+        response.setError(error.key, error.message);
+        if (typeof this.__onTimeout === 'function') {
+            await this.__onTimeout(request, response, error);
+        }
+    }
+
+    async __handleInternalServerError(event, request, response, error) {
         response.code = 500;
         response.setError('server', this.__outputError ? error.message : 'internal server error');
-        if (typeof this.__onError === 'function') {
-            this.__onError(request, response, error);
-        }
         this.__logError(event, request, error);
+        if (typeof this.__onError === 'function') {
+            await this.__onError(request, response, error);
+        }
     }
 
     __logError(event, request, error) {

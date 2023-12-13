@@ -1,4 +1,5 @@
-const ApiError = require('../apigateway/api-error.js');
+const ApiError = require('../apigateway/error/api-error');
+const ApiTimeout = require('../apigateway/error/api-timeout');
 
 class Validator {
     constructor(schema, validationError = true) {

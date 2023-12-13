@@ -1,7 +1,7 @@
 const {assert} = require('chai');
-const ApiError = require('../../../src/apigateway/api-error');
+const ApiError = require('../../../../src/apigateway/error/api-error');
 
-describe('Test Import Error: src/apigateway/import-manager/import-error.js', () => {
+describe('Test Api Error: src/apigateway/error/api-error.js', () => {
     it('should have these defaults', () => {
         const error = new ApiError();
         assert.equal(error.code, 500);

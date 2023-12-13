@@ -771,4 +771,122 @@ describe('Test Router: src/apigateway/router.js', () => {
             assert.deepEqual(expected, JSON.parse(response.body));
         });
     });
+    describe('test timeout feature', () => {
+        it('should timeout', async function () {
+            this.timeout(0);
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                timeout: 500
+            });
+            const event = mockData.getApiGateWayRouteForTimeout();
+            const response = await router.route(event);
+            assert.equal(response.statusCode, 408);
+            assert.deepEqual(JSON.parse(response.body), {errors: [{key_path: 'unknown', message: 'request timeout'}]});
+        });
+        it('should timeout from endpoint with lower timeout than global', async function () {
+            this.timeout(0);
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                timeout: 5000
+            });
+            const event = mockData.getApiGateWayRouteForTimeout('post');
+            const response = await router.route(event);
+            assert.equal(response.statusCode, 408);
+            assert.deepEqual(JSON.parse(response.body), {errors: [{key_path: 'unknown', message: 'request timeout'}]});
+        });
+        it('should call timeout function on globally set timeout', async () => {
+            const event = mockData.getApiGateWayRouteForTimeout();
+            const spyFn = sinon.fake();
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
+                schemaPath: 'test/mocks/openapi.yml',
+                timeout: 500,
+                onTimeout: spyFn
+            });
+            const response = await router.route(event);
+            assert.deepEqual(spyFn.callCount, 1);
+            assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
+        });
+        it('should call timeout function on endpoint set timeout', async () => {
+            const event = mockData.getApiGateWayRouteForTimeout('post');
+            const spyFn = sinon.fake();
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers/',
+                schemaPath: 'test/mocks/openapi.yml',
+                timeout: 5000,
+                onTimeout: spyFn
+            });
+            const response = await router.route(event);
+            assert.deepEqual(spyFn.callCount, 1);
+            assert.equal(spyFn.getCall(0).args[1].code, response.statusCode);
+        });
+        it('should not timeout', async function () {
+            this.timeout(0);
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                timeout: 3000
+            });
+            const event = mockData.getApiGateWayRouteForTimeout('delete');
+            const response = await router.route(event);
+            assert.equal(200, response.statusCode);
+            assert.deepEqual({timeout: false}, JSON.parse(response.body));
+        });
+        it('should not timeout from endpoint with higher timeout than global', async function () {
+            this.timeout(0);
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                timeout: 3000
+            });
+            const event = mockData.getApiGateWayRouteForTimeout('put');
+            const response = await router.route(event);
+            assert.equal(200, response.statusCode);
+            assert.deepEqual({timeout: false}, JSON.parse(response.body));
+        });
+        it('should not call timeout function', async function () {
+            this.timeout(0);
+            const spyFn = sinon.fake();
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                timeout: 3000,
+                onTimeout: spyFn
+            });
+            const event = mockData.getApiGateWayRouteForTimeout('delete');
+            await router.route(event);
+            assert.deepEqual(spyFn.callCount, 0);
+        });
+        it('should not call timeout function from endpoint with higher timeout than global', async function () {
+            this.timeout(0);
+            const spyFn = sinon.fake();
+            const router = new Router({
+                routingMode: 'directory',
+                basePath: 'unit-test/v1',
+                handlerPath: 'test/mocks/apigateway/mock-directory-handlers',
+                schemaPath: 'test/mocks/openapi.yml',
+                timeout: 3000,
+                onTimeout: spyFn
+            });
+            const event = mockData.getApiGateWayRouteForTimeout('put');
+            await router.route(event);
+            assert.deepEqual(spyFn.callCount, 0);
+        });
+    });
 });
