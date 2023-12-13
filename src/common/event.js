@@ -5,7 +5,7 @@ const DynamoDBRecord = require('../dynamodb/record');
 const Schema = require('./schema.js');
 const SQSRecord = require('../sqs/record');
 const S3Record = require('../s3/record');
-const Validator = require('./validator.js');
+const Validator = require('./validator');
 
 class Event {
     constructor(event, params = {}) {
