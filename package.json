@@ -24,7 +24,7 @@
         "ajv": "^8.12.0",
         "aws-lambda": "^1.0.7",
         "aws-sdk": "^2.1528.0",
-        "csv-parse": "^5.5.2",
+        "csv-parse": "^5.5.3",
         "glob": "^10.3.10",
         "js-yaml": "4.1.0",
         "json-schema-merge-allof": "^0.8.1",
