@@ -64,6 +64,8 @@ workflows:
     install-build-test-workflow:
         jobs:
             - install-build-test:
+                context:
+                    - sonarcloud
                 filters:
                     tags:
                         ignore: /.*/
