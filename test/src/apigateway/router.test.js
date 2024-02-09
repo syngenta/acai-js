@@ -641,8 +641,8 @@ describe('Test Router: src/apigateway/router.js', () => {
                     }
                 ]
             };
-            assert.equal(409, response.statusCode);
-            assert.deepEqual(expected, JSON.parse(response.body));
+            assert.equal(response.statusCode, 409);
+            assert.deepEqual(JSON.parse(response.body), expected);
         });
         it('should throw an error about directory and files sharing the same name', async () => {
             const router = new Router({
@@ -661,8 +661,8 @@ describe('Test Router: src/apigateway/router.js', () => {
                     }
                 ]
             };
-            assert.equal(409, response.statusCode);
-            assert.deepEqual(expected, JSON.parse(response.body));
+            assert.equal(response.statusCode, 409);
+            assert.deepEqual(JSON.parse(response.body), expected);
         });
         it('should handle unknown error, but replace error message with default', async () => {
             const router = new Router({
@@ -673,8 +673,8 @@ describe('Test Router: src/apigateway/router.js', () => {
             const event = mockData.getBadImportData();
             const response = await router.route(event);
             const expected = {errors: [{key_path: 'server', message: 'internal server error'}]};
-            assert.equal(500, response.statusCode);
-            assert.deepEqual(expected, JSON.parse(response.body));
+            assert.equal(response.statusCode, 500);
+            assert.deepEqual(JSON.parse(response.body), expected);
         });
         it('should handle unknown error and show exact error message', async () => {
             const router = new Router({
@@ -685,7 +685,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const event = mockData.getBadImportData();
             const response = await router.route(event);
-            assert.equal(500, response.statusCode);
+            assert.equal(response.statusCode, 500);
             assert.isTrue(JSON.parse(response.body).errors[0].message.includes('Cannot find module'));
         });
         it('should find file but throw an error because file has a problem and replace error message with default', async () => {
@@ -697,8 +697,8 @@ describe('Test Router: src/apigateway/router.js', () => {
             const event = mockData.getApiGateWayRouteBadImport();
             const response = await router.route(event);
             const expected = {errors: [{key_path: 'server', message: 'internal server error'}]};
-            assert.equal(500, response.statusCode);
-            assert.deepEqual(expected, JSON.parse(response.body));
+            assert.equal(response.statusCode, 500);
+            assert.deepEqual(JSON.parse(response.body), expected);
         });
     });
     describe('test response validation', () => {
@@ -713,8 +713,8 @@ describe('Test Router: src/apigateway/router.js', () => {
             const expected = {test: true};
             const event = mockData.getApiGateWayRoute();
             const response = await router.route(event);
-            assert.equal(200, response.statusCode);
-            assert.deepEqual(expected, JSON.parse(response.body));
+            assert.equal(response.statusCode, 200);
+            assert.deepEqual(JSON.parse(response.body), expected);
         });
         it('should validate the response and fail with responseBody defined in requirements', async () => {
             const router = new Router({
@@ -732,8 +732,8 @@ describe('Test Router: src/apigateway/router.js', () => {
             };
             const event = mockData.getApiGateWayRoute('', 'PUT');
             const response = await router.route(event);
-            assert.equal(422, response.statusCode);
-            assert.deepEqual(expected, JSON.parse(response.body));
+            assert.equal(response.statusCode, 422);
+            assert.deepEqual(JSON.parse(response.body), expected);
         });
         it('should validate the response succesfully with responseBody defined in openAPI', async () => {
             const router = new Router({
@@ -747,8 +747,8 @@ describe('Test Router: src/apigateway/router.js', () => {
             const event = mockData.getApiGateWayRouteWithProperData();
             const response = await router.route(event);
             const expected = {test: true};
-            assert.equal(200, response.statusCode);
-            assert.deepEqual(expected, JSON.parse(response.body));
+            assert.equal(response.statusCode, 200);
+            assert.deepEqual(JSON.parse(response.body), expected);
         });
         it('should validate the response and fail with responseBody defined in openAPI', async () => {
             const router = new Router({
@@ -767,8 +767,8 @@ describe('Test Router: src/apigateway/router.js', () => {
             };
             const event = mockData.getApiGateWayRouteWithProperData('PUT');
             const response = await router.route(event);
-            assert.equal(422, response.statusCode);
-            assert.deepEqual(expected, JSON.parse(response.body));
+            assert.equal(response.statusCode, 422);
+            assert.deepEqual(JSON.parse(response.body), expected);
         });
     });
     describe('test timeout feature', () => {
