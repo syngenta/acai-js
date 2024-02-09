@@ -13,7 +13,13 @@
     "bugs": {
         "url": "https://github.com/syngenta/acai-js/issues"
     },
-    "keywords":["acai", "aws", "amazon", "lambda", "serverless"],
+    "keywords": [
+        "acai",
+        "aws",
+        "amazon",
+        "lambda",
+        "serverless"
+    ],
     "scripts": {
         "test": "MIN_LOG_LEVEL=OFF nyc mocha test/**/**.test.js",
         "report": "MIN_LOG_LEVEL=OFF nyc report --reporter=lcov",
@@ -22,8 +28,6 @@
     "dependencies": {
         "@apideck/reva": "^0.2.1",
         "ajv": "^8.12.0",
-        "aws-lambda": "^1.0.7",
-        "aws-sdk": "^2.1548.0",
         "csv-parse": "^5.5.3",
         "glob": "^10.3.10",
         "js-yaml": "4.1.0",
@@ -33,6 +37,7 @@
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.93",
+        "aws-sdk": "^2.1548.0",
         "aws-sdk-mock": "^5.7.0",
         "chai": "^4.2.0",
         "chai-as-promised": "^7.1.1",
