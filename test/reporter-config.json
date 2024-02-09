@@ -1,6 +1,6 @@
 {
     "reporterEnabled": "mocha-junit-reporter, mochawesome",
     "mochaJunitReporterReporterOptions": {
-        "mochaFile": "./coverage/lcov.xml"
+        "mochaFile": "./coverage/unit.xml"
     }
 }

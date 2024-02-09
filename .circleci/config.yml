@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+    sonarcloud: sonarsource/sonarcloud@2.0.0
 commands:
     node-install:
         steps:
@@ -42,6 +44,7 @@ jobs:
             - node-linter
             - node-test
             - node-report
+            - sonarcloud/scan
     install-build-deploy:
         docker:
             - image: node:18
