@@ -92,6 +92,13 @@ class Router {
                     throw new ApiTimeout();
                 }
             } catch (error) {
+                this.__logger.log({
+                    level: 'ERROR',
+                    log: {
+                        request: request.request,
+                        error: error.message
+                    }
+                });
                 throw error;
             }
         } else {

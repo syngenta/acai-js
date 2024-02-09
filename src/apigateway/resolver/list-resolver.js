@@ -73,7 +73,7 @@ class ListResolver {
             return false;
         }
         for (const index in splitRequest) {
-            if (splitRoute[index] && splitRoute[index].includes('{') && splitRoute[index].includes('}')) {
+            if (splitRoute[index]?.includes('{') && splitRoute[index]?.includes('}')) {
                 this.hasPathParams = true;
                 continue;
             }

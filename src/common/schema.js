@@ -89,7 +89,7 @@ class Schema {
     }
 
     __getEntityRulesFromSchema(schemaComponentName, refSchema) {
-        if (refSchema && refSchema.components && refSchema.components.schemas) {
+        if (refSchema?.components?.schemas) {
             const schemaWithInlinedRefs = refSchema.components.schemas[schemaComponentName];
             if (schemaWithInlinedRefs) {
                 return schemaWithInlinedRefs;

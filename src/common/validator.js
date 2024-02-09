@@ -19,7 +19,7 @@ class Validator {
         if (!Number.isInteger(cacheSize) && cacheSize !== undefined) {
             throw new ApiError(500, 'router-config', 'cacheSize must be an integer');
         }
-        if (cacheMode !== 'all' && cacheMode !== 'all' && cacheMode !== 'dynamic' && cacheMode !== undefined) {
+        if (cacheMode !== 'all' && cacheMode !== 'dynamic' && cacheMode !== 'static' && cacheMode !== undefined) {
             throw new ApiError(500, 'router-config', 'cacheMode must be either: all, dynamic, static');
         }
         if (routingMode !== 'pattern' && routingMode !== 'directory' && routingMode !== 'list') {
@@ -86,7 +86,7 @@ class Validator {
     }
 
     async validateResponse(response, requirements) {
-        if (requirements && requirements.requiredResponse) {
+        if (requirements?.requiredResponse) {
             const errors = await this.__schema.validate(requirements.requiredResponse, response.rawBody);
             this.__translateResponseErrors(errors, response);
         }

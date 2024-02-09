@@ -16,7 +16,7 @@ class Endpoint {
     }
 
     get hasAuth() {
-        return this.requirements && this.requirements.requiredAuth;
+        return Boolean(this.requirements?.requiredAuth);
     }
 
     get hasBefore() {
@@ -52,7 +52,7 @@ class Endpoint {
     }
 
     get hasDataClass() {
-        return Boolean(this.requirements && this.requirements.dataClass);
+        return Boolean(this.requirements?.dataClass);
     }
 
     dataClass(request) {
