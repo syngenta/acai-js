@@ -205,7 +205,7 @@ describe('Test Validator', () => {
                 await validator.validateWithOpenAPI(request, response);
                 assert.equal(true, false);
             } catch (error) {
-                assert.equal(true, error.message.includes('problem with importing your schema for get::/fail/v1/schema/{fail}'));
+                assert.equal(error.message.includes('problem with importing your schema for get::/fail/v1/schema/{fail}'), true);
             }
         });
     });

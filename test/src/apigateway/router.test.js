@@ -841,7 +841,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const event = mockData.getApiGateWayRouteForTimeout('delete');
             const response = await router.route(event);
-            assert.equal(200, response.statusCode);
+            assert.equal(response.statusCode, 200);
             assert.deepEqual({timeout: false}, JSON.parse(response.body));
         });
         it('should not timeout from endpoint with higher timeout than global', async function () {
@@ -855,7 +855,7 @@ describe('Test Router: src/apigateway/router.js', () => {
             });
             const event = mockData.getApiGateWayRouteForTimeout('put');
             const response = await router.route(event);
-            assert.equal(200, response.statusCode);
+            assert.equal(response.statusCode, 200);
             assert.deepEqual({timeout: false}, JSON.parse(response.body));
         });
         it('should not call timeout function', async function () {
