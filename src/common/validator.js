@@ -15,24 +15,15 @@ class Validator {
     }
 
     validateRouterConfigs(params) {
-        const {routingMode, handlerPath, handlerPattern, handlerList, cacheSize, cacheMode} = params;
+        const {handlerPath, handlerPattern, cacheSize, cacheMode} = params;
         if (!Number.isInteger(cacheSize) && cacheSize !== undefined) {
             throw new ApiError(500, 'router-config', 'cacheSize must be an integer');
         }
         if (cacheMode !== 'all' && cacheMode !== 'dynamic' && cacheMode !== 'static' && cacheMode !== undefined) {
             throw new ApiError(500, 'router-config', 'cacheMode must be either: all, dynamic, static');
         }
-        if (routingMode !== 'pattern' && routingMode !== 'directory' && routingMode !== 'list') {
-            throw new ApiError(500, 'router-config', 'routingMode must be either directory, pattern or list');
-        }
-        if (routingMode === 'directory' && !handlerPath) {
-            throw new ApiError(500, 'router-config', 'handlerPath config is requied when routingMode is directory');
-        }
-        if (routingMode === 'pattern' && !handlerPattern) {
-            throw new ApiError(500, 'router-config', 'handlerPattern config is requied when routingMode is pattern');
-        }
-        if (routingMode === 'list' && !handlerList) {
-            throw new ApiError(500, 'router-config', 'handlerList config is requied when routingMode is list');
+        if (!handlerPattern && !handlerPath) {
+            throw new ApiError(500, 'router-config', 'Provide either handlerPattern or handlerPath for routing.');
         }
     }
 

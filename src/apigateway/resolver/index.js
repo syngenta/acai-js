@@ -1,7 +1,5 @@
 const Endpoint = require('../endpoint');
 const ImportManager = require('./import-manager');
-const DirectoryResolver = require('./directory-resolver');
-const ListResolver = require('./list-resolver');
 const PatternResolver = require('./pattern-resolver');
 const ResolverCache = require('./cache');
 
@@ -12,11 +10,6 @@ class RouteResolver {
         this.__cacher = new ResolverCache(params.cacheSize, params.cacheMode);
         this.__cacheMisses = 0;
         this.__resolver = null;
-        this.__resolvers = {
-            pattern: PatternResolver,
-            directory: DirectoryResolver,
-            list: ListResolver
-        };
     }
 
     get cacheMisses() {
@@ -24,17 +17,14 @@ class RouteResolver {
     }
 
     autoLoad() {
-        this.__setResolverMode();
-        this.__resolver.autoLoad();
+        this.__getResolver().autoLoad();
     }
 
     getResolver() {
-        this.__setResolverMode();
-        return this.__resolver;
+        return this.__getResolver();
     }
 
     getEndpoint(request) {
-        this.__setResolverMode();
         const endpointModule = this.__getEndpointModule(request);
         if (this.__resolver.hasPathParams) {
             this.__configurePathParams(endpointModule, request);
@@ -48,20 +38,21 @@ class RouteResolver {
     __getEndpointModule(request) {
         const cached = this.__cacher.get(request.path);
         if (cached) {
-            this.__resolver.hasPathParams = cached.isDynamic;
+            this.__getResolver().hasPathParams = cached.isDynamic;
             return cached.endpointModule;
         }
         this.__cacheMisses++;
-        const endpointModule = this.__resolver.resolve(request);
-        this.__cacher.put(request.path, endpointModule, this.__resolver.hasPathParams);
+        const resolver = this.__getResolver();
+        const endpointModule = resolver.resolve(request);
+        this.__cacher.put(request.path, endpointModule, resolver.hasPathParams);
         return endpointModule;
     }
 
-    __setResolverMode() {
+    __getResolver() {
         if (!this.__resolver) {
-            const mode = this.__params.routingMode;
-            this.__resolver = new this.__resolvers[mode](this.__params, this.__importer);
+            this.__resolver = new PatternResolver(this.__params, this.__importer);
         }
+        return this.__resolver;
     }
 
     __configurePathParams(endpoint, request) {

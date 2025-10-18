@@ -5,7 +5,7 @@ class PatternResolver {
         this.__importer = importer;
         this.__sep = importer.fileSeparator;
         this.__basePath = params.basePath;
-        this.__pattern = params.handlerPattern;
+        this.__pattern = this.__normalizePattern(params);
         this.hasPathParams = false;
         this.importParts = [];
     }
@@ -93,7 +93,22 @@ class PatternResolver {
             this.importParts.push(mvvmFile);
         } else if (indexFile in fileTree[possibleDir]) {
             this.importParts.push(indexFile);
+        } else {
+            this.__importer.raise404();
         }
+    }
+
+    __normalizePattern(params) {
+        if (params.handlerPattern) {
+            return params.handlerPattern;
+        }
+        if (params.handlerPath) {
+            const cleanPath = this.__importer.cleanPath(params.handlerPath);
+            const normalized = cleanPath.endsWith('.js') ? cleanPath : `${cleanPath.replace(/\/$/, '')}/**/*.js`;
+            params.handlerPattern = normalized;
+            return normalized;
+        }
+        throw new Error('Pattern resolver requires either handlerPattern or handlerPath');
     }
 }
 
