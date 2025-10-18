@@ -80,7 +80,7 @@ describe('Test Router: src/apigateway/router.js', () => {
                 body: '{"test":true}'
             });
         });
-        it('should find route wiht no trailing /', async () => {
+        it('should find route with no trailing /', async () => {
             const event = mockData.getApiGateWayRoute();
             const router = new Router({
                 basePath: 'unit-test/v1',
