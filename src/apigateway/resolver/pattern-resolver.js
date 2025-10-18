@@ -93,8 +93,9 @@ class PatternResolver {
             this.importParts.push(mvvmFile);
         } else if (indexFile in fileTree[possibleDir]) {
             this.importParts.push(indexFile);
+        } else {
+            this.__importer.raise404();
         }
-        // If neither file exists, do nothing and allow resolution to continue
     }
 
     __normalizePattern(params) {
