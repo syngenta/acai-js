@@ -3,7 +3,7 @@
     "author": "Paul Cruse III",
     "description": "JavaScript-first helpers for building AWS Lambda integrations (TypeScript implementation available via acai-ts).",
     "main": "src/index.js",
-    "version": "2.0.4",
+    "version": "2.3.1",
     "license": "Apache-2.0",
     "homepage": "https://syngenta.github.io/acai-js-docs/",
     "repository": {

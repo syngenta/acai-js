@@ -1,34 +1,42 @@
 version: 2.1
 orbs:
-    sonarcloud: sonarsource/sonarcloud@2.0.0
-
+    sonarcloud: sonarsource/sonarcloud@3.0.1
 commands:
+    install-postman-cli:
+        description: "Install Postman CLI"
+        steps:
+            - run:
+                  name: Install Postman CLI
+                  command: curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+    create-artifacts-dir:
+        description: "Create coverage directory"
+        steps:
+            - run:
+                  name: Create coverage directory
+                  command: mkdir -p ./coverage
+            - run:
+                  name: Create lint directory
+                  command: mkdir -p ./lint
     node-install:
         description: "Install Node.js dependencies"
         steps:
             - run:
                   name: Install dependencies
                   command: npm ci
-
     node-linter:
         description: "Run ESLint with HTML output"
         steps:
             - run:
                   name: Run linter
-                  command: |
-                      mkdir -p ./lint
-                      npm run lint -- --format html --output-file ./lint/index.html
+                  command: npm run lint -- --format html --output-file ./lint/index.html
             - store_artifacts:
                   path: ./lint
-
     node-test:
         description: "Run Mocha test suite with reports"
         steps:
             - run:
                   name: Run unit tests
-                  command: |
-                      mkdir -p ./coverage
-                      npm run test -- --reporter mocha-multi-reporters --reporter-options configFile=./test/reporter-config.json
+                  command: npm run test -- --reporter mocha-multi-reporters --reporter-options configFile=./test/reporter-config.json
                   environment:
                       MOCHAWESOME_REPORTFILENAME: index.html
                       MOCHAWESOME_REPORTDIR: ./coverage/unit-test
@@ -36,7 +44,6 @@ commands:
                   path: ./coverage
             - store_artifacts:
                   path: ./coverage
-
     node-coverage:
         description: "Generate NYC coverage report"
         steps:
@@ -45,7 +52,46 @@ commands:
                   command: npm run report
             - store_artifacts:
                   path: ./coverage
-
+    node-package:
+        description: "Create npm package tarball"
+        steps:
+            - run:
+                  name: Create acai package tarball
+                  command: |
+                      rm -f acai-*.tgz
+                      npm pack
+    postman-integration-run:
+        description: "Run integration Postman suite against Serverless Offline"
+        parameters:
+            auto_validate:
+                type: string
+        steps:
+            - run:
+                  name: Install integration dependencies
+                  command: npm install
+                  working_directory: test/integration
+            - run:
+                  name: Install local tarball
+                  command: npm install ../../acai-*.tgz
+                  working_directory: test/integration
+            - run:
+                  name: Start Serverless Offline
+                  command: |
+                      AUTO_VALIDATE=<<parameters.auto_validate>> npx serverless offline --config serverless.yml
+                  working_directory: test/integration
+                  background: true
+            - run:
+                  name: Wait for Serverless Offline
+                  command: |
+                      for i in {1..20}; do
+                          curl -s --fail http://localhost:3000/int-test/v1/hello-world >/dev/null && exit 0
+                          sleep 3
+                      done
+                      echo "Serverless failed to start" >&2
+                      exit 1
+            - run:
+                  name: Run Postman collection
+                  command: postman collection run test/integration/postman/acai-integration.postman_collection.json -e test/integration/postman/acai-integration.postman_environment.json --bail
     npm-deploy:
         description: "Publish package to NPM with beta tag detection"
         steps:
@@ -67,8 +113,15 @@ commands:
                           echo "Publishing to latest"
                           npm publish --access public
                       fi
-
 jobs:
+    install-test-deploy:
+        docker:
+            - image: cimg/node:22.19.0
+        steps:
+            - checkout:
+                  method: full
+            - node-install
+            - npm-deploy
     install:
         docker:
             - image: cimg/node:22.19.0
@@ -80,50 +133,53 @@ jobs:
                   root: ~/project
                   paths:
                       - ./*
-
     lint:
         docker:
             - image: cimg/node:22.19.0
         steps:
             - attach_workspace:
                   at: ~/project
+            - create-artifacts-dir
             - node-linter
-
     test:
         docker:
             - image: cimg/node:22.19.0
         steps:
             - attach_workspace:
                   at: ~/project
+            - create-artifacts-dir
             - node-test
-            - persist_to_workspace:
-                  root: ~/project
-                  paths:
-                      - ./*
-
     coverage:
         docker:
             - image: cimg/node:22.19.0
         steps:
             - attach_workspace:
                   at: ~/project
+            - create-artifacts-dir
+            - node-test
             - node-coverage
             - sonarcloud/scan
-
-    install-test-deploy:
+    integration-test-auto-validate-false:
         docker:
             - image: cimg/node:22.19.0
         steps:
-            - checkout:
-                  method: full
-            - node-install
-            - node-test
-            - node-coverage
-            - npm-deploy
-
+            - attach_workspace:
+                  at: ~/project
+            - install-postman-cli
+            - node-package
+            - postman-integration-run:
+                  auto_validate: "false"
+    integration-test-auto-validate-true:
+        docker:
+            - image: cimg/node:22.19.0
+        steps:
+            - attach_workspace:
+                  at: ~/project
+            - install-postman-cli
+            - node-package
+            - postman-integration-run:
+                  auto_validate: "true"
 workflows:
-    version: 2
-
     install-test-workflow:
         jobs:
             - install
@@ -137,8 +193,13 @@ workflows:
                   context:
                       - sonarcloud
                   requires:
-                      - test
-
+                      - install
+            - integration-test-auto-validate-false:
+                  requires:
+                      - install
+            - integration-test-auto-validate-true:
+                  requires:
+                      - install
     install-deploy-workflow:
         jobs:
             - install-test-deploy:

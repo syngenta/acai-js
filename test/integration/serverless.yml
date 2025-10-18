@@ -1,0 +1,45 @@
+service: int-test
+frameworkVersion: '3'
+package:
+    exclude:
+        - .*
+        - .**/**
+        - aws/**
+        - test/**
+        - README.md
+        - serverless.yml
+        - package.json
+        - package-lock.json
+plugins:
+    - serverless-offline
+provider:
+    name: aws
+    runtime: nodejs20.x
+    stage: integration
+    region: us-east-1
+    environment:
+        AUTO_VALIDATE: ${env:AUTO_VALIDATE, 'true'}
+        VALIDATE_RESPONSE: ${env:VALIDATE_RESPONSE, 'false'}
+        TEST_API_KEY: ${env:TEST_API_KEY, 'integration-key'}
+custom:
+    serverless-offline:
+        httpPort: 3000
+        stage: local
+        prefix: ${self:service}
+        region: us-east-2
+        noAuth: true
+        noPrependStageInUrl: true
+functions:
+    api:
+        handler: src/router.handler
+        memorySize: 256
+        timeout: 30
+        events:
+            -
+                http:
+                    path: /
+                    method: ANY
+            -
+                http:
+                    method: ANY
+                    path: /{proxy+}

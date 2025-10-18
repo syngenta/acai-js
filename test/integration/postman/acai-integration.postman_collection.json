@@ -1,0 +1,411 @@
+{
+    "info": {
+        "_postman_id": "65c2d412-9b8c-4c43-9eb0-f6ad0c5d3f2c",
+        "name": "Acai Integration Tests",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "codex-cli"
+    },
+    "item": [
+        {
+            "name": "Hello World Routes",
+            "item": [
+                {
+                    "name": "GET hello-world",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "POST hello-world",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Acai\",\n    \"greeting\": \"Hello\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "PATCH hello-world",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"payload\": {\n        \"example\": \"patched\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "PUT hello-world",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"payload\": {\n        \"example\": \"put\"\n    }\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "DELETE hello-world",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "x-trace-id",
+                                "value": "integration-trace"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world?purpose=test&mode=debug",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ],
+                            "query": [
+                                {
+                                    "key": "purpose",
+                                    "value": "test"
+                                },
+                                {
+                                    "key": "mode",
+                                    "value": "debug"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Hello World Negative Cases",
+            "item": [
+                {
+                    "name": "POST hello-world missing name",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"greeting\": \"Hello\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PATCH hello-world missing payload",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ }"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "PUT hello-world missing payload",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{ }"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "DELETE hello-world missing trace header",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/hello-world?purpose=test",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "hello-world"
+                            ],
+                            "query": [
+                                {
+                                    "key": "purpose",
+                                    "value": "test"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Middleware Routes",
+            "item": [
+                {
+                    "name": "GET before-all",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/mw/before-all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "mw",
+                                "before-all"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET after-all",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/mw/after-all",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "mw",
+                                "after-all"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET on-error",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/mw/on-error",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "mw",
+                                "on-error"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET on-timeout",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/mw/on-timeout",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "mw",
+                                "on-timeout"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET with-auth",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api_key}}"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/v1/mw/with-auth",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "mw",
+                                "with-auth"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET with-auth missing key",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/mw/with-auth",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "mw",
+                                "with-auth"
+                            ]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Nested Routes",
+            "item": [
+                {
+                    "name": "GET nested index",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/nested",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "nested"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "GET nested dynamic",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/v1/nested/{{nested_id}}",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "v1",
+                                "nested",
+                                "{{nested_id}}"
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

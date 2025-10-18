@@ -1,0 +1,15 @@
+{
+    "name": "acai-integration-tests",
+    "version": "0.0.1",
+    "private": true,
+    "description": "Integration harness for exercising acai-js via Serverless Offline.",
+    "scripts": {
+        "start": "serverless offline",
+        "test": "echo \"Integration test entry point pending\""
+    },
+    "dependencies": {
+        "acai": "*",
+        "serverless": "^3.39.0",
+        "serverless-offline": "^13.4.0"
+    }
+}

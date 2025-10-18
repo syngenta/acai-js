@@ -152,6 +152,12 @@ npm test
 
 We welcome issues, feature requests, and pull requests! Please review the guidelines in [CONTRIBUTING.md](CONTRIBUTING.md) before you start. If you release a bug fix or enhancement, add an entry to `CHANGELOG.md` describing the change.
 
+## 🧭 Agent Resources
+
+- [.agents/AGENTS.md](.agents/AGENTS.md) – Contributor quick-start for day-to-day workflows and expectations.
+- [.agents/ARCHITECTURE.md](.agents/ARCHITECTURE.md) – High-level design notes for the runtime and adapters.
+- [.agents/WARP.md](.agents/WARP.md) – Operational guidance and runbooks for automation agents.
+
 ---
 
 ## 📦 Related Packages

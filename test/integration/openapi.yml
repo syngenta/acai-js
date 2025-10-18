@@ -1,0 +1,399 @@
+openapi: 3.1.0
+info:
+    title: Acai Integration Test API
+    version: 0.0.1
+servers:
+    -
+        url: http://localhost:3000/int-test
+        description: Serverless Offline
+paths:
+    /int-test/v1/hello-world:
+        get:
+            operationId: getHelloWorld
+            summary: Returns a basic hello world payload.
+            responses:
+                '200':
+                    description: Hello world payload.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-get-hello-world-response'
+        post:
+            operationId: postHelloWorld
+            summary: Creates a hello world payload echoing the request body.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-post-hello-world-request'
+            responses:
+                '200':
+                    description: Echoed request body.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-post-hello-world-response'
+        patch:
+            operationId: patchHelloWorld
+            summary: Demonstrates before-hook behaviour.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-patch-hello-world-request'
+            responses:
+                '200':
+                    description: Before hook echoes and metadata.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-patch-hello-world-response'
+        put:
+            operationId: putHelloWorld
+            summary: Demonstrates after-hook behaviour.
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/v1-put-hello-world-request'
+            responses:
+                '200':
+                    description: Put payload plus after hook marker.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-put-hello-world-response'
+        delete:
+            operationId: deleteHelloWorld
+            summary: Demonstrates manual validation requirements.
+            parameters:
+                -
+                    in: header
+                    name: x-trace-id
+                    required: true
+                    schema:
+                        type: string
+                -
+                    in: query
+                    name: purpose
+                    required: true
+                    schema:
+                        type: string
+                -
+                    in: query
+                    name: mode
+                    required: false
+                    schema:
+                        type: string
+                -
+                    in: query
+                    name: optional
+                    required: false
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: Delete handshake details.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-delete-hello-world-response'
+    /int-test/v1/mw/before-all:
+        get:
+            operationId: getBeforeAll
+            summary: Surface global beforeAll mutations.
+            responses:
+                '200':
+                    description: State injected by beforeAll middleware.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-before-all-response'
+    /int-test/v1/mw/after-all:
+        get:
+            operationId: getAfterAll
+            summary: Surface global afterAll mutations.
+            responses:
+                '200':
+                    description: Response body after afterAll middleware.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-after-all-response'
+    /int-test/v1/mw/on-error:
+        get:
+            operationId: getOnError
+            summary: Forces an error to test onError middleware.
+            responses:
+                '200':
+                    description: onError middleware response body.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-on-error-response'
+    /int-test/v1/mw/on-timeout:
+        get:
+            operationId: getOnTimeout
+            summary: Forces a timeout to test onTimeout middleware.
+            responses:
+                '200':
+                    description: onTimeout middleware response body.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-on-timeout-response'
+    /int-test/v1/mw/with-auth:
+        get:
+            operationId: getWithAuth
+            summary: Validates x-api-key header via withAuth middleware.
+            parameters:
+                -
+                    in: header
+                    name: x-api-key
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: Authenticated payload.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-with-auth-response'
+                '401':
+                    description: Missing or invalid key.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-auth-error-response'
+    /int-test/v1/nested:
+        get:
+            operationId: getNestedIndex
+            summary: Returns nested index payload.
+            responses:
+                '200':
+                    description: Nested index response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-nested-index-response'
+    /int-test/v1/nested/{id}:
+        get:
+            operationId: getNestedId
+            summary: Returns dynamic nested payload.
+            parameters:
+                -
+                    in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: string
+            responses:
+                '200':
+                    description: Nested dynamic response.
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/v1-nested-dynamic-response'
+components:
+    schemas:
+        v1-get-hello-world-response:
+            type: object
+            required:
+                - message
+                - route
+            properties:
+                message:
+                    type: string
+                route:
+                    type: string
+        v1-post-hello-world-request:
+            type: object
+            required:
+                - name
+            properties:
+                name:
+                    type: string
+                greeting:
+                    type: string
+            additionalProperties: false
+        v1-post-hello-world-response:
+            type: object
+            required:
+                - message
+                - received
+            properties:
+                message:
+                    type: string
+                received:
+                    $ref: '#/components/schemas/v1-post-hello-world-request'
+        v1-patch-hello-world-request:
+            type: object
+            required:
+                - payload
+            properties:
+                payload:
+                    type: object
+                    additionalProperties: true
+            additionalProperties: false
+        v1-patch-hello-world-response:
+            type: object
+            required:
+                - beforeEcho
+                - patched
+            properties:
+                beforeEcho:
+                    $ref: '#/components/schemas/v1-patch-hello-world-request'
+                patched:
+                    type: boolean
+                contextEcho:
+                    type:
+                        - object
+                        - 'null'
+                    additionalProperties: true
+            additionalProperties: false
+        v1-put-hello-world-request:
+            type: object
+            required:
+                - payload
+            properties:
+                payload:
+                    type: object
+                    additionalProperties: true
+            additionalProperties: false
+        v1-put-hello-world-response:
+            type: object
+            required:
+                - message
+                - payload
+                - afterHook
+            properties:
+                message:
+                    type: string
+                payload:
+                    $ref: '#/components/schemas/v1-put-hello-world-request/properties/payload'
+                afterHook:
+                    type: string
+            additionalProperties: false
+        v1-delete-hello-world-response:
+            type: object
+            required:
+                - message
+                - headers
+                - query
+            properties:
+                message:
+                    type: string
+                headers:
+                    type: object
+                    additionalProperties:
+                        type: string
+                query:
+                    type: object
+                    additionalProperties:
+                        type: string
+            additionalProperties: false
+        v1-before-all-response:
+            type: object
+            required:
+                - message
+            properties:
+                message:
+                    type: string
+                context:
+                    type:
+                        - object
+                        - 'null'
+                    additionalProperties: true
+                header:
+                    type:
+                        - string
+                        - 'null'
+            additionalProperties: false
+        v1-after-all-response:
+            type: object
+            required:
+                - message
+                - afterAll
+            properties:
+                message:
+                    type: string
+                afterAll:
+                    type: string
+            additionalProperties: false
+        v1-on-error-response:
+            type: object
+            required:
+                - message
+            properties:
+                message:
+                    type: string
+            additionalProperties: false
+        v1-on-timeout-response:
+            type: object
+            required:
+                - message
+            properties:
+                message:
+                    type: string
+            additionalProperties: false
+        v1-with-auth-response:
+            type: object
+            required:
+                - message
+                - headers
+            properties:
+                message:
+                    type: string
+                headers:
+                    type: object
+                    additionalProperties:
+                        type: string
+            additionalProperties: false
+        v1-auth-error-response:
+            type: object
+            required:
+                - errors
+            properties:
+                errors:
+                    type: array
+                    items:
+                        type: object
+                        required:
+                            - key_path
+                            - message
+                        properties:
+                            key_path:
+                                type: string
+                            message:
+                                type: string
+                        additionalProperties: false
+            additionalProperties: false
+        v1-nested-index-response:
+            type: object
+            required:
+                - message
+                - path
+            properties:
+                message:
+                    type: string
+                path:
+                    type: string
+            additionalProperties: false
+        v1-nested-dynamic-response:
+            type: object
+            required:
+                - message
+                - id
+                - route
+            properties:
+                message:
+                    type: string
+                id:
+                    type: string
+                route:
+                    type: string
+            additionalProperties: false
