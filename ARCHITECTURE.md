@@ -22,10 +22,9 @@
 5. Executes the endpoint handler, optionally enforcing timeouts through `Timer` and surfacing `ApiTimeout` errors.
 6. Validates responses when requested (`validateResponse`) before returning the serialized payload.
 
-### Route Resolution Strategies (`src/apigateway/resolver/`)
-- **DirectoryResolver**: maps HTTP paths onto a handler directory tree, supporting dynamic `{param}` segments and default `index.js` fallbacks.
-- **PatternResolver**: resolves files via glob-style patterns (e.g., `**/*.controller.js`), handling dynamic segments and MVVM-style folders.
-- **ListResolver**: takes an explicit method::route map for full control, validating uniqueness and method formatting.
+### Route Resolution (`src/apigateway/resolver/`)
+- A single pattern resolver powers routing. It accepts explicit glob patterns (e.g., `**/*.controller.js`) or a base `handlerPath`, which is auto-expanded to `**/*.js` to preserve directory-style routing.
+- Dynamic segments (`{param}`) are supported across both directory-style shorthand and glob patterns, with consistent required-path validation.
 - `ResolverCache` adds an LRU-style cache with configurable size/mode (`all`, `static`, `dynamic`).
 
 ### Validation & Error Surfacing
@@ -50,7 +49,7 @@
 - `validator` logic is reused by both API Gateway and event-based flows to keep error shapes consistent.
 
 ## Testing & Tooling Notes
-- Tests simulate full request flows (router modes, validation paths, error handling) ensuring middleware ordering and caching work as expected.
+- Tests simulate full request flows (routing scenarios, validation paths, error handling) ensuring middleware ordering and caching work as expected.
 - Fixtures under `test/mocks/` supply mock events, OpenAPI specs, and handler modules for coverage across success and failure cases.
 
 ## Observations & Potential Follow-ups

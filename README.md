@@ -1,55 +1,159 @@
+# 🫐 Acai (JavaScript)
+
+**Auto-loading, self-validating, minimalist JavaScript library for Amazon Web Service Lambdas**
+
 [![CircleCI](https://circleci.com/gh/syngenta/acai-js.svg?style=shield)](https://circleci.com/gh/syngenta/acai-js)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=syngenta_acai-js&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=syngenta_acai-js)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=syngenta_acai-js&metric=bugs)](https://sonarcloud.io/summary/new_code?id=syngenta_acai-js)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=syngenta_acai-js&metric=coverage)](https://sonarcloud.io/summary/new_code?id=syngenta_acai-js)
+[![Node.js](https://img.shields.io/badge/Node.js-22.19%2B-339933?logo=node.js)](https://nodejs.org/)
+[![npm package](https://img.shields.io/npm/v/acai?color=blue&label=npm%20package)](https://www.npmjs.com/package/acai)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![Contributions welcome](https://img.shields.io/badge/contributions-welcome-blue.svg?style=flat)](https://github.com/syngenta/acai-js/issues)
 
-# Acai
-DRY, configurable, declarative node library for working with Amazon Web Service Lambdas.
+Acai delivers a **DRY, configurable, declarative** experience for building AWS Lambda integrations in JavaScript. It encourages **Happy Path Programming**—validate inputs first, eliminate defensive code, and keep business logic focused on success paths.
 
-## Features
-* Highly configurable apigateway internal router
-* Openapi schema adherence for all event types
-* Extensible and customizable middleware for validation and other tasks
-* DRY coding interfaces without the need of boilerplate
-* Ease-of-use with the [serverless framework](https://www.serverless.com/)
-* Local Development support
-* Happy Path Programming (See Philosophy below)
+> Need TypeScript bindings? Check out the companion package [**acai-ts**](https://www.npmjs.com/package/acai-ts) for a fully typed experience.
 
-## TypeScript Version
+---
 
-This package now ships JavaScript sources only. If you need bundled TypeScript definitions, use the companion package [acai-ts](https://www.npmjs.com/package/acai-ts), which provides a first-party TypeScript implementation of the library.
+## 📖 Documentation
 
-## Philosophy
+**[Full Documentation](https://syngenta.github.io/acai-js-docs/)** · **[Examples](https://github.com/syngenta/acai-js-docs/tree/main/examples)** · **[Tutorial](https://syngenta.github.io/acai-js-docs/)**
 
-The Acai philosophy is to provide a dry, configurable, declarative library for use with the amazon lambdas, which encourages Happy Path Programming (HPP).
+---
 
-Happy Path Programming is an idea in which inputs are all validated before operated on. This ensures code follows the happy path without the need for mid-level, nested exceptions and all the nasty exception handling that comes with that. The library uses layers of customizable middleware options to allow a developer to easily dictate what constitutes a valid input, without nested conditionals, try/catch blocks or other coding blocks which distract from the happy path that covers the majority of that codes intended operation.
+## 🎯 Why Acai?
 
-## Installation
+- **🚀 Zero Boilerplate** – File-based routing auto-loads handlers with minimal configuration.
+- **✅ Built-in Validation** – OpenAPI schema validation for API Gateway and event sources.
+- **🧩 Extensible Middleware** – Compose `before`, `after`, `withAuth`, and `beforeAll/afterAll` hooks effortlessly.
+- **🔄 Event Helpers** – Uniform abstractions for DynamoDB, S3, and SQS events with operation filtering.
+- **🧪 Test Friendly** – Lightweight surface area and deterministic responses make unit tests straightforward.
+- **🌐 Serverless Friendly** – Designed to slot into Serverless Framework, SAM, or raw Lambda stacks.
 
-This is a [Node.js](https://nodejs.org/en/) module available through the
-[npm registry](https://www.npmjs.com/).
+### Happy Path Programming (HPP)
 
-Before installing, [download and install Node.js](https://nodejs.org/en/download/).
-Node.js 22.19.0 or higher is required.
+Validate early, then write business logic without guardrails and nested try/catch blocks. Acai pushes error handling to the edges, keeping the core flow clean and intention-revealing.
 
-If this is a brand new project, make sure to create a `package.json` first with
-the [`npm init`](https://docs.npmjs.com/creating-a-package-json-file) command.
+---
 
-Installation is done using the
-[`npm install`](https://docs.npmjs.com/getting-started/installing-npm-packages-locally) command:
+## ⚡ Quick Start
 
-```bash
-$ npm install acai
+```javascript
+const {Router} = require('acai').apigateway;
+
+const router = new Router({
+    basePath: 'v1',
+    handlerPath: 'src/handlers',          // auto-expanded to src/handlers/**/*.js
+    schemaPath: 'openapi.yml',            // optional: enable OpenAPI validation
+    autoValidate: true,                   // validate requests automatically
+    validateResponse: true                // validate responses before returning
+});
+
+exports.handler = async (event) => {
+    return await router.route(event);
+};
+
+// File: src/handlers/users/index.js
+exports.requirements = {
+    post: {
+        requiredBody: 'CreateUserRequest'
+    }
+};
+
+exports.post = async (request, response) => {
+    response.body = {
+        id: '123',
+        email: request.body.email
+    };
+    return response;
+};
 ```
 
-## Documentation & Examples
+### Pattern Routing via Globs
 
-* [Full Docs](https://syngenta.github.io/acai-js-docs/)
-* [Tutorial](https://syngenta.github.io/acai-js-docs/)
-* [Examples](https://github.com/syngenta/acai-js-docs/blob/main/examples/)
+```javascript
+const router = new Router({
+    basePath: 'api/v1',
+    handlerPattern: 'src/controllers/**/*.controller.js'
+});
+```
 
-## Testing
+Both `handlerPath` and `handlerPattern` feed the same resolver. `handlerPath` is shorthand for directory-style routing (`**/*.js`), while `handlerPattern` supports custom naming conventions.
+
+---
+
+## 📦 Event Processing Examples
+
+### DynamoDB Streams
+
+```javascript
+const {dynamodb} = require('acai');
+
+exports.handler = async (event) => {
+    const ddbEvent = new dynamodb.Event(event, {
+        operations: ['create', 'update'],
+        globalLogger: true
+    });
+
+    for (const record of ddbEvent.records) {
+        console.log('Operation:', record.operation);
+        console.log('New values:', record.body);
+        console.log('Old values:', record.oldImage);
+    }
+};
+```
+
+### S3 Object Hydration
+
+```javascript
+const {s3} = require('acai');
+
+exports.handler = async (event) => {
+    const s3Event = new s3.Event(event, {
+        getObject: true,
+        isJSON: true
+    });
+
+    const records = await s3Event.getRecords();
+    for (const record of records) {
+        console.log('Bucket:', record.bucket.name);
+        console.log('Key:', record.key);
+        console.log('Parsed body:', record.body);
+    }
+};
+```
+
+---
+
+## 📦 Installation
 
 ```bash
-$ npm install
-$ npm test
+npm install acai
 ```
+
+### Requirements
+
+- **Node.js**: ≥ 22.19.0
+
+---
+
+## 🧪 Testing
+
+```bash
+npm install
+npm test
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome issues, feature requests, and pull requests! Please review the guidelines in [CONTRIBUTING.md](CONTRIBUTING.md) before you start. If you release a bug fix or enhancement, add an entry to `CHANGELOG.md` describing the change.
+
+---
+
+## 📦 Related Packages
+
+- [**acai-ts**](https://www.npmjs.com/package/acai-ts) – TypeScript-first implementation with decorators and type metadata.

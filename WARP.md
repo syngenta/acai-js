@@ -47,7 +47,7 @@ Acai is a Node.js library for AWS Lambda that follows Happy Path Programming (HP
 
 The router (`src/apigateway/router.js`) follows this lifecycle:
 1. Wraps raw Lambda events in `Request`/`Response` objects
-2. Uses `RouteResolver` to locate handler modules (supports Directory, Pattern, and List resolution strategies)
+2. Uses `RouteResolver` to locate handler modules via a pattern-based resolver (directory paths are auto-expanded to glob patterns)
 3. Executes middleware hooks (`beforeAll` → `withAuth` → endpoint `before` → handler → endpoint `after` → `afterAll`)
 4. Applies automatic OpenAPI validation when `autoValidate=true` or explicit requirements
 5. Handles timeouts and error responses with consistent error shapes
@@ -56,7 +56,8 @@ The router (`src/apigateway/router.js`) follows this lifecycle:
 
 ```javascript
 const router = new Router({
-    routeResolver: new DirectoryResolver({directory: './endpoints'}),
+    basePath: 'v1',
+    handlerPath: './endpoints',  // automatically treated as ./endpoints/**/*.js
     autoValidate: true,          // Enable OpenAPI validation
     validateResponse: true,      // Validate outbound responses  
     strictValidation: false,     // Allow additional properties
@@ -67,11 +68,11 @@ const router = new Router({
 });
 ```
 
-### Route Resolution Strategies
+### Route Resolution
 
-- **DirectoryResolver**: `GET /api/users/{id}` → `./endpoints/api/users/{id}/index.js`
-- **PatternResolver**: `**/*.controller.js` finds all controller files
-- **ListResolver**: Explicit `{'GET::/users': './handlers/getUsers.js'}` mapping
+- Provide `handlerPath` for directory-style routing (`GET /api/users/{id}` → `./endpoints/api/users/{id}/index.js`).
+- Provide `handlerPattern` for custom globs (e.g., `**/*.controller.js`).
+- Dynamic `{param}` segments and index fallbacks behave consistently across both inputs.
 
 ### Common Debugging Patterns
 
@@ -123,4 +124,4 @@ throw new ApiTimeout('Operation timed out');
 **Test Organization:**
 - Mirror source structure: `test/src/apigateway/router.test.js`
 - Integration-style tests covering full request flows
-- Separate tests for each resolver strategy and validation mode
+- Dedicated suites cover pattern routing, validation behaviour, and resolver caching
