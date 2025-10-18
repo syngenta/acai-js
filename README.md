@@ -13,6 +13,10 @@ DRY, configurable, declarative node library for working with Amazon Web Service 
 * Local Development support
 * Happy Path Programming (See Philosophy below)
 
+## TypeScript Version
+
+This package now ships JavaScript sources only. If you need bundled TypeScript definitions, use the companion package [acai-ts](https://www.npmjs.com/package/acai-ts), which provides a first-party TypeScript implementation of the library.
+
 ## Philosophy
 
 The Acai philosophy is to provide a dry, configurable, declarative library for use with the amazon lambdas, which encourages Happy Path Programming (HPP).

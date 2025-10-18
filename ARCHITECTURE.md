@@ -11,7 +11,7 @@
 - `src/common/` contains cross-cutting utilities (event dispatch, schema/validator helpers, logger, timer).
 - `src/{dynamodb,s3,sqs}/record.js` wrap native event payloads with consistent accessors and validity flags for downstream processing.
 - `test/` mirrors the source layout with extensive integration-style coverage and fixture data under `test/mocks/`.
-- `typings/` provides TypeScript declaration files for consumers of the published package.
+- First-party TypeScript declarations now live in the dedicated [`acai-ts`](https://www.npmjs.com/package/acai-ts) package.
 
 ## API Gateway Pipeline
 ### Router Lifecycle (`src/apigateway/router.js`)
@@ -54,5 +54,5 @@
 - Fixtures under `test/mocks/` supply mock events, OpenAPI specs, and handler modules for coverage across success and failure cases.
 
 ## Observations & Potential Follow-ups
-- `typings/index.d.ts` references `dynamoddb`; double-check the published package to ensure consumers can import DynamoDB types as expected.
+- Document in release notes that TypeScript consumers should install `acai-ts` for maintained typings.
 - `Event.__getObjectFromS3` returns only hydrated S3 records when `getObject` is enabled; confirm that mixed-source batches are unsupported or document that expectation.

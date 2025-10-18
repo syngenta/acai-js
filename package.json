@@ -1,8 +1,8 @@
 {
     "name": "acai",
     "author": "Paul Cruse III",
+    "description": "JavaScript-first helpers for building AWS Lambda integrations (TypeScript implementation available via acai-ts).",
     "main": "src/index.js",
-    "types": "typings/index.d.ts",
     "version": "2.0.4",
     "license": "Apache-2.0",
     "homepage": "https://syngenta.github.io/acai-js-docs/",
@@ -18,7 +18,8 @@
         "aws",
         "amazon",
         "lambda",
-        "serverless"
+        "serverless",
+        "acai-ts"
     ],
     "scripts": {
         "test": "MIN_LOG_LEVEL=OFF nyc mocha test/**/**.test.js",
@@ -36,7 +37,6 @@
         "xml2js": "^0.6.2"
     },
     "devDependencies": {
-        "@types/aws-lambda": "^8.10.93",
         "aws-sdk": "^2.1548.0",
         "aws-sdk-mock": "^5.7.0",
         "chai": "^4.2.0",
