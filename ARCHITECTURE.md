@@ -1,7 +1,7 @@
 # Architecture Overview
 
 ## Tech Stack
-- Node.js library targeting AWS Lambda environments; requires Node >=18.18.2 via `package.json` engines.
+- Node.js library targeting AWS Lambda environments; requires Node >=22.19.0 via `package.json` engines.
 - Runtime dependencies center on schema validation and AWS parsing (`ajv`, `json-schema-merge-allof`, `@apideck/reva`, `js-yaml`, `json-schema-ref-parser`, `csv-parse`, `glob`, `xml2js`).
 - Testing stack uses Mocha + Chai + Sinon with NYC for coverage; linting via ESLint configured with Prettier integration.
 

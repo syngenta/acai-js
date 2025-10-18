@@ -1,71 +1,149 @@
 version: 2.1
 orbs:
     sonarcloud: sonarsource/sonarcloud@2.0.0
+
 commands:
     node-install:
-        steps:
-            - run: npm ci
-    node-linter:
-        steps:
-            - run: npm run lint -- --format html --output-file ./coverage/lint/index.html
-            - store_artifacts:
-                path: ./coverage
-    node-test:
+        description: "Install Node.js dependencies"
         steps:
             - run:
-                when: always
-                command: npm run test -- --reporter mocha-multi-reporters --reporter-options configFile=./test/reporter-config.json
-                environment:
-                    MOCHAWESOME_REPORTFILENAME: index.html
-                    MOCHAWESOME_REPORTDIR: ./coverage/unit-test
+                  name: Install dependencies
+                  command: npm ci
+
+    node-linter:
+        description: "Run ESLint with HTML output"
+        steps:
+            - run:
+                  name: Run linter
+                  command: |
+                      mkdir -p ./lint
+                      npm run lint -- --format html --output-file ./lint/index.html
+            - store_artifacts:
+                  path: ./lint
+
+    node-test:
+        description: "Run Mocha test suite with reports"
+        steps:
+            - run:
+                  name: Run unit tests
+                  command: |
+                      mkdir -p ./coverage
+                      npm run test -- --reporter mocha-multi-reporters --reporter-options configFile=./test/reporter-config.json
+                  environment:
+                      MOCHAWESOME_REPORTFILENAME: index.html
+                      MOCHAWESOME_REPORTDIR: ./coverage/unit-test
             - store_test_results:
-                path: ./coverage
+                  path: ./coverage
             - store_artifacts:
-                path: ./coverage
-    node-report:
+                  path: ./coverage
+
+    node-coverage:
+        description: "Generate NYC coverage report"
         steps:
-            - run: npm run report
+            - run:
+                  name: Generate coverage report
+                  command: npm run report
             - store_artifacts:
-                path: ./coverage
+                  path: ./coverage
+
     npm-deploy:
+        description: "Publish package to NPM with beta tag detection"
         steps:
-            - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-            - run: npm version $CIRCLE_TAG --allow-same-version --no-git-tag-version
-            - run: npm publish --access public
-            # for beta releases
-            # - run: npm publish --access public --tag beta
+            - run:
+                  name: Authenticate with NPM
+                  command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            - run:
+                  name: Set package version from tag
+                  command: npm version $CIRCLE_TAG --allow-same-version --no-git-tag-version
+            - run:
+                  name: Publish to NPM
+                  command: |
+                      if echo "$CIRCLE_TAG" | grep -iq "beta"; then
+                          echo "Beta version detected in tag: $CIRCLE_TAG"
+                          echo "Publishing with --tag beta"
+                          npm publish --access public --tag beta
+                      else
+                          echo "Stable version detected in tag: $CIRCLE_TAG"
+                          echo "Publishing to latest"
+                          npm publish --access public
+                      fi
+
 jobs:
-    install-build-test:
+    install:
         docker:
-            - image: node:18
+            - image: cimg/node:22.19.0
         steps:
-            - checkout
+            - checkout:
+                  method: full
             - node-install
+            - persist_to_workspace:
+                  root: ~/project
+                  paths:
+                      - ./*
+
+    lint:
+        docker:
+            - image: cimg/node:22.19.0
+        steps:
+            - attach_workspace:
+                  at: ~/project
             - node-linter
-            - node-test
-            - node-report
-            - sonarcloud/scan
-    install-build-deploy:
+
+    test:
         docker:
-            - image: node:18
+            - image: cimg/node:22.19.0
         steps:
-            - checkout
+            - attach_workspace:
+                  at: ~/project
+            - node-test
+            - persist_to_workspace:
+                  root: ~/project
+                  paths:
+                      - ./*
+
+    coverage:
+        docker:
+            - image: cimg/node:22.19.0
+        steps:
+            - attach_workspace:
+                  at: ~/project
+            - node-coverage
+            - sonarcloud/scan
+
+    install-test-deploy:
+        docker:
+            - image: cimg/node:22.19.0
+        steps:
+            - checkout:
+                  method: full
             - node-install
+            - node-test
+            - node-coverage
             - npm-deploy
+
 workflows:
-    install-build-deploy-workflow:
+    version: 2
+
+    install-test-workflow:
         jobs:
-            - install-build-deploy:
-                filters:
-                    tags:
-                        only: /.*/
-                    branches:
-                        ignore: /.*/
-    install-build-test-workflow:
+            - install
+            - lint:
+                  requires:
+                      - install
+            - test:
+                  requires:
+                      - install
+            - coverage:
+                  context:
+                      - sonarcloud
+                  requires:
+                      - test
+
+    install-deploy-workflow:
         jobs:
-            - install-build-test:
-                context:
-                    - sonarcloud
-                filters:
-                    tags:
-                        ignore: /.*/
+            - install-test-deploy:
+                  filters:
+                      tags:
+                          only: /.*/
+                      branches:
+                          ignore: /.*/
