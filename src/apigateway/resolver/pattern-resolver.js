@@ -103,10 +103,7 @@ class PatternResolver {
         }
         if (params.handlerPath) {
             const cleanPath = this.__importer.cleanPath(params.handlerPath);
-            // If cleanPath ends with '.js' and is not a directory (i.e., does not end with '.js/' or '.js\\'), treat as file.
-            const isJsFile = cleanPath.endsWith('.js') && !cleanPath.endsWith('.js/') && !cleanPath.endsWith('.js\\');
-            // Note: If a directory is named with a '.js' suffix (e.g., 'foo.js/'), it will be treated as a directory.
-            const normalized = isJsFile ? cleanPath : `${cleanPath.replace(/\/$/, '')}/**/*.js`;
+            const normalized = cleanPath.endsWith('.js') ? cleanPath : `${cleanPath.replace(/\/$/, '')}/**/*.js`;
             params.handlerPattern = normalized;
             return normalized;
         }
