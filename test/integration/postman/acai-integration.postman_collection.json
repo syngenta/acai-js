@@ -14,16 +14,7 @@
                     "request": {
                         "method": "GET",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world"
                     }
                 },
                 {
@@ -40,16 +31,7 @@
                             "mode": "raw",
                             "raw": "{\n    \"name\": \"Acai\",\n    \"greeting\": \"Hello\"\n}"
                         },
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world"
                     }
                 },
                 {
@@ -66,16 +48,7 @@
                             "mode": "raw",
                             "raw": "{\n    \"payload\": {\n        \"example\": \"patched\"\n    }\n}"
                         },
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world"
                     }
                 },
                 {
@@ -92,16 +65,7 @@
                             "mode": "raw",
                             "raw": "{\n    \"payload\": {\n        \"example\": \"put\"\n    }\n}"
                         },
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world"
                     }
                 },
                 {
@@ -114,26 +78,7 @@
                                 "value": "integration-trace"
                             }
                         ],
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world?purpose=test&mode=debug",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ],
-                            "query": [
-                                {
-                                    "key": "purpose",
-                                    "value": "test"
-                                },
-                                {
-                                    "key": "mode",
-                                    "value": "debug"
-                                }
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world?purpose=test&mode=debug"
                     }
                 }
             ]
@@ -155,16 +100,7 @@
                             "mode": "raw",
                             "raw": "{\n    \"greeting\": \"Hello\"\n}"
                         },
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world"
                     },
                     "response": []
                 },
@@ -182,16 +118,7 @@
                             "mode": "raw",
                             "raw": "{ }"
                         },
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world"
                     },
                     "response": []
                 },
@@ -209,16 +136,7 @@
                             "mode": "raw",
                             "raw": "{ }"
                         },
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world"
                     },
                     "response": []
                 },
@@ -227,22 +145,7 @@
                     "request": {
                         "method": "DELETE",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/hello-world?purpose=test",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "hello-world"
-                            ],
-                            "query": [
-                                {
-                                    "key": "purpose",
-                                    "value": "test"
-                                }
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/hello-world?purpose=test"
                     },
                     "response": []
                 }
@@ -256,17 +159,7 @@
                     "request": {
                         "method": "GET",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/mw/before-all",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "mw",
-                                "before-all"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/mw/before-all"
                     }
                 },
                 {
@@ -274,17 +167,7 @@
                     "request": {
                         "method": "GET",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/mw/after-all",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "mw",
-                                "after-all"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/mw/after-all"
                     }
                 },
                 {
@@ -292,17 +175,7 @@
                     "request": {
                         "method": "GET",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/mw/on-error",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "mw",
-                                "on-error"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/mw/on-error"
                     }
                 },
                 {
@@ -310,17 +183,7 @@
                     "request": {
                         "method": "GET",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/mw/on-timeout",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "mw",
-                                "on-timeout"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/mw/on-timeout"
                     }
                 },
                 {
@@ -333,17 +196,7 @@
                                 "value": "{{api_key}}"
                             }
                         ],
-                        "url": {
-                            "raw": "{{base_url}}/v1/mw/with-auth",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "mw",
-                                "with-auth"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/mw/with-auth"
                     }
                 },
                 {
@@ -351,17 +204,7 @@
                     "request": {
                         "method": "GET",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/mw/with-auth",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "mw",
-                                "with-auth"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/mw/with-auth"
                     },
                     "response": []
                 }
@@ -375,16 +218,7 @@
                     "request": {
                         "method": "GET",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/nested",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "nested"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/nested"
                     }
                 },
                 {
@@ -392,17 +226,7 @@
                     "request": {
                         "method": "GET",
                         "header": [],
-                        "url": {
-                            "raw": "{{base_url}}/v1/nested/{{nested_id}}",
-                            "host": [
-                                "{{base_url}}"
-                            ],
-                            "path": [
-                                "v1",
-                                "nested",
-                                "{{nested_id}}"
-                            ]
-                        }
+                        "url": "{{base_url}}/v1/nested/{{nested_id}}"
                     }
                 }
             ]
