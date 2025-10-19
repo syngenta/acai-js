@@ -2,12 +2,12 @@ version: 2.1
 orbs:
     sonarcloud: sonarsource/sonarcloud@3.0.1
 commands:
-    install-postman-cli:
-        description: "Install Postman CLI"
+    install-newman:
+        description: "Install Newman and HTML reporter"
         steps:
             - run:
-                  name: Install Postman CLI
-                  command: curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+                  name: Install Newman
+                  command: npm install --no-save newman newman-reporter-html
     create-artifacts-dir:
         description: "Create coverage directory"
         steps:
@@ -91,7 +91,11 @@ commands:
                       exit 1
             - run:
                   name: Run Postman collection
-                  command: postman collection run test/integration/postman/acai-integration.postman_collection.json -e test/integration/postman/acai-integration.postman_environment.json --bail
+                  command: npx newman run test/integration/postman/acai-integration.postman_collection.json -e test/integration/postman/acai-integration.postman_environment.json --reporters cli,html,junit --reporter-html-export coverage/index.html --reporter-junit-export coverage/junit.xml --env-var base_url=http://127.0.0.1:3000/int-test --env-var api_key=integration-key --env-var nested_id=demo-id --env-var AUTO_VALIDATE=<<parameters.auto_validate>>
+            - store_test_results:
+                path: ./coverage
+            - store_artifacts:
+                path: ./coverage
     npm-deploy:
         description: "Publish package to NPM with beta tag detection"
         steps:
@@ -165,7 +169,8 @@ jobs:
         steps:
             - attach_workspace:
                   at: ~/project
-            - install-postman-cli
+            - create-artifacts-dir
+            - install-newman
             - node-package
             - postman-integration-run:
                   auto_validate: "false"
@@ -175,7 +180,8 @@ jobs:
         steps:
             - attach_workspace:
                   at: ~/project
-            - install-postman-cli
+            - create-artifacts-dir
+            - install-newman
             - node-package
             - postman-integration-run:
                   auto_validate: "true"
