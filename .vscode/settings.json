@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "syngenta",
+        "projectKey": "syngenta_acai-js"
+    }
+}
