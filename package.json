@@ -30,7 +30,7 @@
         "@apideck/reva": "^0.2.1",
         "ajv": "^8.17.1",
         "csv-parse": "^6.1.0",
-        "glob": "^11.0.3",
+        "glob": "^13.0.0",
         "js-yaml": "4.1.1",
         "json-schema-merge-allof": "^0.8.1",
         "json-schema-ref-parser": "9.0.9",
