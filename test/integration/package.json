@@ -9,7 +9,7 @@
     },
     "dependencies": {
         "acai": "*",
-        "serverless": "^3.39.0",
-        "serverless-offline": "^13.4.0"
+        "serverless": "^4.31.0",
+        "serverless-offline": "^14.4.0"
     }
 }
